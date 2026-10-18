@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Code Compare Local — Beta",
+  "version": "0.3.0",
+  "description": "Compare and edit code locally. Check syntax, copy changes, and save. No AI, account, or uploads.",
+  "action": {
+    "default_title": "Open Code Compare Local"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'none'; base-uri 'none'"
+  }
+}

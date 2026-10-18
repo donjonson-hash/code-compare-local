@@ -1,0 +1,45 @@
+{
+  "name": "code-compare-local",
+  "version": "0.3.0",
+  "description": "Local offline code comparison browser extension",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node tests/browser.mjs",
+    "package": "python3 scripts/package.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "dependencies": {
+    "@babel/parser": "8.0.7",
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/lang-cpp": "6.0.3",
+    "@codemirror/lang-css": "6.3.1",
+    "@codemirror/lang-html": "6.4.12",
+    "@codemirror/lang-java": "6.0.2",
+    "@codemirror/lang-javascript": "6.2.5",
+    "@codemirror/lang-json": "6.0.2",
+    "@codemirror/lang-markdown": "6.5.2",
+    "@codemirror/lang-python": "6.2.1",
+    "@codemirror/lang-sql": "6.10.0",
+    "@codemirror/language": "6.13.1",
+    "@codemirror/legacy-modes": "6.5.5",
+    "@codemirror/lint": "6.9.7",
+    "@codemirror/merge": "6.12.2",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.14",
+    "@lezer/json": "1.0.3",
+    "@lezer/python": "1.1.19",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright": "1.62.1"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  }
+}
