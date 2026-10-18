@@ -1,4 +1,4 @@
-# Code Compare Local · beta 0.3.0
+# Code Compare Local · beta 0.4.0
 
 Compare two versions of code, edit them side by side, move changes from A to B,
 check syntax, and download the result. Processing stays in the browser. No LLM,
@@ -27,8 +27,9 @@ reload button on the extensions page. Open a new editor tab afterward.
 
 1. Choose **Try example**, paste two versions, or open a UTF-8 text file in each
    editor. A is your reference; B is your result. Both sides are editable.
-2. Review the highlighted differences. Click **→** beside a changed block to
-   transfer that block from A to B.
+2. Review the **Differences** list, with line numbers for A and B. Click a card
+   to reveal that block in both editors; **Previous / Next** walks the list.
+   **Use A** transfers just that block to B. The inline **→** also works.
 3. Edit B directly if needed. The toolbar undo/redo buttons affect B;
    Ctrl/Cmd+Z works in the focused editor. **All A → B** replaces the entire B
    document and can be undone.
@@ -37,6 +38,10 @@ reload button on the extensions page. Open a new editor tab afterward.
 5. Review syntax messages. Click a message to jump to its line and column.
 6. Set an output filename and choose **Download B**. Reopen the downloaded file
    to check the final result.
+
+**Code size** offers 14, 16, 18, or 20 px (16 px by default). The first
+difference opens automatically after loading two nonempty files. Insertions
+and deletions show an anchor in the side with no corresponding text.
 
 **Copy B** writes text to the clipboard. Use **Download B** when line endings
 and a UTF-8 byte order mark (BOM) must be preserved exactly. Downloading creates

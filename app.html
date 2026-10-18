@@ -11,17 +11,28 @@
 <body>
   <header class="topbar">
     <a class="brand" href="app.html" aria-label="Code Compare Local"><span class="brand-icon">{≠}</span><span>Code Compare <b>Local</b></span></a>
-    <div class="header-right"><span class="local-badge"><i></i>On your device only</span><span class="version">Beta 0.3.0</span></div>
+    <div class="header-right"><span class="local-badge"><i></i>On your device only</span><span class="version">Beta 0.4.0</span></div>
   </header>
   <main>
     <section class="intro">
       <div><p class="eyebrow">YOUR CODE. YOUR CONTROL.</p><h1>Compare. Fix. Save.</h1><p class="subtitle">Compare two code files or snippets. See every change. No AI required.</p></div>
       <button id="demo" class="button secondary">Try an example <span>↗</span></button>
     </section>
+    <div class="comparison-layout">
+      <aside class="changes-sidebar" aria-label="Differences">
+        <div class="changes-header"><p class="eyebrow">REVIEW YOUR CHANGES</p><h2>Differences</h2><p id="changes-summary" role="status" aria-live="polite">Open two files to see their differences.</p></div>
+        <ol id="changes-list" class="changes-list" aria-label="Changed lines"></ol>
+        <p class="changes-tip">Select a change to see both versions. Use A to replace only that change in B.</p>
+      </aside>
     <section class="workspace" aria-label="Code comparison">
       <div class="toolbar">
         <div class="toolbar-group"><label for="language">Language</label><select id="language"><option value="text">Plain text</option><option value="javascript">JavaScript</option><option value="jsx">JavaScript / JSX</option><option value="typescript">TypeScript</option><option value="tsx">TypeScript / TSX</option><option value="python">Python</option><option value="json">JSON</option><option value="html">HTML</option><option value="css">CSS</option><option value="java">Java</option><option value="cpp">C / C++</option><option value="sql">SQL</option><option value="yaml">YAML</option><option value="markdown">Markdown</option></select><button id="check-syntax" class="button small">Check syntax</button></div>
-        <div class="toolbar-group"><label class="checkbox"><input id="wrap" type="checkbox">Wrap lines</label><span class="toolbar-divider"></span><button id="prev" class="icon-button" title="Previous change" aria-label="Previous change">↑</button><button id="next" class="icon-button" title="Next change" aria-label="Next change">↓</button><span id="diff-count" class="diff-count">Add two texts</span></div>
+        <div class="toolbar-group"><label for="font-size">Code size</label><select id="font-size" aria-label="Code font size"><option value="14">14 px</option><option value="16" selected>16 px</option><option value="18">18 px</option><option value="20">20 px</option></select><label class="checkbox"><input id="wrap" type="checkbox">Wrap lines</label></div>
+      </div>
+      <div class="review-toolbar">
+        <div class="toolbar-group change-navigation"><button id="prev" class="button small" title="Previous change" aria-label="Previous change">↑ Previous</button><span id="change-position" aria-live="polite">0 / 0</span><button id="next" class="button small" title="Next change" aria-label="Next change">Next ↓</button></div>
+        <span id="diff-count" class="diff-count">Add two texts</span>
+        <button id="use-current" class="button small primary" disabled>Use A for this change → B</button>
       </div>
       <div class="pane-heads">
         <div class="pane-head" data-side="a"><span class="side-tag original">A</span><div class="pane-description"><strong>Original version</strong><span id="name-a">Paste code or open a file</span></div><label class="button small file-button">Open file<input id="file-a" type="file" aria-label="Open file A"></label></div>
@@ -39,7 +50,8 @@
         <div class="export-controls"><input id="filename" type="text" value="result.txt" aria-label="Result filename" spellcheck="false"><button id="copy" class="button secondary">Copy B</button><button id="download" class="button primary">Download B <span>↓</span></button></div>
       </div>
     </section>
-    <div class="below-workspace"><div class="legend"><span><i class="removed"></i>Version A</span><span><i class="added"></i>Version B</span><span class="hint-arrow">→</span><span>Use the arrow between the editors to copy a block from A to B</span></div><button id="clear" class="text-button">Clear both editors</button></div>
+    </div>
+    <div class="below-workspace"><div class="legend"><span><i class="removed"></i>Version A</span><span><i class="added"></i>Version B</span><span class="hint-arrow">→</span><span>Select a difference, then use A to fix that block in B</span></div><button id="clear" class="text-button">Clear both editors</button></div>
     <footer><span>No account, server, or AI. Your code is never run or sent online.</span><span>Save your result before closing this tab.</span></footer>
     <details class="help"><summary>Features and limitations</summary><p>Comparison includes spaces, tabs, and the final newline. Downloads preserve the original LF / CRLF / CR line endings, mixed line endings, and UTF-8 BOM. New lines typed in an editor use that file’s main line-ending format.</p><p>Syntax is checked automatically after edits and block transfers for JavaScript/JSX, TypeScript/TSX, JSON, and YAML. Python has a preliminary grammar and indentation check; it does not replace validation with Python itself. Click a diagnostic to go to its line. The selected language applies to both versions.</p><p>Each text is checked as a complete file, so incomplete snippets may be reported as errors. Code is never corrected automatically. Valid syntax does not guarantee correct behavior: moving a Python line into another valid block can change its meaning without a syntax error. TypeScript checks do not include type checking. Other languages have highlighting only.</p><p>Open UTF-8 text files up to 512 KB, 200,000 characters, and 4,000 lines per side. Code is not run or checked for logic errors. For large differences, several changes may be grouped into one block.</p><p>Ctrl/Cmd+Z undoes an edit in the active editor. Tab indents; press Esc, then Tab to leave the editor. Copy and paste snippets from ChatGPT, Claude, or Gemini. Chats are not accessed automatically. The clipboard may change line endings; use Download B to preserve them exactly.</p></details>
   </main>
