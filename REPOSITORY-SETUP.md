@@ -1,44 +1,27 @@
-# Перенос Code Compare Local в отдельный репозиторий
+# Code Compare Local repository
 
-Подготовлен самостоятельный локальный Git-репозиторий с основной веткой `main`
-и меткой `v0.3.0`. Доступный GitHub-коннектор не поддерживает создание репозитория;
-удалённый репозиторий и запуск CI пока отсутствуют.
+Remote: https://github.com/donjonson-hash/code-compare-local
 
-## Восстановление подготовленной истории
+The project is maintained independently of Compare These Texts. The main branch
+is `main`. The 0.3.0 beta includes the English UI, local syntax checks, regression
+tests, synthetic example files, and store listing materials.
 
-Скачайте файл `code-compare-local-0.3.0.bundle` и выполните из папки загрузки:
+## Clone and verify
 
 ```sh
-git clone code-compare-local-0.3.0.bundle code-compare-local
+git clone https://github.com/donjonson-hash/code-compare-local.git
 cd code-compare-local
-git remote remove origin
+npm ci
+npm run build
+npm test
+npx playwright install chromium
+REQUIRE_EXTENSION=1 npm run test:browser
+npm run package
 ```
 
-Создайте пустой репозиторий `code-compare-local` в аккаунте
-`aiagent2046-coder`, без README, лицензии и .gitignore. Исходники пока помечены
-`UNLICENSED`; для первого переноса можно выбрать приватный репозиторий.
+The `Beta checks` GitHub Actions workflow builds the code, runs unit tests and
+installed-extension browser tests, then uploads distribution ZIPs. A successful
+local-page test does not replace the installed-extension gate.
 
-После создания подключите его и загрузите подготовленную ветку и метку:
-
-```sh
-git remote add origin https://github.com/aiagent2046-coder/code-compare-local.git
-git push -u origin main
-git push origin v0.3.0
-```
-
-Это целевой адрес для создания, а не утверждение о существующем репозитории.
-При другом владельце замените адрес. Обычная GitHub-аутентификация выполняется
-вашим локальным Git-клиентом.
-
-После первого push откройте вкладку Actions: workflow `Beta checks` должен
-собрать код, выполнить модульные и браузерные проверки и приложить ZIP-пакеты.
-Браузерный шаг требует реально загруженного расширения. До завершения этого
-запуска не считайте CI пройденным.
-
-## Если используете только архив исходников
-
-Распакуйте `code-compare-local-0.3.0-source.zip`. Он содержит те же исходники
-и CI, но не историю Git. Для сохранения подготовленной истории используйте bundle.
-
-Не загружайте в репозиторий `node_modules`, браузерные профили или свои файлы кода
-из реальных сравнений. Подготовленный bundle их не содержит.
+Development dependencies, browser profiles and generated distribution archives
+are excluded from version control. Supplied example files contain synthetic data.

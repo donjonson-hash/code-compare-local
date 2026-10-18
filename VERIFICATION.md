@@ -16,7 +16,7 @@ The user separately confirmed Python and JavaScript syntax correction in the ins
 ## Remaining gates
 
 - The available Chromium binary does not load extensions, so this environment verified the packaged page and worker, not a full installed MV3 extension. Downloading the Playwright Chromium distribution failed because the received archive was incomplete/invalid. No successful installed-extension run is claimed.
-- GitHub CI has been prepared but not run: the remote repository has not been created. Its browser job uses `REQUIRE_EXTENSION=1`, so it fails instead of silently falling back to a local page.
+- GitHub CI is configured for `donjonson-hash/code-compare-local`; its first remote run must still be verified. Its browser job uses `REQUIRE_EXTENSION=1`, so it fails instead of silently falling back to a local page.
 - Before publishing: install 0.3.0 in a normal desktop browser and check the extension toolbar action, clipboard, download UI, and reopen workflow. Firefox and mobile are outside this release.
 - Store submission and a public privacy/support URL are not completed.
 
