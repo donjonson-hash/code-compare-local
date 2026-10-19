@@ -9,9 +9,11 @@ Code Compare Local — Beta
 
 ## Short description
 
-Compare and edit code side by side. Move changes, check syntax, and save files locally. No account or AI required.
+Compare and edit code locally. Check syntax, copy changes, and save. No AI, account, or uploads.
 
 ## Full description
+
+THIS EXTENSION IS FOR BETA TESTING.
 
 Compare two versions of code and build the result you want.
 
@@ -67,8 +69,9 @@ The prepared screenshot shows the actual English beta with the supplied JavaScri
 ## Publication checklist
 
 - Use a screenshot captured from the packaged build.
-- Provide a publicly accessible privacy-statement URL before submission.
-- Add the actual support contact or issue URL once the project has one.
+- Privacy policy: https://github.com/donjonson-hash/code-compare-local/blob/main/PRIVACY.md
+- Support: https://github.com/donjonson-hash/code-compare-local/issues
+- Homepage: https://github.com/donjonson-hash/code-compare-local
 - Confirm the uploaded package version matches this listing.
 - Verify installation and the save/reopen workflow in a normal browser.
 
@@ -79,3 +82,7 @@ The prepared screenshot shows the actual English beta with the supplied JavaScri
 - `../icons/icon128.png`: extension icon.
 
 Image dimensions were checked against the [official Chrome Web Store image guide](https://developer.chrome.com/docs/webstore/images) on 18 October 2026.
+
+## Submission worksheet
+
+Use `SUBMISSION-RU.md` for the package, dashboard answers, and review instructions.
