@@ -1,7 +1,7 @@
 import { EditorView } from '@codemirror/view';
 import { setDiagnostics } from '@codemirror/lint';
 
-export function createSyntaxController({ getView, getLanguage }) {
+export function createSyntaxController({ getView, getLanguage, beforeReveal = () => {} }) {
   let worker, timer, watchdog, generation = 0, active = 0;
   const $ = id => document.getElementById(id);
   const renderStatus = (side, title, note, kind = 'neutral') => {
@@ -68,6 +68,7 @@ export function createSyntaxController({ getView, getLanguage }) {
       const id = generation;
       button.addEventListener('click', () => {
         if (id !== generation) return;
+        beforeReveal();
         const editor = getView(side);
         editor.dispatch({ selection: { anchor: from, head: Math.min(editor.state.doc.length, diagnostic.to) }, effects: EditorView.scrollIntoView(from, { y: 'center' }) });
         editor.focus();

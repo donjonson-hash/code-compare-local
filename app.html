@@ -11,7 +11,7 @@
 <body>
   <header class="topbar">
     <a class="brand" href="app.html" aria-label="Code Compare Local"><span class="brand-icon">{≠}</span><span>Code Compare <b>Local</b></span></a>
-    <div class="header-right"><span class="local-badge"><i></i>On your device only</span><span class="version">Beta 0.4.0</span></div>
+    <div class="header-right"><span class="local-badge"><i></i>On your device only</span><span class="version">Beta 0.5.0</span></div>
   </header>
   <main>
     <section class="intro">
@@ -22,7 +22,7 @@
       <aside class="changes-sidebar" aria-label="Differences">
         <div class="changes-header"><p class="eyebrow">REVIEW YOUR CHANGES</p><h2>Differences</h2><p id="changes-summary" role="status" aria-live="polite">Open two files to see their differences.</p></div>
         <ol id="changes-list" class="changes-list" aria-label="Changed lines"></ol>
-        <p class="changes-tip">Select a change to see both versions. Use A to replace only that change in B.</p>
+        <p class="changes-tip">Review each change: use A to update B, or keep B as it is.</p>
       </aside>
     <section class="workspace" aria-label="Code comparison">
       <div class="toolbar">
@@ -32,7 +32,15 @@
       <div class="review-toolbar">
         <div class="toolbar-group change-navigation"><button id="prev" class="button small" title="Previous change" aria-label="Previous change">↑ Previous</button><span id="change-position" aria-live="polite">0 / 0</span><button id="next" class="button small" title="Next change" aria-label="Next change">Next ↓</button></div>
         <span id="diff-count" class="diff-count">Add two texts</span>
-        <button id="use-current" class="button small primary" disabled>Use A for this change → B</button>
+        <span id="review-progress" role="status" aria-live="polite">Reviewed 0 / 0</span>
+        <button id="keep-current" class="button small" disabled>Keep B</button>
+        <button id="use-current" class="button small primary" disabled>Use A → B</button>
+      </div>
+      <div class="view-options">
+        <label class="checkbox"><input id="changes-only" type="checkbox">Only changes</label>
+        <label class="checkbox"><input id="show-whitespace" type="checkbox">Show spaces &amp; tabs</label>
+        <span id="focus-hint" hidden>3 context lines · expand any hidden section</span>
+        <span id="whitespace-hint" hidden>Dots = spaces · arrows = tabs. Code stays unchanged.</span>
       </div>
       <div class="pane-heads">
         <div class="pane-head" data-side="a"><span class="side-tag original">A</span><div class="pane-description"><strong>Original version</strong><span id="name-a">Paste code or open a file</span></div><label class="button small file-button">Open file<input id="file-a" type="file" aria-label="Open file A"></label></div>

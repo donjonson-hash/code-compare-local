@@ -1,4 +1,4 @@
-# Store listing draft · Code Compare Local 0.4.0
+# Store listing draft · Code Compare Local 0.5.0
 
 Draft for a desktop Chromium beta. This document does not indicate that the
 extension has been submitted, approved, or published.
@@ -27,6 +27,8 @@ WHAT YOU CAN DO
 - Compare and edit two code files side by side.
 - Move individual changes from A to B or copy the whole A document.
 - Undo and redo changes.
+- Review each difference with Use A or Keep B and track progress.
+- Collapse unchanged sections and reveal spaces and tabs without modifying code.
 - See a difference list with A/B line numbers and jump to any changed block.
 - Choose a readable code size (14–20 px) and turn line wrapping on or off.
 - Check syntax automatically after edits and jump to reported errors.

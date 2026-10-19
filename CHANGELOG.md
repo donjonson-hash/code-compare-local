@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 — 19 October 2026
+
+- Only changes mode folds unchanged sections with three context lines and keyboard-accessible expansion.
+- Syntax diagnostic navigation reveals complete files, including identical hidden errors.
+- Show spaces & tabs adds visual markers without changing content or comparison semantics.
+- Space/tab-only changes receive an explicit, neutral label.
+- Keep B and Use A track review progress and advance to the next unreviewed block.
+- Use A undo/redo restores review progress; manual edits invalidate stale review decisions.
+- No LLM, network requests or persistent session storage added.
+
 ## 0.4.0 — 18 October 2026
 
 - Difference sidebar lists changed line ranges for both A and B, with insert/delete anchors.

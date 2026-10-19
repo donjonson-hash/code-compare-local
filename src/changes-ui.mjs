@@ -1,23 +1,50 @@
 import { EditorView } from '@codemirror/view';
 import { buildChangeItems } from './changes.mjs';
+import { createReviewState } from './review-state.mjs';
 
 export function createChangesController({ getMerge, applyChunk }) {
   const list = document.getElementById('changes-list');
   const summary = document.getElementById('changes-summary');
   const position = document.getElementById('change-position');
   const useCurrent = document.getElementById('use-current');
-  let items = [], active = -1, lastChunks, lastA, lastB;
+  const keepCurrentButton = document.getElementById('keep-current');
+  const progress = document.getElementById('review-progress');
+  const review = createReviewState({ sameDocument: (a, b) => a.eq(b) });
+  let items = [], active = -1, lastChunks, lastA, lastB, pendingCause = 'edit', applying = false;
+
+  function readItems(merge) {
+    return buildChangeItems(merge.chunks, merge.a.state.doc, merge.b.state.doc).map(item => ({
+      ...item,
+      // A remains unchanged when a block is copied to B. Excluding B's position
+      // keeps decisions attached to their content when preceding lines move.
+      key: JSON.stringify([item.a.from, item.a.to,
+        merge.a.state.doc.sliceString(item.a.from, item.a.to),
+        merge.b.state.doc.sliceString(item.b.from, item.b.to)])
+    }));
+  }
+  function pair(merge, nextItems) {
+    return { a: merge.a.state.doc, b: merge.b.state.doc, keys: nextItems.map(item => item.key) };
+  }
 
   function paintActive() {
     for (let i = 0; i < list.children.length; i++) {
       const selected = i === active;
       const card = list.children[i];
+      const kept = review.isKept(items[i].key);
       card.classList.toggle('is-active', selected);
+      card.classList.toggle('is-reviewed', kept);
       if (selected) card.setAttribute('aria-current', 'true');
       else card.removeAttribute('aria-current');
+      const keep = card.querySelector('.change-keep');
+      keep.textContent = kept ? 'B kept ✓' : 'Keep B';
+      keep.disabled = kept;
+      keep.setAttribute('aria-pressed', String(kept));
     }
     position.textContent = items.length ? `${active < 0 ? '—' : active + 1} / ${items.length}` : '0 / 0';
     useCurrent.disabled = active < 0 || !items.length;
+    if (keepCurrentButton) keepCurrentButton.disabled = active < 0 || !items.length || review.isKept(items[active].key);
+    const state = review.progress;
+    if (progress) progress.textContent = `Reviewed ${state.reviewed} / ${state.total}${state.notice ? ` · ${state.notice}` : state.total && state.reviewed === state.total ? ' · All changes reviewed' : ''}`;
   }
 
   function update() {
@@ -27,13 +54,13 @@ export function createChangesController({ getMerge, applyChunk }) {
     if (lastChunks === merge.chunks && lastA === docA && lastB === docB) return;
     const previous = items[active];
     lastChunks = merge.chunks; lastA = docA; lastB = docB;
-    items = buildChangeItems(merge.chunks, docA, docB);
+    items = readItems(merge);
+    review.sync(pair(merge, items), pendingCause);
+    pendingCause = 'edit';
     if (!items.length || !previous) active = -1;
     else {
       active = items.findIndex(item => item.chunk === previous.chunk);
       if (active < 0) {
-        // Edits recreate chunks. Stay near the former active block, without
-        // moving the user's editor viewport while they type.
         let distance = Infinity;
         items.forEach((item, index) => {
           const nextDistance = Math.abs(item.a.from - previous.a.from) + Math.abs(item.b.from - previous.b.from);
@@ -64,15 +91,19 @@ export function createChangesController({ getMerge, applyChunk }) {
       apply.type = 'button'; apply.className = 'change-apply'; apply.textContent = 'Use A';
       apply.title = item.a.empty ? 'Remove this addition from B' : 'Use version A for this change';
       apply.setAttribute('aria-label', `Use A for change ${item.index + 1}: ${item.label}`);
-      apply.addEventListener('click', () => {
+      apply.addEventListener('click', () => applyForChunk(item.chunk));
+      const keep = document.createElement('button');
+      keep.type = 'button'; keep.className = 'change-keep'; keep.textContent = 'Keep B';
+      keep.title = 'Keep version B and mark this change reviewed';
+      keep.setAttribute('aria-label', `Keep B for change ${item.index + 1}: ${item.label}`);
+      keep.addEventListener('click', () => {
         update();
         const index = items.findIndex(current => current.chunk === item.chunk);
-        if (index < 0) return; // Never apply an index from an obsolete diff.
-        active = index;
-        applyChunk(items[index].chunk);
-        update();
+        if (index >= 0) { active = index; keepCurrent(); }
       });
-      card.append(jump, apply); fragment.append(card);
+      const actions = document.createElement('div');
+      actions.className = 'change-actions'; actions.append(apply, keep);
+      card.append(jump, actions); fragment.append(card);
     });
     list.replaceChildren(fragment);
     paintActive();
@@ -95,15 +126,59 @@ export function createChangesController({ getMerge, applyChunk }) {
     list.children[active]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 
+  function nextUnreviewed(start = active + 1) {
+    update();
+    for (let offset = 0; offset < items.length; offset++) {
+      const index = (Math.max(0, start) + offset) % items.length;
+      if (!review.isKept(items[index].key)) { reveal(index); return; }
+    }
+    paintActive();
+  }
+
+  function keepCurrent() {
+    update();
+    const item = items[active];
+    if (!item) return;
+    review.keep(item.key);
+    paintActive();
+    nextUnreviewed();
+  }
+
+  function applyForChunk(chunk) {
+    update();
+    const index = items.findIndex(item => item.chunk === chunk);
+    if (index < 0) return;
+    active = index;
+    const item = items[index], merge = getMerge();
+    applying = true;
+    try { applyChunk(chunk); } finally { applying = false; }
+    const applied = review.apply(item.key, pair(merge, readItems(merge)));
+    update();
+    if (applied) {
+      const start = items.findIndex(next => next.a.from >= item.a.from);
+      nextUnreviewed(start < 0 ? 0 : start);
+    }
+  }
+
   return {
-    update,
-    reset() { active = -1; items = []; lastChunks = lastA = lastB = undefined; update(); },
+    update, applyForChunk, keepCurrent, nextUnreviewed,
+    documentChanged(editorUpdate) {
+      if (!editorUpdate.docChanged || applying) return;
+      const isHistory = editorUpdate.transactions.filter(tr => tr.docChanged)
+        .every(tr => tr.isUserEvent('undo') || tr.isUserEvent('redo'));
+      // Invalidate immediately, even if a manual edit and Undo happen before
+      // the next animation frame. Configuration changes do not reach this path.
+      if (!isHistory) review.invalidate();
+      lastChunks = undefined; // A rapid edit + undo may end at the same Text objects.
+      pendingCause = isHistory ? 'history' : 'edit';
+    },
+    reset() {
+      active = -1; items = []; lastChunks = lastA = lastB = undefined;
+      pendingCause = 'edit'; review.reset(); update();
+    },
     revealFirst() { update(); if (items.length) reveal(0); },
     next() { update(); if (items.length) reveal(active < 0 ? 0 : active + 1); },
     previous() { update(); if (items.length) reveal(active < 0 ? items.length - 1 : active - 1); },
-    applyCurrent() {
-      update();
-      if (active >= 0 && items[active]) { applyChunk(items[active].chunk); update(); }
-    }
+    applyCurrent() { update(); if (active >= 0 && items[active]) applyForChunk(items[active].chunk); }
   };
 }

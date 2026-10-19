@@ -1,5 +1,5 @@
 import { EditorState, Compartment } from '@codemirror/state';
-import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, placeholder, drawSelection } from '@codemirror/view';
+import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, placeholder, drawSelection, highlightWhitespace } from '@codemirror/view';
 import { history, historyKeymap, defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, isolateHistory } from '@codemirror/commands';
 import { syntaxHighlighting, defaultHighlightStyle, bracketMatching, StreamLanguage } from '@codemirror/language';
 import { MergeView } from '@codemirror/merge';
@@ -18,9 +18,10 @@ import { rawField, rawHistory, restoreRaw } from './raw-state.mjs';
 import { lintGutter } from '@codemirror/lint';
 import { createSyntaxController } from './syntax-ui.mjs';
 import { createChangesController } from './changes-ui.mjs';
+import { accessibleCollapsedContext } from './focus-view.mjs';
 
 const $ = id => document.getElementById(id);
-const compartments = { a: { language: new Compartment(), wrap: new Compartment() }, b: { language: new Compartment(), wrap: new Compartment() } };
+const compartments = { a: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() }, b: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() } };
 const revisions = { a: 0, b: 0 };
 let merge, syntax, changes, revealRequested = false, updateQueued = false, toastTimer, dirty = false;
 
@@ -39,6 +40,9 @@ function extensions(side, doc) {
     keymap.of([...historyKeymap, ...defaultKeymap, indentWithTab]),
     EditorState.tabSize.of(4), EditorState.lineSeparator.of('\n'),
     compartments[side].language.of([]), compartments[side].wrap.of([]),
+    compartments[side].whitespace.of($('show-whitespace').checked ? highlightWhitespace() : []),
+    accessibleCollapsedContext,
+    EditorState.phrases.of({ '$ unchanged lines': '$ unchanged lines · expand' }),
     placeholder(side === 'a' ? 'Paste the original code…' : 'Paste the updated code…'),
     EditorView.contentAttributes.of({ 'aria-label': `Code ${side.toUpperCase()}`, spellcheck: 'false', autocorrect: 'off', autocapitalize: 'off' }),
     EditorState.transactionFilter.of(tr => {
@@ -49,6 +53,7 @@ function extensions(side, doc) {
     EditorView.updateListener.of(update => {
       if (update.docChanged || update.transactions.some(tr => tr.effects.some(e => e.is(restoreRaw)))) {
         revisions[side]++;
+        changes?.documentChanged(update);
         dirty = true;
         syntax?.schedule();
       }
@@ -70,7 +75,7 @@ function renderRevertControl() {
     // are pinned, and this integration is covered by a real browser test.
     const chunk = merge.chunks[Number(button.dataset.chunk)];
     if (!chunk) return;
-    applyChunk(chunk);
+    changes.applyForChunk(chunk);
   });
   return button;
 }
@@ -120,8 +125,9 @@ function updateStats() {
   $('redo').disabled = !redoDepth(merge.b.state);
   $('copy-all').disabled = sameRaw;
   changes?.update();
-  if (revealRequested && merge.a.state.doc.length && merge.b.state.doc.length) {
+  if (revealRequested) {
     revealRequested = false;
+    if ($('changes-only').checked) setChangesOnly(true);
     changes?.revealFirst();
   }
 }
@@ -175,6 +181,24 @@ $('wrap').addEventListener('change', event => {
 });
 $('undo').addEventListener('click', () => { undo(merge.b); merge.b.focus(); });
 $('redo').addEventListener('click', () => { redo(merge.b); merge.b.focus(); });
+function setChangesOnly(enabled) {
+  $('changes-only').checked = enabled;
+  // Remove the field before rebuilding its ranges for newly loaded documents.
+  merge.reconfigure({ collapseUnchanged: undefined });
+  if (enabled) merge.reconfigure({ collapseUnchanged: { margin: 3, minSize: 6 } });
+  $('focus-hint').hidden = !enabled;
+}
+$('changes-only').addEventListener('change', event => {
+  setChangesOnly(event.target.checked);
+  if (event.target.checked) changes.revealFirst();
+});
+$('show-whitespace').addEventListener('change', event => {
+  for (const side of ['a', 'b']) merge[side].dispatch({
+    effects: compartments[side].whitespace.reconfigure(event.target.checked ? highlightWhitespace() : [])
+  });
+  $('whitespace-hint').hidden = !event.target.checked;
+});
+$('keep-current').addEventListener('click', () => changes.keepCurrent());
 $('next').addEventListener('click', () => changes.next());
 $('prev').addEventListener('click', () => changes.previous());
 $('use-current').addEventListener('click', () => changes.applyCurrent());
@@ -203,6 +227,7 @@ $('clear').addEventListener('click', () => $('confirm-clear').showModal());
 $('confirm-clear').addEventListener('close', () => {
   if ($('confirm-clear').returnValue !== 'clear') return;
   revealRequested = false;
+  $('changes-only').checked = false; $('focus-hint').hidden = true;
   changes.reset();
   merge.destroy();
   initialize();
@@ -226,5 +251,7 @@ $('demo').addEventListener('click', () => {
 window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
 initialize();
 changes = createChangesController({ getMerge: () => merge, applyChunk });
-syntax = createSyntaxController({ getView: side => merge[side], getLanguage: () => $('language').value });
+syntax = createSyntaxController({ getView: side => merge[side], getLanguage: () => $('language').value, beforeReveal: () => {
+  if ($('changes-only').checked) { setChangesOnly(false); notify('Showing full files for this syntax issue.'); }
+} });
 syntax.schedule(true);
