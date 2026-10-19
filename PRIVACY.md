@@ -1,6 +1,6 @@
 # Code Compare Local privacy statement
 
-Version 0.3.0 · 18 October 2026
+Version 0.5.0 · 19 October 2026
 
 Code Compare Local compares and edits text within its own browser-extension
 tab. This statement describes the included beta build.
@@ -48,3 +48,12 @@ erasure of browser or operating-system memory.
 Feedback is not submitted automatically. If you choose to share a screenshot
 or example with the developer, review it first and include only the information
 needed to reproduce the issue.
+
+## Support and contact
+
+For product questions or privacy questions, use the project support page:
+https://github.com/donjonson-hash/code-compare-local/issues
+
+GitHub issues are public and governed by GitHub's own privacy policy. Posting
+feedback there is a separate, voluntary action; the extension does not submit
+anything on your behalf. Include only a minimal, non-sensitive example.

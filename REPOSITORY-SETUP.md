@@ -3,8 +3,9 @@
 Remote: https://github.com/donjonson-hash/code-compare-local
 
 The project is maintained independently of Compare These Texts. The main branch
-is `main`. The 0.5.0 beta adds a line-numbered difference list, direct navigation and
-readable code sizes to the English UI and local syntax checks.
+is `main`. The 0.5.0 beta includes line-numbered navigation, readable code sizes, collapsed
+unchanged context, visible whitespace, and Use A / Keep B review decisions.
+The UI and store listing are in English; comparison and syntax checks run locally.
 
 ## Clone and verify
 
