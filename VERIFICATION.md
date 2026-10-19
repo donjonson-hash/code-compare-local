@@ -17,10 +17,16 @@
 
 The user separately confirmed Python and JavaScript syntax correction in the installed 0.2.0 pilot. This does not replace installation checks for 0.5.0.
 
+## Installed-extension CI
+
+- Runtime commit `9d662808874da2c46ab4fe86321b638600c56141` passed both push and pull-request CI on 19 October 2026. The browser log reports `mode: extension`, and `REQUIRE_EXTENSION=1` prevents fallback to a local page.
+- Push: https://github.com/donjonson-hash/code-compare-local/actions/runs/39214971608
+- Pull request: https://github.com/donjonson-hash/code-compare-local/actions/runs/39214976622
+- Both runs completed the installed-extension scenarios and built the distribution archives. This report update changes documentation only.
+- The local Chromium 138 binary was used only for the separate local-page run described above.
+
 ## Remaining gates
 
-- The available Chromium binary does not load extensions, so this environment verified the packaged page and worker, not a full installed MV3 extension. Downloading the Playwright Chromium distribution failed because the received archive was incomplete/invalid. No successful installed-extension run is claimed.
-- The previous 0.4.0 commit passed installed-extension CI: https://github.com/donjonson-hash/code-compare-local/actions/runs/39210901698 . This is historical evidence only. The 0.5.0 branch still needs its own remote CI run after upload. The job uses `REQUIRE_EXTENSION=1`, so it cannot silently fall back to a local page.
 - Before publishing: install 0.5.0 in a normal desktop browser and check the extension toolbar action, clipboard, download UI, and reopen workflow. Firefox and mobile are outside this release.
 - Store submission and a public privacy/support URL are not completed.
 
