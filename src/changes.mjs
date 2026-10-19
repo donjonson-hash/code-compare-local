@@ -2,6 +2,15 @@
 // edited characters, so labels must be based on those narrower ranges.
 const clamp = (position, doc) => Math.max(0, Math.min(doc.length, position));
 
+// This describes characters only, not semantic equivalence: indentation and
+// spaces inside string literals can change a program. Keep line breaks and all
+// other whitespace significant, and never modify the editor documents here.
+function onlySpacesOrTabsChanged(chunk, docA, docB) {
+  const a = docA.sliceString(clamp(chunk.fromA, docA), clamp(chunk.toA, docA));
+  const b = docB.sliceString(clamp(chunk.fromB, docB), clamp(chunk.toB, docB));
+  return a !== b && a.replace(/[ \t]/g, '') === b.replace(/[ \t]/g, '');
+}
+
 function describeSide(chunk, changes, doc, side) {
   const base = chunk[`from${side}`];
   const spans = changes.map(change => ({
@@ -49,7 +58,9 @@ export function buildChangeItems(chunks, docA, docB) {
     }];
     const a = describeSide(chunk, changes, docA, 'A');
     const b = describeSide(chunk, changes, docB, 'B');
-    const kind = a.empty && !b.empty ? 'Added in B' : b.empty && !a.empty ? 'Removed from B' : 'Changed';
+    const whitespaceOnly = onlySpacesOrTabsChanged(chunk, docA, docB);
+    const kind = whitespaceOnly ? 'Spaces / tabs changed'
+      : a.empty && !b.empty ? 'Added in B' : b.empty && !a.empty ? 'Removed from B' : 'Changed';
     const previewDoc = b.empty ? docA : docB;
     const previewSide = b.empty ? a : b;
     let preview = '';
@@ -58,6 +69,6 @@ export function buildChangeItems(chunks, docA, docB) {
     }
     preview ||= 'Blank line / line break';
     const label = `A: ${a.label} · B: ${b.label}`;
-    return { chunk, index, kind, a, b, label, preview, summary: `${kind} — ${label}` };
+    return { chunk, index, kind, whitespaceOnly, a, b, label, preview, summary: `${kind} — ${label}` };
   });
 }

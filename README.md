@@ -1,4 +1,4 @@
-# Code Compare Local · beta 0.4.0
+# Code Compare Local · beta 0.5.0
 
 Compare two versions of code, edit them side by side, move changes from A to B,
 check syntax, and download the result. Processing stays in the browser. No LLM,
@@ -29,7 +29,9 @@ reload button on the extensions page. Open a new editor tab afterward.
    editor. A is your reference; B is your result. Both sides are editable.
 2. Review the **Differences** list, with line numbers for A and B. Click a card
    to reveal that block in both editors; **Previous / Next** walks the list.
-   **Use A** transfers just that block to B. The inline **→** also works.
+   **Use A** transfers just that block to B. **Keep B** marks it reviewed without
+   changing the code. Both advance to the next unreviewed block. The inline **→**
+   also works. **Reviewed X / Y** includes blocks already copied from A.
 3. Edit B directly if needed. The toolbar undo/redo buttons affect B;
    Ctrl/Cmd+Z works in the focused editor. **All A → B** replaces the entire B
    document and can be undone.
@@ -40,8 +42,23 @@ reload button on the extensions page. Open a new editor tab afterward.
    to check the final result.
 
 **Code size** offers 14, 16, 18, or 20 px (16 px by default). The first
-difference opens automatically after loading two nonempty files. Insertions
+difference opens automatically after loading a file, including empty files. Insertions
 and deletions show an anchor in the side with no corresponding text.
+
+**Only changes** folds long unchanged sections, keeping three context lines.
+Click an unchanged-lines marker (or focus it and press Enter/Space) to expand
+that section in both panes. Turn the option off to show complete files.
+Opening a syntax diagnostic switches to full files so a shared error is visible.
+
+**Show spaces & tabs** displays dots for spaces and arrows for tabs without
+modifying the file. **Spaces / tabs changed** labels lexical whitespace edits;
+these can still affect Python indentation, string values or token boundaries.
+No whitespace differences are ignored.
+
+Review decisions last only for this session. Undo/redo of **Use A** restores its
+review progress; manual text edits restart the review so stale approvals cannot
+survive. **Keep B** is a review mark, not a text edit, and editor Undo does not
+undo that mark. Opening files, loading the example or clearing starts a new review.
 
 **Copy B** writes text to the clipboard. Use **Download B** when line endings
 and a UTF-8 byte order mark (BOM) must be preserved exactly. Downloading creates

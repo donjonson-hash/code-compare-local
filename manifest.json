@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Code Compare Local — Beta",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Compare and edit code locally. Check syntax, copy changes, and save. No AI, account, or uploads.",
   "action": {
     "default_title": "Open Code Compare Local"

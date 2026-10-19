@@ -156,3 +156,19 @@ dialog::backdrop { background: #122c3a66; }dialog h2 { font-size: 23px; margin: 
   .below-workspace { align-items: flex-start; flex-wrap: wrap; gap: 10px; }.legend { gap: 8px; }.syntax-side { padding: 9px; }.syntax-heading { align-items: flex-start; }
 }
 @media (max-width: 420px) { .local-badge { display: none; }.review-toolbar .button { font-size: 13px; }.change-navigation { gap: 5px; }#change-position { min-width: 42px; } }
+
+/* Focus and review controls keep file content and display options separate. */
+.view-options { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px; padding: 10px 15px; border-bottom: 1px solid var(--line); font-size: 14px; background: #fbfcfa; }
+.view-options span { color: var(--muted); font-size: 13px; }
+#review-progress { color: #416252; font-size: 14px; }
+#keep-current { margin-left: auto; }
+#use-current { margin-left: 0; }
+.change-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 10px 10px; }
+.change-actions .change-apply, .change-actions .change-keep { margin: 0; }
+.change-keep { border: 1px solid #c4d8c9; border-radius: 5px; padding: 6px 10px; background: white; color: var(--accent-dark); font-size: 14px; font-weight: 600; }
+.change-item.is-reviewed { background: #f3f5f3; }
+.change-item.is-reviewed .change-kind::after { content: ' · Reviewed'; color: #416252; }
+.cm-collapsedLines { cursor: pointer; border-block: 1px dashed #b9d0bf; color: #385d4a !important; background: #eff5ed !important; font: 13px/1.8 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; padding: 3px 8px !important; text-align: center; }
+.cm-collapsedLines:hover { background: #e4f0e0 !important; }
+.cm-collapsedLines:focus-visible { outline: 2px solid #4e98dd; outline-offset: -2px; }
+@media (max-width: 720px) { #keep-current { margin-left: 0; } .view-options { padding: 10px; } }

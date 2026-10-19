@@ -67,3 +67,49 @@ test('all ranges remain within documents including non-BMP text and trailing new
     }
   }
 });
+
+test('space/tab changes remain explicit differences with precise Python line ranges', () => {
+  const cases = [
+    ['if ready:\n    run()\n', 'if ready:\n\trun()\n'],
+    ['if ready:\n    run()\n', 'if ready:\n        run()\n'],
+    ['if ready:\n    run()\n', 'if ready:\nrun()\n']
+  ];
+  for (const [a, b] of cases) {
+    const [item] = compare(a, b);
+    assert.equal(item.whitespaceOnly, true);
+    assert.equal(item.kind, 'Spaces / tabs changed');
+    assert.equal(item.a.startLine, 2);
+    assert.equal(item.b.startLine, 2);
+    assert.equal(item.a.endLine, 2);
+    assert.equal(item.b.endLine, 2);
+  }
+});
+
+test('space/tab classification is lexical and does not imply harmless string or token changes', () => {
+  for (const [a, b] of [
+    ['message = "a b"', 'message = "ab"'],
+    ['x = a + +b', 'x = a ++b'],
+    ['x = 1\n  \nend', 'x = 1\n\t\nend']
+  ]) {
+    const [item] = compare(a, b);
+    assert.equal(item.whitespaceOnly, true);
+    assert.match(item.summary, /^Spaces \/ tabs changed — A:/);
+  }
+});
+
+test('line breaks, blank-line additions, nonbreaking spaces and code changes stay significant', () => {
+  for (const [a, b] of [
+    ['a b', 'a\nb'],
+    ['a\nb', 'a\n \nb'],
+    ['a\n \nb', 'a\nb'],
+    ['a', 'a\n'],
+    ['a b', 'a\u00a0b'],
+    ['value = 1', 'value  = 2'],
+    ['if ready:\n    run()\n', 'if ready:\n\tstop()\n']
+  ]) {
+    const items = compare(a, b);
+    assert.ok(items.length > 0);
+    assert.ok(items.every(item => item.whitespaceOnly === false));
+    assert.ok(items.every(item => item.kind !== 'Spaces / tabs changed'));
+  }
+});
