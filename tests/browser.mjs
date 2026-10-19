@@ -117,6 +117,70 @@ try {
     assert.deepEqual((await download()).bytes, expected, `${language}: reopening must preserve bytes`);
   }
 
+  // Long files must expose a navigable overview before manual scrolling.
+  const longA = Array.from({length:240}, (_, i) => `value_${i + 1} = ${i + 1}`).join('\n') + '\n';
+  const longB = longA.replace('value_30 = 30', 'value_30 = 999')
+    .replace(Array.from({length:11}, (_, i) => `value_${i + 66} = ${i + 66}\n`).join(''), '')
+    .replace('value_200 = 200', 'value_200 = 888');
+  await open('a', longA, 'long.py');
+  await open('b', longB, 'long.py');
+  await page.waitForFunction(() => document.querySelectorAll('#changes-list .change-jump').length === 3);
+  const items = page.locator('#changes-list .change-item');
+  assert.match(await items.nth(0).innerText(), /30/);
+  assert.match(await items.nth(1).innerText(), /66.*76/s);
+  assert.match(await items.nth(2).innerText(), /200[\s\S]*189/);
+  await items.nth(2).locator('.change-jump').click();
+  await page.waitForFunction(() => document.querySelectorAll('#changes-list .change-item')[2].classList.contains('is-active'));
+  await page.waitForFunction(() => {
+    const viewport = document.querySelector('.cm-mergeView').getBoundingClientRect();
+    return [...document.querySelectorAll('.cm-merge-b .cm-line')].some(line => {
+      const r = line.getBoundingClientRect();
+      return line.textContent.includes('value_200 = 888') && r.top >= viewport.top && r.bottom <= viewport.bottom;
+    });
+  });
+  const beforeFont = await page.locator('.cm-mergeView').evaluate(el => getComputedStyle(el).fontSize);
+  assert.equal(beforeFont, '16px');
+  await page.locator('#font-size').selectOption('20');
+  assert.equal(await page.locator('.cm-mergeView').evaluate(el => getComputedStyle(el).fontSize), '20px');
+  await page.locator('#font-size').selectOption('16');
+  await page.locator('#use-current').click();
+  await page.waitForFunction(() => document.querySelectorAll('#changes-list .change-jump').length === 2);
+  const partlyFixed = (await download()).bytes.toString();
+  assert.equal(partlyFixed, longB.replace('value_200 = 888', 'value_200 = 200'));
+  await page.locator('#undo').click();
+  await page.waitForFunction(() => document.querySelectorAll('#changes-list .change-jump').length === 3);
+  assert.equal((await download()).bytes.toString(), longB);
+  await page.locator('#changes-list .change-apply').nth(1).click();
+  await page.waitForFunction(() => document.querySelectorAll('#changes-list .change-jump').length === 2);
+  const restored = (await download()).bytes.toString();
+  assert.equal(restored, longA.replace('value_30 = 30', 'value_30 = 999').replace('value_200 = 200','value_200 = 888'));
+  await page.locator('#prev').click();
+  await page.locator('#next').click();
+  assert.equal(await page.locator('#changes-list .is-active').count(), 1);
+  await page.screenshot({path:`${output}/change-overview.png`,fullPage:true});
+
+  // Optional private regression fixture supplied by the user; never committed.
+  if (process.env.REVIEW_FILE_A && process.env.REVIEW_FILE_B) {
+    const a = await readFile(process.env.REVIEW_FILE_A, 'utf8');
+    const b = await readFile(process.env.REVIEW_FILE_B, 'utf8');
+    await open('a', a, 'test_archive_extraction.py');
+    await open('b', b, 'test_archive_extraction_B.py');
+    await page.waitForFunction(() => document.querySelectorAll('#changes-list .change-jump').length === 4);
+    const reviewItems = page.locator('#changes-list .change-item');
+    for (const [i, pattern] of [[0,/30/],[1,/32.*33/s],[2,/36.*37/s]]) assert.match(await reviewItems.nth(i).innerText(), pattern);
+    await reviewItems.nth(3).locator('.change-jump').click();
+    await page.screenshot({path:`${output}/private-user-files.png`,fullPage:true});
+    await reviewItems.nth(3).locator('.change-apply').click();
+    await page.waitForFunction(() => document.querySelectorAll('#changes-list .change-jump').length === 3);
+    const expected = a.replace('    if isinstance(files, str):','     if isinstance(files, str):')
+      .replace('    buf = io.BytesIO()', '     buf = io.BytesIO()')
+      .replace('    with zipfile.ZipFile(buf, "w") as z:', '     with zipfile.ZipFile(buf, "w") as z:')
+      .replace('    buf.seek(0)', '     buf.seek(0)').replace('    return buf', '     return buf');
+    assert.equal((await download()).bytes.toString(), expected, 'restore only the removed function; leave other edits intact');
+    await page.locator('#undo').click();
+    assert.equal((await download()).bytes.toString(), b);
+  }
+
   const exact = '\uFEFF\tпривет 😀\r\nsecond\nthird\rfinal\r\n';
   await open('b', exact, 'mixed.ts');
   const roundTrip = await download();
@@ -172,7 +236,7 @@ try {
   assert.equal(await page.locator('#undo').isDisabled(), true);
   assert.deepEqual(requests, [], 'No network requests while using the app');
   assert.deepEqual(errors, [], 'No uncaught browser errors');
-  console.log(JSON.stringify({ passed: true, mode: extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
+  console.log(JSON.stringify({ passed: true, mode: extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
 } catch(error) {
   console.error({errors, requests, status: await page.locator('#diff-count').textContent(), toast: await page.locator('#toast').textContent()});
   await page.screenshot({path: `${output}/failure.png`, fullPage:true});

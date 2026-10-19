@@ -1,4 +1,4 @@
-# Store listing draft · Code Compare Local 0.3.0
+# Store listing draft · Code Compare Local 0.4.0
 
 Draft for a desktop Chromium beta. This document does not indicate that the
 extension has been submitted, approved, or published.
@@ -27,7 +27,8 @@ WHAT YOU CAN DO
 - Compare and edit two code files side by side.
 - Move individual changes from A to B or copy the whole A document.
 - Undo and redo changes.
-- Jump between differences and turn line wrapping on or off.
+- See a difference list with A/B line numbers and jump to any changed block.
+- Choose a readable code size (14–20 px) and turn line wrapping on or off.
 - Check syntax automatically after edits and jump to reported errors.
 - Copy B or download it as a UTF-8 file.
 - Preserve tabs, spaces, original line endings, and UTF-8 BOM in downloaded

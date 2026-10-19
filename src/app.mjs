@@ -2,7 +2,7 @@ import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, placeholder, drawSelection } from '@codemirror/view';
 import { history, historyKeymap, defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, isolateHistory } from '@codemirror/commands';
 import { syntaxHighlighting, defaultHighlightStyle, bracketMatching, StreamLanguage } from '@codemirror/language';
-import { MergeView, goToNextChunk, goToPreviousChunk } from '@codemirror/merge';
+import { MergeView } from '@codemirror/merge';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { python } from '@codemirror/lang-python';
@@ -17,11 +17,12 @@ import { normalize, makeDocument, decodeFile, encodeFile, applyEdits, chunkEdits
 import { rawField, rawHistory, restoreRaw } from './raw-state.mjs';
 import { lintGutter } from '@codemirror/lint';
 import { createSyntaxController } from './syntax-ui.mjs';
+import { createChangesController } from './changes-ui.mjs';
 
 const $ = id => document.getElementById(id);
 const compartments = { a: { language: new Compartment(), wrap: new Compartment() }, b: { language: new Compartment(), wrap: new Compartment() } };
 const revisions = { a: 0, b: 0 };
-let merge, syntax, updateQueued = false, toastTimer, dirty = false;
+let merge, syntax, changes, revealRequested = false, updateQueued = false, toastTimer, dirty = false;
 
 function notify(message) {
   $('toast').textContent = message;
@@ -69,16 +70,21 @@ function renderRevertControl() {
     // are pinned, and this integration is covered by a real browser test.
     const chunk = merge.chunks[Number(button.dataset.chunk)];
     if (!chunk) return;
-    const edits = chunkEdits(chunk, merge.a.state.field(rawField));
-    const next = applyEdits(merge.b.state.field(rawField), edits);
-    merge.b.dispatch({
-      changes: edits.map(e => ({ from: e.from, to: e.to, insert: normalize(e.rawInsert) })),
-      effects: restoreRaw.of(next), annotations: isolateHistory.of('full'), userEvent: 'input.merge'
-    });
-    merge.b.focus();
-    notify('Block copied to B. You can undo this edit.');
+    applyChunk(chunk);
   });
   return button;
+}
+
+function applyChunk(chunk) {
+  if (!merge.chunks.includes(chunk)) return;
+  const edits = chunkEdits(chunk, merge.a.state.field(rawField));
+  const next = applyEdits(merge.b.state.field(rawField), edits);
+  merge.b.dispatch({
+    changes: edits.map(e => ({ from: e.from, to: e.to, insert: normalize(e.rawInsert) })),
+    effects: restoreRaw.of(next), annotations: isolateHistory.of('full'), userEvent: 'input.merge'
+  });
+  merge.b.focus();
+  notify('Block copied to B. You can undo this edit.');
 }
 
 function initialize() {
@@ -113,6 +119,11 @@ function updateStats() {
   $('undo').disabled = !undoDepth(merge.b.state);
   $('redo').disabled = !redoDepth(merge.b.state);
   $('copy-all').disabled = sameRaw;
+  changes?.update();
+  if (revealRequested && merge.a.state.doc.length && merge.b.state.doc.length) {
+    revealRequested = false;
+    changes?.revealFirst();
+  }
 }
 
 const languages = {
@@ -142,6 +153,8 @@ async function loadFile(side, file) {
     if (file.size > 512 * 1024) throw new Error('File exceeds 512 KB. Choose a smaller file.');
     const doc = decodeFile(new Uint8Array(await file.arrayBuffer()));
     if (revision !== revisions[side]) { notify('Loading canceled: the editor content has changed.'); return; }
+    changes?.reset();
+    revealRequested = true;
     replaceDocument(side, doc);
     $(`name-${side}`).textContent = file.name;
     setLanguage(inferLanguage(file.name));
@@ -162,8 +175,15 @@ $('wrap').addEventListener('change', event => {
 });
 $('undo').addEventListener('click', () => { undo(merge.b); merge.b.focus(); });
 $('redo').addEventListener('click', () => { redo(merge.b); merge.b.focus(); });
-$('next').addEventListener('click', () => { goToNextChunk(merge.b); merge.b.focus(); });
-$('prev').addEventListener('click', () => { goToPreviousChunk(merge.b); merge.b.focus(); });
+$('next').addEventListener('click', () => changes.next());
+$('prev').addEventListener('click', () => changes.previous());
+$('use-current').addEventListener('click', () => changes.applyCurrent());
+$('font-size').addEventListener('change', event => {
+  const size = Number(event.target.value);
+  if (![14, 16, 18, 20].includes(size)) return;
+  document.documentElement.style.setProperty('--code-font-size', `${size}px`);
+  merge.a.requestMeasure(); merge.b.requestMeasure();
+});
 $('copy-all').addEventListener('click', () => { replaceDocument('b', merge.a.state.field(rawField)); notify('Version A copied to B. You can undo this edit.'); });
 $('copy-format').addEventListener('click', () => { replaceDocument('b', merge.a.state.field(rawField)); notify('Line endings and BOM copied from A. You can undo this edit.'); });
 $('copy').addEventListener('click', async () => {
@@ -182,6 +202,8 @@ $('download').addEventListener('click', () => {
 $('clear').addEventListener('click', () => $('confirm-clear').showModal());
 $('confirm-clear').addEventListener('close', () => {
   if ($('confirm-clear').returnValue !== 'clear') return;
+  revealRequested = false;
+  changes.reset();
   merge.destroy();
   initialize();
   $('filename').value = 'result.txt'; $('language').value = 'text'; $('wrap').checked = false;
@@ -195,12 +217,14 @@ $('confirm-clear').addEventListener('close', () => {
 $('demo').addEventListener('click', () => {
   const a = 'function calculateTotal(items) {\n  const subtotal = items.reduce((sum, item) => {\n    return sum + item.price;\n  }, 0);\n\n  const tax = subtotal * 0.20;\n  return subtotal + tax;\n}\n\nconst cart = [\n  { name: "Notebook", price: 12 },\n  { name: "Pencil", price: 3 }\n];\n\nconsole.log(calculateTotal(cart));\n';
   const b = 'function calculateTotal(items) {\n  const subtotal = items.reduce((sum, item) => {\n    return sum + item.price * item.quantity;\n  }, 0);\n\n  const tax = subtotal * 0.18;\n  const shipping = subtotal > 50 ? 0 : 5;\n  return subtotal + tax + shipping;\n}\n\nconst cart = [\n  { name: "Notebook", price: 12, quantity: 2 },\n  { name: "Pencil", price: 3, quantity: 4 }\n];\n\nconsole.log(calculateTotal(cart).toFixed(2));\n';
+  changes.reset(); revealRequested = true;
   replaceDocument('a', makeDocument(a)); replaceDocument('b', makeDocument(b));
   $('name-a').textContent = 'cart-original.js'; $('name-b').textContent = 'cart-updated.js';
   $('filename').value = 'cart-updated.js'; setLanguage('javascript');
-  notify('Example loaded. Click → next to a block to copy it from A to B.');
+  notify('Example loaded. Select a difference, then use A to update that block in B.');
 });
 window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
 initialize();
+changes = createChangesController({ getMerge: () => merge, applyChunk });
 syntax = createSyntaxController({ getView: side => merge[side], getLanguage: () => $('language').value });
 syntax.schedule(true);

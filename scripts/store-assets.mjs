@@ -21,15 +21,15 @@ const browser = await chromium.launch({
 });
 try {
   await mkdir(`${root}store`, { recursive: true });
-  const page = await browser.newPage({ viewport: { width: 1360, height: 800 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: 1656, height: 720 }, deviceScaleFactor: 0.8 });
   await page.goto(`http://127.0.0.1:${server.address().port}/app.html`);
   for (const [side, name] of [['a', 'A-correct.js'], ['b', 'B-error.js']]) {
     await page.locator(`#file-${side}`).setInputFiles(`${root}examples/javascript/${name}`);
   }
   await page.waitForFunction(() => document.getElementById('syntax-a').dataset.state === 'checked' && document.getElementById('syntax-b').dataset.state === 'error');
   await page.locator('#toast').waitFor({ state: 'hidden' });
-  const box = await page.locator('.workspace').boundingBox();
-  const clip = { x: box.x, y: box.y - 8, width: 1280, height: 800 };
+  const box = await page.locator('.comparison-layout').boundingBox();
+  const clip = { x: box.x, y: 0, width: 1600, height: 1000 };
   const save = await page.locator('#download').boundingBox();
   assert.ok(save.y + save.height < clip.y + clip.height, 'Screenshot must include Download B');
   await page.screenshot({ path: `${root}store/screenshot-1280x800.png`, clip, fullPage: true });
