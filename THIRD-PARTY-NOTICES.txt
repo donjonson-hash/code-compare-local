@@ -1,3 +1,7 @@
+Local modification: @codemirror/merge 6.12.2 is bundled with a guarded build-time change to use full comparison after document edits. Original licenses follow. See scripts/canonical-merge-plugin.mjs and DETERMINISM.md.
+
+========================================================================
+
 @babel/parser 8.0.7
 Copyright (C) 2012-2014 by various contributors (see AUTHORS)
 
