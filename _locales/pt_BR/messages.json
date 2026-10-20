@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Comparar código — Beta"
+  },
+  "extensionDescription": {
+    "message": "Compare e edite código lado a lado. Veja diferenças, verifique a sintaxe e salve arquivos sem conexão."
+  },
+  "actionTitle": {
+    "message": "Abrir Code Compare Local"
+  }
+}

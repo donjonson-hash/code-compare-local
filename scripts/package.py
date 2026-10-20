@@ -26,8 +26,8 @@ def archive(name, files, prefix=""):
 
 runtime = [ROOT / name for name in (
     "manifest.json", "background.js", "app.html", "app.js", "syntax-worker.js",
-    "styles.css", "THIRD-PARTY-NOTICES.txt", "PRIVACY.md", "README.md", "README-RU.md",
-)] + list((ROOT / "icons").glob("*.png"))
+    "styles.css", "welcome.html", "welcome.css", "THIRD-PARTY-NOTICES.txt", "PRIVACY.md", "README.md", "README-RU.md",
+)] + list((ROOT / "icons").glob("*.png")) + list((ROOT / "_locales").glob("*/messages.json"))
 archive(f"code-compare-local-{version}-beta.zip", runtime)
 
 excluded = {"node_modules", ".git", "dist", "test-output", "__pycache__"}
@@ -46,11 +46,24 @@ store_files = {
     "icon128.png": (ROOT / "icons/icon128.png").read_bytes(),
 }
 for name in ("LISTING-EN.md", "SUBMISSION-RU.md", "screenshot-1280x800.png",
-             "screenshot-fixed-1280x800.png", "promo-440x280.png"):
+             "screenshot-fixed-1280x800.png", "screenshot-welcome-1280x800.png",
+             "promo-440x280.png", "promo-1400x560.png", "KEYWORDS.md", "BOOTCAMP-CHECKLIST-RU.md", "LOCALIZATION-RU.md"):
     store_files[name] = (ROOT / "store" / name).read_bytes()
 listing = store_files["LISTING-EN.md"].decode("utf-8")
 description = listing.split("## Full description\n", 1)[1].split("\n## ", 1)[0].strip()
 store_files["FULL-DESCRIPTION-EN.txt"] = (description + "\n").encode("utf-8")
+store_files["descriptions/en.txt"] = (description + "\n").encode("utf-8")
+metadata = {}
+for path in sorted((ROOT / "_locales").glob("*/messages.json")):
+    locale = path.parent.name
+    messages = json.loads(path.read_text())
+    metadata[locale] = {key: value["message"] for key, value in messages.items()}
+    store_files[f"metadata/{locale}.json"] = path.read_bytes()
+    if locale != "en":
+        store_files[f"descriptions/{locale}.txt"] = (ROOT / "store/descriptions" / f"{locale}.txt").read_bytes()
+store_files["LOCALIZED-METADATA.json"] = (json.dumps(metadata, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+for path in sorted((ROOT / "icons").glob("*.png")):
+    store_files[f"icons/{path.name}"] = path.read_bytes()
 store_files["SHA256SUMS.txt"] = "".join(
     f"{hashlib.sha256(data).hexdigest()}  {name}\n"
     for name, data in sorted(store_files.items())

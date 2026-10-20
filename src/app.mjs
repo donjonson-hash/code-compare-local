@@ -304,3 +304,11 @@ syntax = createSyntaxController({ getView: side => merge[side], getLanguage: () 
   if ($('changes-only').checked) { setChangesOnly(false); notify('Showing full files for this syntax issue.'); }
 } });
 syntax.schedule(true);
+
+// The welcome example is an explicit one-time action, not a saved session.
+const launchUrl = new URL(window.location.href);
+if (launchUrl.searchParams.get('demo') === '1') {
+  launchUrl.searchParams.delete('demo');
+  window.history.replaceState(window.history.state, '', launchUrl);
+  $('demo').click();
+}

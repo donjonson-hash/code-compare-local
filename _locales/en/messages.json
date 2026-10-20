@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Beta"
+  },
+  "extensionDescription": {
+    "message": "Compare code side by side with a local code diff tool. Edit changes, check syntax, and save files offline."
+  },
+  "actionTitle": {
+    "message": "Open Code Compare Local"
+  }
+}

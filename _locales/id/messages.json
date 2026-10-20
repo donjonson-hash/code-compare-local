@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Bandingkan Kode — Beta"
+  },
+  "extensionDescription": {
+    "message": "Bandingkan kode berdampingan secara lokal. Edit perubahan, periksa sintaks, dan simpan berkas secara offline."
+  },
+  "actionTitle": {
+    "message": "Buka Code Compare Local"
+  }
+}

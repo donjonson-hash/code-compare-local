@@ -12,7 +12,7 @@ test('MV3 package references existing files and requests no site permissions', a
   assert.equal(manifest.host_permissions, undefined);
   assert.equal(manifest.content_scripts, undefined);
   assert.match(manifest.content_security_policy.extension_pages, /connect-src 'none'/);
-  for (const path of [manifest.background.service_worker, ...Object.values(manifest.icons), 'app.html', 'app.js', 'syntax-worker.js', 'styles.css', 'THIRD-PARTY-NOTICES.txt'])
+  for (const path of [manifest.background.service_worker, ...Object.values(manifest.icons), 'app.html', 'welcome.html', 'welcome.css', 'app.js', 'syntax-worker.js', 'styles.css', 'THIRD-PARTY-NOTICES.txt'])
     await access(new URL(`../${path}`, import.meta.url));
 });
 
@@ -20,7 +20,7 @@ test('extension action opens its packaged editor without site access', async () 
   let clicked, opened;
   const chrome = {
     action: { onClicked: { addListener(callback) { clicked = callback; } } },
-    runtime: { getURL: name => `chrome-extension://test/${name}` },
+    runtime: { getURL: name => `chrome-extension://test/${name}`, onInstalled: { addListener() {} } },
     tabs: { create(options) { opened = options.url; } }
   };
   vm.runInNewContext(await readFile(new URL('../background.js', import.meta.url), 'utf8'), { chrome });

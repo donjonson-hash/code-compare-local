@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Paghambingin ang Code — Beta"
+  },
+  "extensionDescription": {
+    "message": "Ihambing ang code nang magkatabi sa device. I-edit ang pagbabago, suriin ang syntax, at i-save ang mga file offline."
+  },
+  "actionTitle": {
+    "message": "Buksan ang Code Compare Local"
+  }
+}

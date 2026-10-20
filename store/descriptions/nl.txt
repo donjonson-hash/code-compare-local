@@ -1,0 +1,42 @@
+DEZE EXTENSIE IS BEDOELD VOOR BÈTATESTS.
+
+Vergelijk twee versies van code, bekijk de verschillen en sla het gewenste resultaat op. Code Compare Local is een hulpmiddel om code te vergelijken dat offline in je browser werkt. Open je referentie in A en de aangepaste versie in B en loop de gemarkeerde wijzigingen naast elkaar na.
+
+BEGIN MET EEN VOORBEELD
+De welkomstpagina opent na de eerste installatie. Open de editor of probeer het ingebouwde JavaScript-voorbeeld zonder bestanden voor te bereiden. De editor en welkomstpagina zijn Engelstalig. Vertaalde winkelbeschrijvingen en extensienamen veranderen de taal van de interface niet.
+
+VIND DE GEWIJZIGDE REGELS
+De code-diffweergave toont toevoegingen, verwijderingen en vervangingen. De lijst Differences geeft A/B-regelnummers en een voorbeeld van elk gewijzigd blok. Selecteer een item of gebruik Previous en Next om ernaartoe te gaan, ook als wijzigingen ver uit elkaar staan in een langer bestand.
+
+KIES WAT IN B KOMT
+Klik op Use A om het geselecteerde blok naar B te kopiëren, of op Keep B om het verschil als bekeken te markeren zonder het te wijzigen. Use A → B werkt op één verschil tegelijk; All A → B vervangt het volledige resultaat. De voortgang helpt je bijhouden welke beslissingen je tijdens deze sessie hebt genomen.
+
+BEWERK EN MAAK ONGEDAAN
+Bewerk code rechtstreeks in beide panelen. Undo en Redo boven de editors werken op B; Ctrl/Cmd+Z werkt op de editor met de focus. Ook overgenomen blokken kun je ongedaan maken. Keep B is een beoordelingsmarkering, geen tekstbewerking. Handmatige bewerkingen zetten de voortgang terug, zodat eerdere beslissingen niet ongemerkt voor gewijzigde tekst blijven gelden.
+
+KRIJG CONSISTENTE VERSCHILLEN
+Dezelfde uiteindelijke A/B-tekst levert dezelfde verschilblokken op, of je de bestanden nu rechtstreeks opent, bewerkt of wijzigingen ongedaan maakt en opnieuw uitvoert. Daardoor kun je code na het opslaan gemakkelijker opnieuw vergelijken. Lastige verschillen kunnen in grotere blokken worden gegroepeerd; een blok is niet altijd de kleinst mogelijke wijziging.
+
+MAAK CODE BETER LEESBAAR
+Kies een tekstgrootte van 14 tot 20 px en zet regelterugloop aan of uit. Only changes vouwt lange ongewijzigde stukken samen, met drie contextregels rond de verschillen. Vouw een stuk uit wanneer je meer context nodig hebt. Show spaces & tabs maakt inspringing zichtbaar zonder de code te veranderen.
+
+CONTROLEER ONDERSTEUNDE SYNTAXIS
+Syntaxcontroles draaien lokaal na het openen, plakken, bewerken en overnemen van code. Klik op Check syntax om opnieuw te controleren en selecteer daarna een gemelde locatie om naar het probleem te gaan. JavaScript, JSX, TypeScript, TSX, JSON en YAML hebben syntaxcontroles. Python heeft voorlopige controles op grammatica en inspringing.
+
+WEET WAT EEN CONTROLE BETEKENT
+De extensie voert geen code uit en herstelt die niet automatisch. Elke kant wordt als een zelfstandig bestand gecontroleerd; een onvolledig fragment kan dus fouten opleveren. Typecontrole voor TypeScript en schemavalidatie voor YAML zijn niet inbegrepen. De Python-controles vervangen geen validatie met Python zelf. Andere vermelde talen bieden alleen syntaxkleuring. Geldige syntaxis bewijst niet dat het gedrag klopt.
+
+SLA JE AANGEPASTE BESTAND OP
+Download B maakt een nieuw UTF-8-bestand zonder het origineel te overschrijven. Downloads behouden spaties, tabs, de UTF-8-bytevolgordemarkering en de oorspronkelijke regeleinden in ongewijzigde tekst. Overgenomen blokken behouden de regeleinden van A. Nieuw getypte regels gebruiken de meest voorkomende stijl van het bewerkte bestand. Copy B kopieert naar het klembord, dat regeleinden kan normaliseren.
+
+GEBRUIK HET BIJ DAGELIJKSE CODECONTROLES
+Vergelijk JavaScript-code voordat je een update in je project overneemt. Bekijk een Python-bestand waarvan de inspringing tijdens het overzetten kan zijn veranderd. Vergelijk JSON- of YAML-configuratiebestanden en bekijk gewijzigde waarden als tekst. JSON wordt tekstueel vergeleken: objecten worden niet op betekenis gekoppeld en de sleutelvolgorde wordt niet genegeerd. Dit zijn controles van twee bestanden, geen beoordeling van een volledig repository.
+
+HOUD DE VERWERKING OP JE APPARAAT
+Er zijn geen account, API-sleutel, externe AI-dienst, gebruiksanalyses of code-upload nodig. De extensie werkt in een eigen editortabblad en leest geen andere tabbladen of gesprekken. Plak of open de code zelf, ook fragmenten uit een chat. Er is geen automatische verbinding met ChatGPT, Claude of Gemini.
+
+SLA OP VOORDAT JE SLUIT
+Tekst, de geschiedenis voor ongedaan maken en de beoordelingsstatus blijven tijdens de sessie in het geheugen. Na sluiten of herladen van de editor wordt je werk niet hersteld. Download het resultaat voordat je het tabblad verlaat. Er is geen cloudgeschiedenis of achtergrondback-up.
+
+BESTANDSLIMIETEN VAN DE BÈTA
+Open UTF-8-tekstbestanden van maximaal 512 KiB, 200.000 UTF-16-code-eenheden en 4.000 regels per kant. PDF, Word-documenten, binaire bestanden en hele mappen worden niet ondersteund. Begin met twee bekende codebestanden: zoek een verschil, corrigeer het, probeer Undo en download B.

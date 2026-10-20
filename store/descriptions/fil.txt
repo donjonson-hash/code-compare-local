@@ -1,0 +1,42 @@
+ANG EXTENSION NA ITO AY PARA SA BETA TESTING.
+
+Ihambing ang dalawang bersyon ng code, suriin ang mga pagkakaiba, at i-save ang resultang gusto mo. Ang Code Compare Local ay kasangkapan sa paghahambing ng code na gumagana offline sa iyong browser. Buksan ang batayang bersyon sa A at ang binagong bersyon sa B, at suriin nang magkatabi ang mga naka-highlight na pagbabago.
+
+MAGSIMULA SA ISANG HALIMBAWA
+Bubukas ang welcome page pagkatapos ng unang pag-install. Buksan ang editor o subukan ang kasamang halimbawa ng JavaScript nang hindi naghahanda ng mga file. Nasa Ingles ang editor at welcome page. Hindi binabago ng isinaling paglalarawan sa store at pangalan ng extension ang wika ng interface.
+
+HANAPIN ANG MGA NABAGONG LINYA
+Ipinapakita ng code diff ang mga idinagdag, tinanggal, at pinalitan. Makikita sa listahang Differences ang mga numero ng linya sa A/B at ang preview ng bawat nabagong bloke. Pumili ng entry o gamitin ang Previous at Next upang pumunta rito, kahit magkakalayo ang mga pagbabago sa mahabang file.
+
+PILIIN ANG ILALAGAY SA B
+I-click ang Use A upang kopyahin ang napiling bloke sa B, o ang Keep B upang markahang nasuri ang pagkakaiba nang hindi ito binabago. Isang pagkakaiba sa bawat pagkakataon ang inaasikaso ng Use A → B; pinapalitan naman ng All A → B ang buong resulta. Nakakatulong ang progreso ng pagsusuri sa pagsubaybay sa mga desisyon mo sa kasalukuyang session.
+
+MAG-EDIT AT MAG-UNDO
+Direktang i-edit ang code sa alinmang panel. Para sa B ang Undo at Redo sa itaas ng mga editor; gumagana ang Ctrl/Cmd+Z sa editor na kasalukuyang naka-focus. Maaari ring i-undo ang paglilipat ng bloke. Marka ng pagsusuri ang Keep B, hindi pagbabago sa teksto. Nagsisimula muli ang progreso ng pagsusuri kapag mano-manong nag-edit, upang hindi basta madala ang mga naunang desisyon sa nabagong teksto.
+
+MAKAKUHA NG PARE-PAREHONG PAGKAKAIBA
+Kapag pareho ang huling teksto sa A/B, pareho rin ang mga bloke ng pagkakaiba—direktang nagbukas ka man ng mga file, nag-edit, o nag-undo at nag-redo. Mas madaling ihambing muli ang code pagkatapos mag-save. Maaaring pagsamahin sa mas malalaking bloke ang mahihirap na pagkakaiba; hindi laging pinakamaliit na posibleng pagbabago ang isang bloke.
+
+GAWING MAS MADALING BASAHIN ANG CODE
+Pumili ng laki ng code mula 14 hanggang 20 px at i-on o i-off ang pagbalot ng linya. Tinitiklop ng Only changes ang mahahabang bahaging hindi nabago, na may tatlong linya ng konteksto sa paligid ng mga pagkakaiba. Palawakin ang isang nakatiklop na bahagi kapag kailangan mo ng dagdag na konteksto. Ipinapakita ng Show spaces & tabs ang indentation nang hindi binabago ang code.
+
+SURIIN ANG SUPORTADONG SYNTAX
+Lokal na isinasagawa ang pagsusuri ng syntax matapos mag-load, mag-paste, mag-edit, at maglipat ng code. I-click ang Check syntax upang ulitin ito, at pumili ng naiulat na lokasyon upang puntahan ang problema. May pagsusuri ng syntax para sa JavaScript, JSX, TypeScript, TSX, JSON, at YAML. May paunang pagsusuri ng grammar at indentation para sa Python.
+
+UNAWAIN ANG SAKLAW NG PAGSUSURI
+Hindi pinapatakbo ng extension ang code at hindi nito awtomatikong inaayos ito. Sinusuri ang bawat panig bilang hiwalay na file, kaya maaaring mag-ulat ng error ang hindi kumpletong snippet. Hindi kasama ang TypeScript type checking at pagpapatunay ng YAML schema. Hindi pamalit sa pagpapatunay gamit ang Python mismo ang mga pagsusuri para sa Python. Highlighting lamang ang ibinibigay sa iba pang nakalistang wika; hindi patunay ng tamang paggana ang wastong syntax.
+
+I-SAVE ANG BINAGONG FILE
+Gumagawa ang Download B ng bagong UTF-8 file nang hindi pinapalitan ang orihinal. Pinananatili sa download ang mga space, tab, UTF-8 byte order mark, at orihinal na line ending sa tekstong hindi nabago. Nananatili ang line ending mula sa A sa mga inilipat na bloke. Ginagamit ng mga bagong tinipa na linya ang pangunahing estilo ng line ending ng ine-edit na file. Gamitin ang Copy B para sa clipboard; maaari nitong gawing magkakapareho ang mga line ending.
+
+GAMITIN SA ARAW-ARAW NA CODE REVIEW
+Ihambing ang JavaScript code bago kopyahin ang update sa iyong proyekto. Suriin ang Python file kung posibleng nagbago ang indentation habang inililipat. Ihambing ang mga JSON o YAML configuration file at suriin bilang teksto ang mga nabagong value. Tekstuwal ang paghahambing ng JSON: hindi nito itinutugma ang mga object ayon sa kahulugan o binabalewala ang pagkakasunod-sunod ng mga key. Pagsusuri ito ng dalawang file, hindi ng buong repository.
+
+PANATILIHIN ANG PAGPROSESO SA IYONG DEVICE
+Hindi kailangan ng account, API key, panlabas na serbisyo ng AI, analytics, o pag-upload ng code. Gumagana ang extension sa sarili nitong editor tab at hindi nagbabasa ng ibang tab o pag-uusap. Ikaw mismo ang mag-paste o magbukas ng code, kabilang ang mga snippet mula sa chat. Hindi ito awtomatikong kumokonekta sa ChatGPT, Claude, o Gemini.
+
+MAG-SAVE BAGO ISARA
+Nasa memory lamang habang bukas ang session ang teksto, undo history, at estado ng pagsusuri. Hindi maibabalik ang iyong gawa kapag isinara o ni-reload ang editor. I-download ang resulta bago umalis sa tab. Walang cloud history o backup na tumatakbo sa background.
+
+MGA LIMITASYON NG FILE SA BETA
+Magbukas ng mga UTF-8 text file na hanggang 512 KiB, 200,000 UTF-16 code unit, at 4,000 linya sa bawat panig. Hindi suportado ang PDF, mga Word document, binary file, at buong folder. Magsimula sa dalawang code file na pamilyar sa iyo: humanap ng pagkakaiba, gumawa ng pagwawasto, subukan ang Undo, at i-download ang B.

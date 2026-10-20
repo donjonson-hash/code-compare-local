@@ -1,0 +1,42 @@
+DIESE ERWEITERUNG IST FÜR BETA-TESTS BESTIMMT.
+
+Vergleichen Sie zwei Codeversionen, prüfen Sie die Unterschiede und speichern Sie das gewünschte Ergebnis. Code Compare Local ist ein Werkzeug zum Codevergleich, das offline im Browser arbeitet. Öffnen Sie die Referenz in A und die überarbeitete Version in B. Gehen Sie die hervorgehobenen Änderungen nebeneinander durch.
+
+MIT EINEM BEISPIEL STARTEN
+Nach der ersten Installation öffnet sich die Willkommensseite. Öffnen Sie den Editor oder probieren Sie das integrierte JavaScript-Beispiel aus, ohne Dateien vorzubereiten. Editor und Willkommensseite sind auf Englisch. Übersetzte Store-Beschreibungen und Erweiterungsnamen ändern die Sprache der Oberfläche nicht.
+
+GEÄNDERTE ZEILEN FINDEN
+Die Code-Diff-Ansicht zeigt Ergänzungen, Löschungen und Ersetzungen. Die Liste Differences enthält A/B-Zeilennummern und eine Vorschau jedes geänderten Blocks. Wählen Sie einen Eintrag oder navigieren Sie mit Previous und Next dorthin – auch bei weit auseinanderliegenden Änderungen in längeren Dateien.
+
+ENTSCHEIDEN, WAS IN B BLEIBT
+Mit Use A übernehmen Sie den ausgewählten Block nach B. Mit Keep B markieren Sie den Unterschied als geprüft, ohne ihn zu ändern. Use A → B bearbeitet jeweils einen Unterschied; All A → B ersetzt das gesamte Ergebnis. Der Fortschritt zeigt, welche Entscheidungen Sie in dieser Sitzung bereits getroffen haben.
+
+BEARBEITEN UND RÜCKGÄNGIG MACHEN
+Bearbeiten Sie den Code direkt in beiden Bereichen. Undo und Redo über den Editoren wirken auf B; Strg/Cmd+Z wirkt auf den fokussierten Editor. Auch Blockübertragungen lassen sich rückgängig machen. Keep B ist eine Prüfmarkierung, keine Textänderung. Manuelle Änderungen setzen den Prüffortschritt zurück, damit frühere Entscheidungen nicht unbemerkt für geänderten Text gelten.
+
+EINHEITLICHE UNTERSCHIEDE ERHALTEN
+Derselbe endgültige A/B-Text ergibt dieselben Unterschiedsblöcke – unabhängig davon, ob Sie Dateien direkt laden, bearbeiten oder Änderungen rückgängig machen und wiederholen. So lässt sich der Code nach dem Speichern erneut vergleichen. Schwierige Unterschiede können zu größeren Blöcken zusammengefasst werden; ein Block ist nicht immer die kleinstmögliche Änderung.
+
+CODE BESSER LESEN
+Wählen Sie eine Schriftgröße von 14 bis 20 px und schalten Sie den Zeilenumbruch ein oder aus. Only changes klappt lange unveränderte Abschnitte ein und zeigt drei Kontextzeilen um die Unterschiede. Klappen Sie Abschnitte bei Bedarf auf. Show spaces & tabs macht Einrückungen sichtbar, ohne den Code zu verändern.
+
+UNTERSTÜTZTE SYNTAX PRÜFEN
+Syntaxprüfungen laufen lokal nach dem Laden, Einfügen, Bearbeiten und Übertragen von Code. Mit Check syntax starten Sie sie erneut. Wählen Sie anschließend eine gemeldete Stelle, um zum Problem zu springen. JavaScript, JSX, TypeScript, TSX, JSON und YAML werden auf Syntax geprüft. Für Python gibt es vorläufige Grammatik- und Einrückungsprüfungen.
+
+PRÜFERGEBNISSE RICHTIG EINORDNEN
+Die Erweiterung führt keinen Code aus und korrigiert ihn nicht automatisch. Jede Seite wird als eigenständige Datei geprüft; unvollständige Ausschnitte können daher Fehler melden. TypeScript-Typprüfung und YAML-Schemavalidierung sind nicht enthalten. Die Python-Prüfung ersetzt keine Validierung mit Python selbst. Andere aufgeführte Sprachen bieten nur Syntaxhervorhebung. Gültige Syntax beweist kein korrektes Verhalten.
+
+ÜBERARBEITETE DATEI SPEICHERN
+Download B erstellt eine neue UTF-8-Datei, ohne das Original zu überschreiben. Downloads bewahren Leerzeichen, Tabulatoren, die UTF-8-Byte-Reihenfolgemarkierung und die ursprünglichen Zeilenenden unveränderter Textstellen. Übertragene Blöcke behalten die Zeilenenden aus A. Neu eingegebene Zeilen verwenden das vorherrschende Zeilenende der bearbeiteten Datei. Copy B kopiert in die Zwischenablage, die Zeilenenden vereinheitlichen kann.
+
+CODE IM ALLTAG PRÜFEN
+Vergleichen Sie JavaScript-Code, bevor Sie eine Aktualisierung ins Projekt übernehmen. Prüfen Sie Python-Dateien, deren Einrückung beim Übertragen verändert worden sein könnte. Vergleichen Sie JSON- oder YAML-Konfigurationen und prüfen Sie geänderte Werte als Text. JSON wird textuell verglichen: Objekte werden nicht nach Bedeutung zugeordnet und die Schlüsselreihenfolge wird nicht ignoriert. Geprüft werden zwei Dateien, kein vollständiges Repository.
+
+VERARBEITUNG AUF IHREM GERÄT
+Es sind weder Konto, API-Schlüssel, externer KI-Dienst, Analysefunktionen noch Code-Upload nötig. Die Erweiterung arbeitet in einem eigenen Editor-Tab und liest keine anderen Tabs oder Unterhaltungen. Fügen Sie Code selbst ein oder öffnen Sie ihn, auch Ausschnitte aus einem Chat. Eine automatische Verbindung zu ChatGPT, Claude oder Gemini gibt es nicht.
+
+VOR DEM SCHLIESSEN SPEICHERN
+Text, Rückgängig-Verlauf und Prüfstatus bleiben während der Sitzung im Arbeitsspeicher. Nach Schließen oder Neuladen des Editors wird Ihre Arbeit nicht wiederhergestellt. Laden Sie das Ergebnis herunter, bevor Sie den Tab verlassen. Es gibt keinen Cloud-Verlauf und keine Hintergrundsicherung.
+
+DATEIGRENZEN DER BETA
+Öffnen Sie UTF-8-Textdateien mit höchstens 512 KiB, 200.000 UTF-16-Codeeinheiten und 4.000 Zeilen pro Seite. PDF, Word-Dokumente, Binärdateien und ganze Ordner werden nicht unterstützt. Beginnen Sie mit zwei bekannten Codedateien: Finden Sie einen Unterschied, korrigieren Sie ihn, testen Sie Undo und laden Sie B herunter.

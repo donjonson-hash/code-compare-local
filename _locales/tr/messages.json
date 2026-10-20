@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Kod karşılaştırma — Beta"
+  },
+  "extensionDescription": {
+    "message": "Kodu yerel olarak yan yana karşılaştırın. Değişiklikleri düzenleyin, sözdizimini denetleyin ve dosyaları çevrimdışı kaydedin."
+  },
+  "actionTitle": {
+    "message": "Code Compare Local uygulamasını aç"
+  }
+}

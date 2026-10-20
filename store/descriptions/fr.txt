@@ -1,0 +1,42 @@
+CETTE EXTENSION EST DESTINÉE AUX TESTS BÊTA.
+
+Comparez deux versions de code, examinez leurs différences et enregistrez le résultat souhaité. Code Compare Local est un outil de comparaison de code qui fonctionne hors ligne dans votre navigateur. Ouvrez votre référence dans A et la version révisée dans B, puis parcourez les changements surlignés côte à côte.
+
+COMMENCER AVEC UN EXEMPLE
+La page d’accueil s’ouvre après la première installation. Ouvrez l’éditeur ou essayez l’exemple JavaScript intégré sans préparer de fichiers. L’éditeur et la page d’accueil sont en anglais. Les descriptions du Store et les noms traduits de l’extension ne changent pas la langue de l’interface.
+
+TROUVER LES LIGNES MODIFIÉES
+La vue de différences de code montre les ajouts, suppressions et remplacements. La liste Differences affiche les numéros de ligne A/B et un aperçu de chaque bloc modifié. Sélectionnez une entrée ou utilisez Previous et Next pour y accéder, même si les changements sont éloignés dans un long fichier.
+
+CHOISIR LE CONTENU DE B
+Cliquez sur Use A pour copier le bloc sélectionné dans B, ou sur Keep B pour marquer cette différence comme examinée sans la modifier. Use A → B agit sur une différence à la fois ; All A → B remplace tout le résultat. L’indicateur de progression vous aide à suivre vos décisions pendant la session.
+
+MODIFIER ET ANNULER
+Modifiez le code directement dans l’un ou l’autre volet. Les boutons Undo et Redo au-dessus des éditeurs s’appliquent à B ; Ctrl/Cmd+Z agit sur l’éditeur actif. Les transferts de blocs peuvent aussi être annulés. Keep B est un repère de révision, pas une modification du texte. Les modifications manuelles réinitialisent la progression pour éviter de conserver discrètement des décisions prises sur un texte différent.
+
+OBTENIR DES DIFFÉRENCES COHÉRENTES
+Un même texte final A/B produit les mêmes blocs de différences, que vous chargiez directement les fichiers, les modifiiez ou annuliez puis rétablissiez vos changements. Cela facilite une nouvelle comparaison après l’enregistrement. Les différences complexes peuvent être regroupées dans des blocs plus larges ; un bloc n’est pas toujours la plus petite modification possible.
+
+AMÉLIORER LA LISIBILITÉ DU CODE
+Choisissez une taille de texte de 14 à 20 px et activez ou désactivez le retour à la ligne. Only changes replie les longues sections inchangées en gardant trois lignes de contexte autour des différences. Dépliez une section lorsque vous avez besoin de contexte. Show spaces & tabs rend l’indentation visible sans modifier le code.
+
+VÉRIFIER LA SYNTAXE PRISE EN CHARGE
+Les vérifications s’exécutent localement après le chargement, le collage, la modification et le transfert de code. Cliquez sur Check syntax pour les relancer, puis sélectionnez un emplacement signalé pour accéder au problème. JavaScript, JSX, TypeScript, TSX, JSON et YAML disposent de vérifications syntaxiques. Python bénéficie de vérifications préliminaires de grammaire et d’indentation.
+
+COMPRENDRE LES VÉRIFICATIONS
+L’extension n’exécute pas le code et ne le corrige pas automatiquement. Chaque côté est vérifié comme un fichier autonome ; un extrait inachevé peut donc produire des erreurs. La vérification des types TypeScript et la validation de schémas YAML ne sont pas incluses. Les vérifications Python ne remplacent pas une validation avec Python lui-même. Les autres langages proposés disposent seulement de la coloration syntaxique. Une syntaxe valide ne prouve pas que le comportement est correct.
+
+ENREGISTRER LE FICHIER RÉVISÉ
+Download B crée un nouveau fichier UTF-8 sans écraser l’original. Les téléchargements préservent les espaces, tabulations, la marque d’ordre des octets UTF-8 et les fins de ligne d’origine dans le texte inchangé. Les blocs transférés conservent les fins de ligne de A. Les nouvelles lignes saisies utilisent le style de fin de ligne dominant du fichier modifié. Copy B copie vers le presse-papiers, qui peut normaliser les fins de ligne.
+
+L’UTILISER AU QUOTIDIEN
+Comparez du code JavaScript avant d’intégrer une mise à jour à votre projet. Examinez un fichier Python dont l’indentation a pu changer lors d’un transfert. Comparez des configurations JSON ou YAML et inspectez les valeurs modifiées sous forme de texte. La comparaison JSON est textuelle : elle n’associe pas les objets selon leur sens et n’ignore pas l’ordre des clés. Il s’agit de vérifier deux fichiers, pas un dépôt entier.
+
+GARDER LE TRAITEMENT SUR VOTRE APPAREIL
+Aucun compte, clé API, service d’IA externe, outil d’analyse d’usage ou téléversement de code n’est nécessaire. L’extension travaille dans son propre onglet d’édition et ne lit pas les autres onglets ni les conversations. Collez ou ouvrez vous-même le code, y compris les extraits d’une conversation. Elle ne se connecte pas automatiquement à ChatGPT, Claude ou Gemini.
+
+ENREGISTRER AVANT DE FERMER
+Le texte, l’historique d’annulation et l’état de révision restent en mémoire pendant la session. Fermer ou recharger l’éditeur ne restaure pas votre travail. Téléchargez le résultat avant de quitter l’onglet. Il n’y a ni historique dans le cloud ni sauvegarde en arrière-plan.
+
+LIMITES DES FICHIERS EN BÊTA
+Ouvrez des fichiers texte UTF-8 jusqu’à 512 KiB, 200 000 unités de code UTF-16 et 4 000 lignes par côté. Les PDF, documents Word, fichiers binaires et dossiers entiers ne sont pas pris en charge. Commencez avec deux fichiers de code connus : trouvez une différence, corrigez-la, essayez Undo et téléchargez B.

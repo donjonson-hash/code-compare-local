@@ -5,6 +5,7 @@ import { checkFocusedReview } from './review-browser.mjs';
 import { checkDeterministicTransfer } from './transfer-browser.mjs';
 import { checkClockIndependentComparison } from './diff-browser.mjs';
 import { checkCanonicalComparison } from './canonical-browser.mjs';
+import { checkWelcomeFlow } from './welcome-browser.mjs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
@@ -14,7 +15,7 @@ const output = process.env.TEST_OUTPUT || `${root}/test-output`;
 await mkdir(output, { recursive: true });
 const server = createServer(async(req,res) => {
   const name = new URL(req.url, 'http://localhost').pathname.slice(1);
-  if (!['app.html','app.js','syntax-worker.js','styles.css','icons/icon16.png'].includes(name)) { res.writeHead(404).end(); return; }
+  if (!['app.html','app.js','syntax-worker.js','styles.css','icons/icon16.png','welcome.html','welcome.css','icons/icon128.png'].includes(name)) { res.writeHead(404).end(); return; }
   try {
     res.setHeader('Content-Type', name.endsWith('.js') ? 'text/javascript' : name.endsWith('.css') ? 'text/css' : name.endsWith('.png') ? 'image/png' : 'text/html');
     res.end(await readFile(`${root}/${name}`));
@@ -53,8 +54,12 @@ const download = async () => {
 };
 
 try {
+  await checkWelcomeFlow({ context, appUrl: url, output });
+  // Welcome checks open several tabs; resume the editor as the active tab.
+  await page.bringToFront();
   await page.locator('#demo').click();
   await page.locator('.cm-merge-revert button').first().waitFor();
+  await page.waitForFunction(() => /4 change blocks/.test(document.getElementById('diff-count').textContent));
   assert.match(await page.locator('#diff-count').innerText(), /4 change blocks/);
   await page.screenshot({ path: `${output}/desktop.png`, fullPage: true });
   const demoBefore = await download();
@@ -245,7 +250,7 @@ try {
   assert.equal(await page.locator('#undo').isDisabled(), true);
   assert.deepEqual(requests, [], 'No network requests while using the app');
   assert.deepEqual(errors, [], 'No uncaught browser errors');
-  console.log(JSON.stringify({ passed: true, mode: extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
+  console.log(JSON.stringify({ passed: true, mode: extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['welcome-local-links-example-and-edit-preservation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
 } catch(error) {
   console.error({errors, requests, status: await page.locator('#diff-count').textContent(), toast: await page.locator('#toast').textContent()});
   await page.screenshot({path: `${output}/failure.png`, fullPage:true});

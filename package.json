@@ -1,6 +1,6 @@
 {
   "name": "code-compare-local",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Local offline code comparison browser extension",
   "scripts": {
     "build": "node build.mjs",

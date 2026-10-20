@@ -1,0 +1,42 @@
+QUESTA ESTENSIONE È DESTINATA AI TEST BETA.
+
+Confronta due versioni di codice, esamina le differenze e salva il risultato desiderato. Code Compare Local è uno strumento di confronto del codice che funziona offline nel browser. Apri il riferimento in A e la versione rivista in B, poi esamina le modifiche evidenziate affiancate.
+
+INIZIA CON UN ESEMPIO
+La pagina di benvenuto si apre dopo la prima installazione. Apri l’editor o prova l’esempio JavaScript integrato senza preparare file. L’editor e la pagina di benvenuto sono in inglese. Le descrizioni dello store e i nomi tradotti dell’estensione non cambiano la lingua dell’interfaccia.
+
+TROVA LE RIGHE MODIFICATE
+La vista delle differenze mostra aggiunte, rimozioni e sostituzioni. L’elenco Differences indica i numeri di riga A/B e un’anteprima di ogni blocco modificato. Seleziona una voce o usa Previous e Next per raggiungerla, anche quando le modifiche sono distanti in un file lungo.
+
+SCEGLI COSA INSERIRE IN B
+Fai clic su Use A per copiare il blocco selezionato in B, oppure su Keep B per segnare la differenza come esaminata senza modificarla. Use A → B interviene su una differenza alla volta; All A → B sostituisce l’intero risultato. L’avanzamento della revisione aiuta a seguire le decisioni prese durante la sessione.
+
+MODIFICA E ANNULLA
+Modifica il codice direttamente in entrambi i riquadri. Undo e Redo sopra gli editor agiscono su B; Ctrl/Cmd+Z agisce sull’editor attivo. Puoi annullare anche i trasferimenti di blocchi. Keep B è un segno di revisione, non una modifica al testo. Le modifiche manuali azzerano l’avanzamento per evitare che decisioni precedenti vengano applicate senza avviso a un testo diverso.
+
+OTTIENI DIFFERENZE COERENTI
+Lo stesso testo finale A/B produce gli stessi blocchi di differenze, sia caricando direttamente i file sia modificandoli, annullando o ripetendo le modifiche. Questo facilita un nuovo confronto dopo il salvataggio. Le differenze complesse possono essere raggruppate in blocchi più ampi: un blocco non è sempre la modifica più piccola possibile.
+
+RENDI IL CODICE PIÙ LEGGIBILE
+Scegli una dimensione del testo da 14 a 20 px e attiva o disattiva il ritorno a capo. Only changes comprime le sezioni lunghe rimaste invariate, lasciando tre righe di contesto intorno alle differenze. Espandi una sezione quando serve altro contesto. Show spaces & tabs rende visibile l’indentazione senza modificare il codice.
+
+CONTROLLA LA SINTASSI SUPPORTATA
+I controlli vengono eseguiti localmente dopo il caricamento, l’incolla, la modifica e il trasferimento del codice. Fai clic su Check syntax per ripeterli, poi seleziona una posizione segnalata per raggiungere il problema. JavaScript, JSX, TypeScript, TSX, JSON e YAML dispongono di controlli sintattici. Python offre controlli preliminari della grammatica e dell’indentazione.
+
+COMPRENDI I RISULTATI DEL CONTROLLO
+L’estensione non esegue il codice e non lo corregge automaticamente. Ogni lato viene controllato come un file autonomo, quindi un frammento incompleto può generare errori. Non sono inclusi il controllo dei tipi TypeScript e la validazione degli schemi YAML. I controlli Python non sostituiscono la validazione con Python stesso. Gli altri linguaggi elencati offrono solo l’evidenziazione della sintassi; una sintassi valida non dimostra che il comportamento sia corretto.
+
+SALVA IL FILE RIVISTO
+Download B crea un nuovo file UTF-8 senza sovrascrivere l’originale. I download conservano spazi, tabulazioni, il marcatore dell’ordine dei byte UTF-8 e le terminazioni di riga originali nel testo invariato. I blocchi trasferiti mantengono le terminazioni di riga di A. Le nuove righe digitate usano lo stile predominante del file modificato. Copy B copia negli appunti, che possono normalizzare le terminazioni di riga.
+
+USALO PER LE REVISIONI QUOTIDIANE
+Confronta codice JavaScript prima di inserire un aggiornamento nel progetto. Controlla un file Python quando l’indentazione potrebbe essere cambiata durante un trasferimento. Confronta configurazioni JSON o YAML ed esamina i valori modificati come testo. Il confronto JSON è testuale: non abbina gli oggetti in base al significato e non ignora l’ordine delle chiavi. Si tratta di controlli su due file, non della revisione di un intero repository.
+
+MANTIENI L’ELABORAZIONE SUL DISPOSITIVO
+Non servono account, chiavi API, servizi di IA esterni, analisi dell’utilizzo o caricamenti del codice. L’estensione lavora nella propria scheda editor e non legge altre schede o conversazioni. Incolla o apri personalmente il codice, anche se proviene da una chat. Non si collega automaticamente a ChatGPT, Claude o Gemini.
+
+SALVA PRIMA DI CHIUDERE
+Il testo, la cronologia delle operazioni annullabili e lo stato di revisione restano in memoria durante la sessione. Chiudere o ricaricare l’editor non ripristina il lavoro. Scarica il risultato prima di lasciare la scheda. Non ci sono cronologia nel cloud né backup in background.
+
+LIMITI DEI FILE NELLA BETA
+Apri file di testo UTF-8 fino a 512 KiB, 200.000 unità di codice UTF-16 e 4.000 righe per lato. PDF, documenti Word, file binari e intere cartelle non sono supportati. Inizia con due file di codice che conosci: trova una differenza, correggila, prova Undo e scarica B.

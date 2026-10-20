@@ -1,4 +1,18 @@
-# Canonical comparison pilot 0.8.0 — 20 October 2026
+# Verification — 0.9.0 candidate and accepted 0.8.0
+
+## 0.9.0 local checks — 20 October 2026
+
+- Build passed; all 53 unit tests passed, including installation/update lifecycle and localized manifest validation.
+- Full browser suite passed in local-page Chromium 138.0.7204.0, including welcome links, one-time example launch, narrow layout and preserving B/Undo when opening help. Installed-extension CI is the remote PR gate.
+- Store screenshots were captured from the current English interface with synthetic files; welcome fits a 1280×800 frame and a 375 px viewport without horizontal overflow.
+- All 22 metadata catalogs resolve the manifest fields within name/short-description limits.
+- The store kit contains 22 full descriptions, metadata, all five icon sizes, three screenshots, two promotional images and submission instructions.
+- ZIP integrity, payload/working-file equality, embedded SHA-256 checksums, PNG dimensions and transparent 96×96 artwork inside the 128×128 store icon were checked.
+- Full descriptions were reviewed for consistent capabilities and limits; native-speaker review of every translation has not been performed.
+- The editor and welcome page remain English. No new permissions, dependencies, telemetry, persistent session storage or code-processing service.
+- 0.9.0 is a candidate, not a newly accepted/tagged release or a store submission.
+
+## Historical 0.8.0 comparison checks — 20 October 2026
 
 ## Completed locally
 
@@ -23,9 +37,9 @@ PR #6 merged at `dccd0c25ed0cd11514e6fb55e76470e02e3bbabb`; the user pushed
 Installed-extension checks passed on the PR head and on main:
 https://github.com/donjonson-hash/code-compare-local/actions/runs/39408116810
 The workflow requires `REQUIRE_EXTENSION=1`, so it cannot silently fall back to
-a local page. Store assets now show 0.8.0 with synthetic JavaScript files only.
-The store preparation changes documentation and asset generation, not runtime
-code, icons, dependencies, permissions or version. No store submission is claimed.
+a local page. The 0.8.0 store preparation used synthetic JavaScript files only.
+That preparation changed documentation and assets only. The subsequent 0.9.0
+candidate adds welcome behavior and metadata as described above. No store submission is claimed.
 
 ## Scope and cost
 

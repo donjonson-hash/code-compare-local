@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Sammenlign kode — Beta"
+  },
+  "extensionDescription": {
+    "message": "Sammenlign kode side om side lokalt. Rediger ændringer, tjek syntaks, og gem filer offline."
+  },
+  "actionTitle": {
+    "message": "Åbn Code Compare Local"
+  }
+}
