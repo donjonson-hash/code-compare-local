@@ -55,8 +55,11 @@ const download = async () => {
 
 try {
   await checkWelcomeFlow({ context, appUrl: url, output });
+  // Welcome checks open several tabs; resume the editor as the active tab.
+  await page.bringToFront();
   await page.locator('#demo').click();
   await page.locator('.cm-merge-revert button').first().waitFor();
+  await page.waitForFunction(() => /4 change blocks/.test(document.getElementById('diff-count').textContent));
   assert.match(await page.locator('#diff-count').innerText(), /4 change blocks/);
   await page.screenshot({ path: `${output}/desktop.png`, fullPage: true });
   const demoBefore = await download();
