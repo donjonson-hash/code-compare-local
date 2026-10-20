@@ -77,7 +77,16 @@ export async function checkWelcomeFlow({ context, appUrl, output }) {
     const saved = await pendingDownload;
     assert.equal(await readFile(await saved.path(), 'utf8'), edited, 'opening help preserves the edited B bytes');
     await tab.locator('#undo').click();
+    // Statistics render on the next animation frame, after the history edit.
+    await tab.waitForFunction(() => /\b0 chars\b/.test(document.getElementById('meta-b').textContent));
     assert.match(await tab.locator('#meta-b').innerText(), /\b0 chars\b/, 'opening help preserves edit history');
+    const undoneDownload = tab.waitForEvent('download');
+    await tab.locator('#download').click();
+    assert.equal(await readFile(await (await undoneDownload).path(), 'utf8'), '', 'Undo restores empty B bytes');
+    await tab.locator('#redo').click();
+    const redoneDownload = tab.waitForEvent('download');
+    await tab.locator('#download').click();
+    assert.equal(await readFile(await (await redoneDownload).path(), 'utf8'), edited, 'Redo restores edited B bytes');
     assert.deepEqual(externalRequests, [], 'welcome and its local editor links make no external requests');
     assert.deepEqual(errors, [], 'welcome flow has no uncaught browser errors');
   } finally {
