@@ -1,34 +1,37 @@
-# Beta verification 0.5.0 — 19 October 2026
+# Deterministic transfer pilot 0.6.1 — 20 October 2026
 
-## Completed
+## Completed locally
 
-- `npm ci --ignore-scripts`: completed with the pinned dependency lockfile.
-- `npm run build`: bundled editor, syntax worker, and licenses for bundled dependencies.
-- `npm test`: all 35 tests passed. Includes 121 edge-case diff pairs and 200 reproducible randomized pairs.
-- `npm run test:browser`: passed in Chromium 138.0.7204.0 as a local page. The page loaded from a temporary localhost server and then ran with network access disabled.
-- For Python, JavaScript, TypeScript, JSON, and YAML, the browser loaded the supplied correct and broken files, detected the error, transferred the correction, downloaded B, checked exact byte equality with A, exercised undo/redo, reopened the actual download, and verified clean syntax and identical re-exported bytes.
-- Existing scenarios passed: diagnostic navigation, stale result invalidation, unsupported language status, manual edits, mixed LF/CRLF/CR and BOM round-trip, format-only edits, empty files, final newlines, file limits, inert source text, compact layout, clear session.
-- No external HTTP(S) requests or uncaught page errors during the browser scenarios.
-- Difference overview: 240-line synthetic files show A/B line ranges, jump to a distant block, apply only the selected modification or deletion, and undo to byte-identical B. Font selection changes the rendered code size.
-- Historical 0.4.0 check: two user-supplied Python files were compared locally: four change blocks were listed; restoring the deleted function preserved all other differences, and undo restored exact B bytes. The files and private screenshots are excluded from this repository and its archives.
-- Eight change-description tests cover line ranges and distinguish spaces/tabs-only edits from line breaks, code changes and non-ASCII whitespace. Six review-state tests cover decisions, history and invalidation.
-- New browser scenarios: collapse unchanged context and expand with the keyboard without editing code; navigate to shared syntax errors hidden by collapse; show spaces/tabs while preserving downloaded bytes; Keep B, Use A, progress, undo/redo, and invalidation after manual edits.
-- English UI screenshots inspected at desktop and 900px widths. No page-wide horizontal overflow at 900px. Store assets use only synthetic examples.
+- Reproduced 0.6.0 controls hidden by compact grid-card clipping and icon-only Undo/Redo below the initial viewport.
+- Version 0.6.1 puts labeled Use A, Keep B, Undo, Redo and Download B above the editors and prevents compact cards from shrinking.
+- At 1440, 1280, 1100 and 900 px width (720 px height), browser checks assert visible labels and unclipped controls before clicks, then double-click Use A → Undo → Redo and verify actual downloaded bytes. CodeMirror line-reveal layout is allowed to settle before measuring the page top.
 
-The user separately confirmed Python and JavaScript syntax correction in the installed 0.2.0 pilot. This does not replace installation checks for 0.5.0.
+- `npm run build`: bundled editor, syntax worker, and third-party notices with the existing pinned dependencies.
+- `npm test`: all 46 tests passed, including 11 proposal-validation tests and the existing diff, byte-preservation, review-state and syntax tests.
+- `npm run test:browser`: the complete offline suite passed in local-page Chromium 138.0.7204.0. This local run is not an installed-extension check.
+- New end-to-end checks replay a consumed list button and inline arrow, edit A/B after a proposal is displayed, reload B with unchanged visible text but different BOM/line endings, apply a fresh proposal, and double-click the selected-block action. Each scenario checks actual downloaded B bytes.
+- Undo/Redo restores both the expected raw document and review progress. An old command remains consumed after Undo; a fresh proposal can be applied normally.
+- The real long-file regression covers signed relative CodeMirror change offsets for deleted lines, while absolute positions remain bounded.
+- Existing five-language correction/download/reopen, syntax navigation, collapsed context, whitespace display, limits, compact layout and clear-session checks passed.
+- No external HTTP(S) requests or uncaught page errors during the passing browser run.
 
-## Installed-extension CI
+## Remote and manual gates
 
-- Runtime commit `9d662808874da2c46ab4fe86321b638600c56141` passed both push and pull-request CI on 19 October 2026. The browser log reports `mode: extension`, and `REQUIRE_EXTENSION=1` prevents fallback to a local page.
-- Push: https://github.com/donjonson-hash/code-compare-local/actions/runs/39214971608
-- Pull request: https://github.com/donjonson-hash/code-compare-local/actions/runs/39214976622
-- Both runs completed the installed-extension scenarios and built the distribution archives. This report update changes documentation only.
-- The local Chromium 138 binary was used only for the separate local-page run described above.
+The GitHub `Beta checks` workflow runs with `REQUIRE_EXTENSION=1` and cannot
+silently fall back to local-page mode. Consult this pilot pull request's checks
+for installed-extension status and the exact tested commit. This document records
+the local results before upload and does not claim a remote result in advance.
 
-## Remaining gates
+The user confirmed the previous 0.5.0 behavior on 19 October 2026. The 0.6.1
+pilot still needs the user's own-file acceptance before replacing that baseline.
+Store materials in `store/` describe 0.5.0; no 0.6.1 store submission is claimed.
 
-- Before publishing: install 0.5.0 in a normal desktop browser and check the extension toolbar action, clipboard, download UI, and reopen workflow. Firefox and mobile are outside this release.
-- Store submission and a public privacy/support URL are not completed.
+## Scope and known boundary
+
+The contract and operation map are in `DETERMINISM.md`. This pilot validates
+application of an explicit versioned block proposal. The existing time-limited
+diff grouping is not claimed to be fully deterministic. No external plugin API,
+LLM call, new permission, dependency or persistent source storage is introduced.
 
 ## Reproduce
 
@@ -41,6 +44,10 @@ REQUIRE_EXTENSION=1 npm run test:browser
 npm run package
 ```
 
-For local-page checks with an existing Chromium executable, omit `REQUIRE_EXTENSION` and set `CHROMIUM_EXECUTABLE`. Optional `PLAYWRIGHT_MODULE` and `TEST_OUTPUT` override the module path and temporary output directory. Browser profiles and internal test screenshots are excluded from distribution archives.
+For the local-page fallback, omit `REQUIRE_EXTENSION` and set
+`CHROMIUM_EXECUTABLE`. `TEST_OUTPUT` controls temporary profiles/screenshots;
+they are excluded from distribution ZIPs. Test files are synthetic.
 
-The installation archive has `manifest.json` at its root. The source archive contains code, pinned dependencies, CI, documentation, synthetic examples, and store materials; it excludes installed dependencies and browser profiles.
+The beta archive has `manifest.json` at its root. The source archive includes
+implementation, tests and the contract; it excludes installed dependencies,
+browser profiles and generated archives.

@@ -64,8 +64,8 @@ select { border: 1px solid #dce5df; border-radius: 5px; padding: 6px 8px; color:
 .toolbar-divider { height: 18px; width: 1px; background: var(--line); margin: 0 7px; }
 .review-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 15px; border-bottom: 1px solid var(--line); background: #f5f8f3; }
 #change-position { min-width: 50px; text-align: center; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--muted); }
-#use-current { margin-left: auto; }
-.icon-button { width: 35px; height: 35px; border: 1px solid var(--line); border-radius: 5px; background: white; color: var(--ink); font-size: 23px; display: inline-grid; place-items: center; line-height: 1; }
+.action-toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 10px 15px; border-bottom: 1px solid var(--line); }
+.action-toolbar #download { margin-left: auto; }
 .diff-count { font-size: 14px; font-weight: 600; color: var(--accent-dark); }
 .pane-heads { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-bottom: 1px solid var(--line); background: #fcfdfb; }
 .pane-head { padding: 15px; display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -138,10 +138,10 @@ dialog::backdrop { background: #122c3a66; }dialog h2 { font-size: 23px; margin: 
   .comparison-layout { grid-template-columns: minmax(0, 1fr); }
   .changes-sidebar { display: grid; grid-template-columns: 210px minmax(0, 1fr); }
   .changes-header { border-bottom: 0; border-right: 1px solid var(--line); padding: 16px; }
-  .changes-list { max-height: 200px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 8px; }
+  .changes-list { max-height: 200px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: max-content; align-content: start; gap: 8px; }
   .change-item { margin: 0; }.changes-tip { grid-column: 1 / -1; padding: 8px 16px; }
   .pane-head { flex-wrap: nowrap; }.pane-description { flex-basis: auto; }.pane-head .file-button { margin-left: 0; }
-  .topbar { padding: 12px 20px; }.version { display: none; }
+  .topbar { padding: 12px 20px; }
   footer { flex-direction: column; gap: 4px; }
 }
 @media (max-width: 720px) {
@@ -149,7 +149,7 @@ dialog::backdrop { background: #122c3a66; }dialog h2 { font-size: 23px; margin: 
   main { padding: 18px 12px; }.intro { align-items: flex-start; flex-wrap: wrap; gap: 12px; }.subtitle { font-size: 15px; }
   .changes-sidebar { display: block; }.changes-header { border-right: 0; padding: 12px 14px; }.changes-header .eyebrow { display: none; }.changes-header h2 { font-size: 21px; }
   .changes-list { display: block; max-height: 185px; padding-top: 0; }.change-item { margin-bottom: 8px; }.changes-tip { padding: 8px 14px; }
-  .toolbar, .review-toolbar { padding: 10px; gap: 10px; }.toolbar-group { gap: 7px; }#use-current { margin-left: 0; }
+  .toolbar, .review-toolbar, .action-toolbar { padding: 10px; gap: 10px; }.toolbar-group { gap: 7px; }#use-current { margin-left: 0; }
   .pane-head { flex-wrap: wrap; padding: 12px; gap: 8px; }.pane-description { flex-basis: calc(100% - 44px); }.pane-head .file-button { margin-top: 3px; }
   .pane-description strong { font-size: 15px; }.cm-mergeView { height: 440px; }.cm-merge-revert { min-width: 34px; }.cm-merge-revert button { margin-left: 3px; width: 27px; }
   .pane-feet span { padding: 8px; }.result-bar { padding: 12px; }.export-controls { width: 100%; }#filename { flex: 1; }
@@ -161,7 +161,7 @@ dialog::backdrop { background: #122c3a66; }dialog h2 { font-size: 23px; margin: 
 .view-options { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px; padding: 10px 15px; border-bottom: 1px solid var(--line); font-size: 14px; background: #fbfcfa; }
 .view-options span { color: var(--muted); font-size: 13px; }
 #review-progress { color: #416252; font-size: 14px; }
-#keep-current { margin-left: auto; }
+#keep-current { margin-left: 0; }
 #use-current { margin-left: 0; }
 .change-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 10px 10px; }
 .change-actions .change-apply, .change-actions .change-keep { margin: 0; }

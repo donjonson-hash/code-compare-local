@@ -1,8 +1,9 @@
 import { EditorView } from '@codemirror/view';
 import { buildChangeItems } from './changes.mjs';
 import { createReviewState } from './review-state.mjs';
+import { restoreRaw } from './raw-state.mjs';
 
-export function createChangesController({ getMerge, applyChunk }) {
+export function createChangesController({ getMerge, prepareChunk, applyChunk, notify }) {
   const list = document.getElementById('changes-list');
   const summary = document.getElementById('changes-summary');
   const position = document.getElementById('change-position');
@@ -54,7 +55,7 @@ export function createChangesController({ getMerge, applyChunk }) {
     if (lastChunks === merge.chunks && lastA === docA && lastB === docB) return;
     const previous = items[active];
     lastChunks = merge.chunks; lastA = docA; lastB = docB;
-    items = readItems(merge);
+    items = readItems(merge).map(item => ({ ...item, operation: prepareChunk(item.chunk) }));
     review.sync(pair(merge, items), pendingCause);
     pendingCause = 'edit';
     if (!items.length || !previous) active = -1;
@@ -91,12 +92,13 @@ export function createChangesController({ getMerge, applyChunk }) {
       apply.type = 'button'; apply.className = 'change-apply'; apply.textContent = 'Use A';
       apply.title = item.a.empty ? 'Remove this addition from B' : 'Use version A for this change';
       apply.setAttribute('aria-label', `Use A for change ${item.index + 1}: ${item.label}`);
-      apply.addEventListener('click', () => applyForChunk(item.chunk));
+      apply.addEventListener('click', event => { if (event.detail <= 1) applyItem(item); });
       const keep = document.createElement('button');
       keep.type = 'button'; keep.className = 'change-keep'; keep.textContent = 'Keep B';
       keep.title = 'Keep version B and mark this change reviewed';
       keep.setAttribute('aria-label', `Keep B for change ${item.index + 1}: ${item.label}`);
-      keep.addEventListener('click', () => {
+      keep.addEventListener('click', event => {
+        if (event.detail > 1) return;
         update();
         const index = items.findIndex(current => current.chunk === item.chunk);
         if (index >= 0) { active = index; keepCurrent(); }
@@ -144,27 +146,34 @@ export function createChangesController({ getMerge, applyChunk }) {
     nextUnreviewed();
   }
 
-  function applyForChunk(chunk) {
+  function captureForChunk(chunk) {
     update();
-    const index = items.findIndex(item => item.chunk === chunk);
-    if (index < 0) return;
-    active = index;
-    const item = items[index], merge = getMerge();
+    const item = items.find(item => item.chunk === chunk);
+    return item ? () => applyItem(item) : null;
+  }
+
+  function applyItem(item) {
+    // Use the proposal that was displayed. Never silently replace an old
+    // proposal with a new command against a newer document during this click.
+    const merge = getMerge();
     applying = true;
-    try { applyChunk(chunk); } finally { applying = false; }
+    let accepted;
+    try { accepted = applyChunk(item.operation); } finally { applying = false; }
+    if (!accepted) { update(); return false; }
     const applied = review.apply(item.key, pair(merge, readItems(merge)));
     update();
     if (applied) {
       const start = items.findIndex(next => next.a.from >= item.a.from);
       nextUnreviewed(start < 0 ? 0 : start);
     }
+    return true;
   }
 
   return {
-    update, applyForChunk, keepCurrent, nextUnreviewed,
+    update, captureForChunk, keepCurrent, nextUnreviewed,
     documentChanged(editorUpdate) {
-      if (!editorUpdate.docChanged || applying) return;
-      const isHistory = editorUpdate.transactions.filter(tr => tr.docChanged)
+      if (applying) return;
+      const isHistory = editorUpdate.transactions.filter(tr => tr.docChanged || tr.effects.some(e => e.is(restoreRaw)))
         .every(tr => tr.isUserEvent('undo') || tr.isUserEvent('redo'));
       // Invalidate immediately, even if a manual edit and Undo happen before
       // the next animation frame. Configuration changes do not reach this path.
@@ -179,6 +188,6 @@ export function createChangesController({ getMerge, applyChunk }) {
     revealFirst() { update(); if (items.length) reveal(0); },
     next() { update(); if (items.length) reveal(active < 0 ? 0 : active + 1); },
     previous() { update(); if (items.length) reveal(active < 0 ? items.length - 1 : active - 1); },
-    applyCurrent() { update(); if (active >= 0 && items[active]) applyForChunk(items[active].chunk); }
+    applyCurrent() { if (active >= 0 && items[active]) applyItem(items[active]); }
   };
 }

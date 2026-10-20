@@ -1,4 +1,18 @@
-# Code Compare Local · beta 0.5.0
+# Code Compare Local · beta 0.6.1
+
+## Deterministic transfer pilot
+
+Version 0.6.1 prepares each displayed A → B block as a versioned proposal.
+It checks both files and the exact expected text before applying the entire
+change. An outdated proposal is rejected, a consumed command cannot replay,
+and a double-click does not also copy the next block. Undo/redo still restores
+raw bytes and review progress; applying again after Undo creates a fresh proposal.
+
+See [DETERMINISM.md](DETERMINISM.md) for the operation map, schema, boundaries,
+and acceptance checks. No API, account, AI call or persistent storage is added.
+This is a development pilot; `store/` retains the prepared 0.5.0 listing/assets.
+The previously tested 0.5.0 store candidate is commit `7de941c`.
+
 
 Compare two versions of code, edit them side by side, move changes from A to B,
 check syntax, and download the result. Processing stays in the browser. No LLM,
@@ -7,6 +21,10 @@ API key, account, or server is required.
 This is an unpacked desktop Chromium extension, not a published or approved
 store release. The beta interface is in English. Firefox is not included in this
 release. [Инструкция на русском](README-RU.md).
+
+The **Use A → B**, **Keep B**, **Undo**, **Redo**, and **Download B** buttons are
+grouped above the editors. Version 0.6.1 fixes clipped card actions on narrower
+windows and gives Undo/Redo visible text labels.
 
 ## Install or update
 
