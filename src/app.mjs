@@ -20,6 +20,7 @@ import { createSyntaxController } from './syntax-ui.mjs';
 import { createChangesController } from './changes-ui.mjs';
 import { accessibleCollapsedContext } from './focus-view.mjs';
 import { prepareBlockTransfer, checkBlockTransfer } from './block-transfer.mjs';
+import { DIFF_CONFIG } from './diff-policy.mjs';
 
 const $ = id => document.getElementById(id);
 const compartments = { a: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() }, b: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() } };
@@ -137,7 +138,7 @@ function initialize() {
     a: { doc: '', extensions: extensions('a', makeDocument()) },
     b: { doc: '', extensions: extensions('b', makeDocument()) },
     parent: $('editors'), revertControls: 'a-to-b', renderRevertControl,
-    diffConfig: { scanLimit: 1500, timeout: 100 }, highlightChanges: true, gutter: true
+    diffConfig: DIFF_CONFIG, highlightChanges: true, gutter: true
   });
   queueStats();
 }

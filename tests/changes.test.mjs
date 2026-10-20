@@ -1,3 +1,4 @@
+import { DIFF_CONFIG } from '../src/diff-policy.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Text } from '@codemirror/state';
@@ -6,7 +7,7 @@ import { buildChangeItems } from '../src/changes.mjs';
 
 function compare(a, b) {
   const docA = Text.of(a.split('\n')), docB = Text.of(b.split('\n'));
-  return buildChangeItems(Chunk.build(docA, docB), docA, docB);
+  return buildChangeItems(Chunk.build(docA, docB, DIFF_CONFIG), docA, docB);
 }
 
 test('change labels point at actual changed lines, excluding full chunk context', () => {
