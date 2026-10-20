@@ -1,0 +1,42 @@
+ESTA EXTENSÃO SE DESTINA A TESTES BETA.
+
+Compare duas versões de código, revise as diferenças e salve o resultado desejado. Code Compare Local é uma ferramenta de comparação de código que funciona sem conexão no navegador. Abra a referência em A e a versão revisada em B; depois, percorra as alterações destacadas lado a lado.
+
+COMECE COM UM EXEMPLO
+A página de boas-vindas abre após a primeira instalação. Abra o editor ou experimente o exemplo JavaScript integrado sem preparar arquivos. O editor e a página de boas-vindas estão em inglês. As descrições da loja e os nomes traduzidos da extensão não alteram o idioma da interface.
+
+ENCONTRE AS LINHAS ALTERADAS
+A visualização de diferenças mostra inclusões, exclusões e substituições. A lista Differences apresenta os números de linha A/B e uma prévia de cada bloco alterado. Selecione um item ou use Previous e Next para ir até ele, inclusive quando as alterações estão distantes em um arquivo longo.
+
+ESCOLHA O QUE FICA EM B
+Clique em Use A para copiar o bloco selecionado para B, ou em Keep B para marcar a diferença como revisada sem alterá-la. Use A → B atua sobre uma diferença por vez; All A → B substitui o resultado inteiro. O progresso da revisão ajuda a acompanhar as decisões tomadas durante a sessão.
+
+EDITE E DESFAÇA
+Edite o código diretamente em qualquer um dos painéis. Undo e Redo, acima dos editores, atuam em B; Ctrl/Cmd+Z atua no editor em foco. Transferências de blocos também podem ser desfeitas. Keep B é uma marca de revisão, não uma edição de texto. As edições manuais reiniciam o progresso para que decisões anteriores não sejam mantidas sem aviso em um texto alterado.
+
+OBTENHA DIFERENÇAS CONSISTENTES
+O mesmo texto final A/B produz os mesmos blocos de diferenças, seja ao abrir arquivos diretamente, editá-los ou desfazer e refazer alterações. Isso facilita comparar o código novamente após salvá-lo. Diferenças complexas podem ser agrupadas em blocos maiores; um bloco nem sempre é a menor alteração possível.
+
+FACILITE A LEITURA DO CÓDIGO
+Escolha um tamanho de texto entre 14 e 20 px e ative ou desative a quebra de linha. Only changes recolhe trechos longos sem alterações, mantendo três linhas de contexto ao redor das diferenças. Expanda um trecho quando precisar de mais contexto. Show spaces & tabs mostra a indentação sem alterar o código.
+
+VERIFIQUE A SINTAXE COMPATÍVEL
+As verificações são executadas localmente após abrir, colar, editar e transferir código. Clique em Check syntax para repeti-las e selecione um local indicado para ir ao problema. JavaScript, JSX, TypeScript, TSX, JSON e YAML têm verificações de sintaxe. Python oferece verificações preliminares de gramática e indentação.
+
+ENTENDA O ALCANCE DA VERIFICAÇÃO
+A extensão não executa código nem o corrige automaticamente. Cada lado é verificado como um arquivo independente; por isso, um trecho incompleto pode gerar erros. A verificação de tipos do TypeScript e a validação de esquemas YAML não estão incluídas. As verificações de Python não substituem a validação com o próprio Python. As demais linguagens de programação listadas oferecem apenas realce de sintaxe; uma sintaxe válida não comprova um comportamento correto.
+
+SALVE O ARQUIVO REVISADO
+Download B cria um novo arquivo UTF-8 sem sobrescrever o original. Os downloads preservam espaços, tabulações, a marca de ordem de bytes UTF-8 e as terminações de linha originais no texto inalterado. Os blocos transferidos mantêm as terminações de linha de A. As novas linhas digitadas usam o estilo predominante do arquivo editado. Copy B copia para a área de transferência, que pode normalizar as terminações de linha.
+
+USE NA REVISÃO DIÁRIA DE CÓDIGO
+Compare código JavaScript antes de incorporar uma atualização ao projeto. Revise um arquivo Python quando a indentação possa ter mudado durante uma transferência. Compare configurações JSON ou YAML e examine os valores alterados como texto. A comparação JSON é textual: não associa objetos pelo significado nem ignora a ordem das chaves. São verificações de dois arquivos, não a revisão de um repositório inteiro.
+
+MANTENHA O PROCESSAMENTO NO DISPOSITIVO
+Não são necessários conta, chave de API, serviço externo de IA, análise de uso ou envio de código. A extensão trabalha na própria aba do editor e não lê outras abas nem conversas. Cole ou abra o código por conta própria, incluindo trechos de um chat. Ela não se conecta automaticamente ao ChatGPT, Claude ou Gemini.
+
+SALVE ANTES DE FECHAR
+O texto, o histórico de desfazer e o estado da revisão ficam na memória durante a sessão. Fechar ou recarregar o editor não restaura seu trabalho. Baixe o resultado antes de sair da aba. Não há histórico na nuvem nem backup em segundo plano.
+
+LIMITES DE ARQUIVOS DA BETA
+Abra arquivos de texto UTF-8 de até 512 KiB, 200.000 unidades de código UTF-16 e 4.000 linhas por lado. PDF, documentos Word, arquivos binários e pastas inteiras não são compatíveis. Comece com dois arquivos de código conhecidos: encontre uma diferença, faça uma correção, experimente Undo e baixe B.

@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — コード比較 — Beta"
+  },
+  "extensionDescription": {
+    "message": "コードを左右に並べてローカルで比較。変更箇所の編集、構文チェック、ファイル保存をオフラインで行えます。"
+  },
+  "actionTitle": {
+    "message": "Code Compare Local を開く"
+  }
+}

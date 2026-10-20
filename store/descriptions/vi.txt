@@ -1,0 +1,42 @@
+TIỆN ÍCH NÀY DÀNH CHO THỬ NGHIỆM BETA.
+
+So sánh hai phiên bản mã, xem các khác biệt và lưu kết quả bạn muốn. Code Compare Local là công cụ so sánh mã hoạt động ngoại tuyến trong trình duyệt. Mở bản tham chiếu ở A và bản đã sửa ở B, rồi xem các thay đổi được tô sáng trong hai khung đặt cạnh nhau.
+
+BẮT ĐẦU BẰNG VÍ DỤ
+Trang chào mừng mở sau lần cài đặt đầu tiên. Mở trình soạn thảo hoặc thử ví dụ JavaScript có sẵn mà không cần chuẩn bị tệp. Trình soạn thảo và trang chào mừng dùng tiếng Anh. Bản dịch mô tả trên cửa hàng và tên tiện ích không thay đổi ngôn ngữ giao diện.
+
+TÌM CÁC DÒNG ĐÃ THAY ĐỔI
+Chế độ xem khác biệt mã hiển thị phần thêm, xóa và thay thế. Danh sách Differences cho biết số dòng A/B và bản xem trước của từng khối thay đổi. Chọn một mục hoặc dùng Previous và Next để chuyển tới mục đó, kể cả những thay đổi nằm xa nhau trong tệp dài.
+
+CHỌN NỘI DUNG CHO B
+Nhấn Use A để sao chép khối đang chọn vào B, hoặc Keep B để đánh dấu khác biệt đã được xem xét mà không sửa nội dung. Use A → B xử lý từng khác biệt; All A → B thay thế toàn bộ kết quả. Tiến độ xem xét giúp bạn theo dõi những quyết định trong phiên làm việc hiện tại.
+
+CHỈNH SỬA VÀ HOÀN TÁC
+Sửa mã trực tiếp trong một trong hai khung. Undo và Redo phía trên các khung áp dụng cho B; Ctrl/Cmd+Z tác động tới khung đang được chọn. Bạn cũng có thể hoàn tác thao tác chuyển khối. Keep B là dấu đã xem xét, không phải thao tác sửa văn bản. Chỉnh sửa thủ công đặt lại tiến độ xem xét để quyết định cũ không âm thầm được giữ lại cho văn bản đã thay đổi.
+
+NHẬN CÁC KHỐI KHÁC BIỆT NHẤT QUÁN
+Cùng một nội dung A/B cuối cùng sẽ cho cùng các khối khác biệt, dù bạn tải tệp trực tiếp, sửa chúng hay hoàn tác và làm lại thay đổi. Nhờ đó, việc so sánh mã lần nữa sau khi lưu trở nên dễ hơn. Các khác biệt phức tạp có thể được gộp thành khối lớn hơn; một khối không phải lúc nào cũng là thay đổi nhỏ nhất có thể.
+
+GIÚP MÃ DỄ ĐỌC HƠN
+Chọn cỡ chữ mã từ 14 đến 20 px và bật hoặc tắt ngắt dòng theo khung. Only changes thu gọn các đoạn dài không thay đổi, giữ ba dòng ngữ cảnh quanh mỗi khác biệt. Mở rộng đoạn đã thu gọn khi cần thêm ngữ cảnh. Show spaces & tabs hiển thị thụt lề mà không làm thay đổi mã.
+
+KIỂM TRA CÚ PHÁP ĐƯỢC HỖ TRỢ
+Kiểm tra cú pháp chạy cục bộ sau khi tải, dán, sửa hoặc chuyển mã. Nhấn Check syntax để kiểm tra lại, rồi chọn vị trí được báo để chuyển tới vấn đề. JavaScript, JSX, TypeScript, TSX, JSON và YAML có kiểm tra cú pháp. Python có kiểm tra sơ bộ về ngữ pháp và thụt lề.
+
+HIỂU Ý NGHĨA CỦA VIỆC KIỂM TRA
+Tiện ích không thực thi mã hay tự động sửa lỗi. Mỗi bên được kiểm tra như một tệp độc lập, nên đoạn mã chưa hoàn chỉnh có thể báo lỗi. Không bao gồm kiểm tra kiểu TypeScript hay xác thực lược đồ YAML. Kiểm tra Python không thay thế việc xác thực bằng chính Python. Các ngôn ngữ khác trong danh sách chỉ được tô màu cú pháp; cú pháp hợp lệ không chứng minh chương trình hoạt động đúng.
+
+LƯU TỆP ĐÃ CHỈNH SỬA
+Download B tạo tệp UTF-8 mới mà không ghi đè tệp gốc. Khi tải xuống, dấu cách, tab, dấu thứ tự byte UTF-8 và kiểu kết thúc dòng gốc trong phần văn bản không thay đổi được giữ nguyên. Khối được chuyển giữ kiểu kết thúc dòng của A. Dòng mới nhập dùng kiểu kết thúc dòng chính của tệp đang sửa. Dùng Copy B để sao chép vào bảng nhớ tạm; bảng nhớ tạm có thể chuẩn hóa kiểu kết thúc dòng.
+
+DÙNG ĐỂ XEM XÉT MÃ HẰNG NGÀY
+So sánh mã JavaScript trước khi sao chép bản cập nhật vào dự án. Xem lại tệp Python khi thụt lề có thể đã thay đổi trong quá trình chuyển. So sánh tệp cấu hình JSON hoặc YAML và kiểm tra các giá trị đã thay đổi dưới dạng văn bản. So sánh JSON là so sánh văn bản: không đối chiếu đối tượng theo ý nghĩa và không bỏ qua thứ tự khóa. Đây là kiểm tra hai tệp, không phải xem xét toàn bộ kho mã.
+
+GIỮ VIỆC XỬ LÝ TRÊN THIẾT BỊ
+Không cần tài khoản, khóa API, dịch vụ AI bên ngoài, phân tích theo dõi hay tải mã lên. Tiện ích hoạt động trong thẻ trình soạn thảo riêng và không đọc các thẻ hay cuộc hội thoại khác. Bạn tự dán hoặc mở mã, kể cả đoạn mã từ cuộc trò chuyện. Tiện ích không tự động kết nối với ChatGPT, Claude hay Gemini.
+
+LƯU TRƯỚC KHI ĐÓNG
+Văn bản, lịch sử hoàn tác và trạng thái xem xét chỉ nằm trong bộ nhớ trong phiên làm việc. Đóng hoặc tải lại trình soạn thảo sẽ không khôi phục công việc của bạn. Hãy tải kết quả xuống trước khi rời thẻ. Không có lịch sử đám mây hay sao lưu nền.
+
+GIỚI HẠN TỆP TRONG BẢN BETA
+Mở tệp văn bản UTF-8 tối đa 512 KiB, 200.000 đơn vị mã UTF-16 và 4.000 dòng mỗi bên. Không hỗ trợ PDF, tài liệu Word, tệp nhị phân hay toàn bộ thư mục. Bắt đầu với hai tệp mã bạn hiểu rõ: tìm một khác biệt, chỉnh sửa, thử Undo và tải B xuống.

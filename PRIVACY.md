@@ -1,6 +1,6 @@
 # Code Compare Local privacy statement
 
-Versions 0.5.0 and 0.8.0 pilot · 20 October 2026
+Version 0.9.0 beta candidate · 20 October 2026
 
 Code Compare Local compares and edits text within its own browser-extension
 tab. This statement describes the included beta build.
@@ -36,6 +36,12 @@ usage events, identifiers, or browsing history to the developer.
 The manifest requests no optional permissions, API permissions, or website
 host permissions. No content scripts run on other websites. Clicking the
 extension icon opens its own editor tab; it does not read chats or other tabs.
+A local welcome page opens on first installation, not on updates. Its editor
+and example links stay within the extension. Translated extension metadata is
+packaged locally; no translation service or language-detection request is used.
+Support and privacy links open GitHub only when you choose them. GitHub then
+receives an ordinary browser visit under its own policies; editor contents are
+not included in those links.
 The extension page's content security policy blocks network connections through
 `connect-src 'none'` and loads scripts from the extension package.
 

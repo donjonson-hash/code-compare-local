@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0 — Welcome and localized store kit (candidate)
+
+- Open a local getting-started page on first install; updates remain quiet.
+- Launch the existing example explicitly and open help without replacing edits.
+- Add localized manifest metadata and full store descriptions for 22 locales; the editor and welcome remain English.
+- Complete 16/32/48/64/128 icons, three screenshots, small and marquee promos, and bootcamp submission materials.
+- Keep comparison, transfer, syntax-check algorithms and offline/session behavior unchanged.
+
 ## 0.8.0 — 20 October 2026
 
 - Rebuild all difference blocks from current A/B after document edits, transfers and Undo/Redo, removing grouping dependence on edit history.

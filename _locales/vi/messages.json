@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — So sánh mã — Beta"
+  },
+  "extensionDescription": {
+    "message": "So sánh mã cạnh nhau ngay trên thiết bị. Sửa thay đổi, kiểm tra cú pháp và lưu tệp ngoại tuyến."
+  },
+  "actionTitle": {
+    "message": "Mở Code Compare Local"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Koodin vertailu — Beta"
+  },
+  "extensionDescription": {
+    "message": "Vertaa koodia rinnakkain paikallisesti. Muokkaa muutoksia, tarkista syntaksi ja tallenna tiedostot ilman verkkoyhteyttä."
+  },
+  "actionTitle": {
+    "message": "Avaa Code Compare Local"
+  }
+}

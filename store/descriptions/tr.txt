@@ -1,0 +1,42 @@
+BU UZANTI BETA TESTİ İÇİNDİR.
+
+Kodun iki sürümünü karşılaştırın, farklarını inceleyin ve istediğiniz sonucu kaydedin. Code Compare Local, tarayıcınızda çevrimdışı çalışan bir kod karşılaştırma aracıdır. Referans sürümünü A'da, düzenlenmiş sürümü B'de açın ve vurgulanan değişiklikleri yan yana inceleyin.
+
+BİR ÖRNEKLE BAŞLAYIN
+İlk kurulumdan sonra karşılama sayfası açılır. Dosya hazırlamadan düzenleyiciyi açın veya yerleşik JavaScript örneğini deneyin. Düzenleyici ve karşılama sayfası İngilizcedir. Çevrilmiş mağaza açıklamaları ve uzantı adları, arayüzün dilini değiştirmez.
+
+DEĞİŞEN SATIRLARI BULUN
+Kod farkı görünümü eklemeleri, silmeleri ve değiştirmeleri gösterir. Differences listesinde A/B satır numaraları ve değişen her bloğun önizlemesi bulunur. Bir öğe seçin veya Previous ve Next düğmeleriyle ilgili konuma gidin; uzun dosyalarda birbirinden uzak değişikliklere de ulaşabilirsiniz.
+
+B'DE NE KALACAĞINI SEÇİN
+Seçili bloğu B'ye kopyalamak için Use A'ya, farkı değiştirmeden incelendi olarak işaretlemek için Keep B'ye tıklayın. Use A → B tek seferde bir farkı işler; All A → B sonucun tamamını değiştirir. İnceleme ilerlemesi, bu oturumda aldığınız kararları izlemenize yardımcı olur.
+
+DÜZENLEYİN VE GERİ ALIN
+Kodu iki bölmeden birinde doğrudan düzenleyin. Düzenleyicilerin üzerindeki Undo ve Redo B için geçerlidir; Ctrl/Cmd+Z, odaktaki düzenleyicide çalışır. Blok aktarımları da geri alınabilir. Keep B bir inceleme işaretidir, metin düzenlemesi değildir. Elle yapılan düzenlemeler inceleme ilerlemesini sıfırlar; böylece önceki kararlar değişmiş metne sessizce aktarılmaz.
+
+TUTARLI FARKLAR ELDE EDİN
+A/B'deki son metin aynıysa, dosyaları doğrudan açmanız, düzenlemeniz veya değişiklikleri geri alıp yinelemeniz aynı fark bloklarını üretir. Bu, kaydettikten sonra kodu yeniden karşılaştırmayı kolaylaştırır. Zor farklar daha geniş bloklarda gruplanabilir; bir blok her zaman mümkün olan en küçük değişiklik değildir.
+
+KODU DAHA OKUNAKLI HALE GETİRİN
+14 ile 20 px arasında bir metin boyutu seçin ve satır kaydırmayı açın veya kapatın. Only changes, uzun ve değişmemiş bölümleri daraltır; farkların çevresinde üç bağlam satırı bırakır. Daha fazla bağlam gerektiğinde daraltılmış bölümü genişletin. Show spaces & tabs, kodu değiştirmeden girintileri görünür kılar.
+
+DESTEKLENEN SÖZDİZİMİNİ DENETLEYİN
+Kod açıldıktan, yapıştırıldıktan, düzenlendikten veya aktarıldıktan sonra sözdizimi denetimleri yerel olarak çalışır. Yeniden çalıştırmak için Check syntax'a tıklayın, ardından soruna gitmek için bildirilen konumu seçin. JavaScript, JSX, TypeScript, TSX, JSON ve YAML için sözdizimi denetimi bulunur. Python için dilbilgisi ve girintiye yönelik ön denetimler sunulur.
+
+DENETİMİN NE ANLAMA GELDİĞİNİ BİLİN
+Uzantı kodu çalıştırmaz ve otomatik olarak onarmaz. Her taraf bağımsız bir dosya olarak denetlendiğinden, tamamlanmamış kod parçaları hata bildirebilir. TypeScript tür denetimi ve YAML şema doğrulaması dahil değildir. Python denetimleri, Python ile yapılan doğrulamanın yerini almaz. Listelenen diğer dillerde yalnızca sözdizimi vurgulama vardır; geçerli sözdizimi, doğru çalışmanın kanıtı değildir.
+
+DÜZENLENMİŞ DOSYAYI KAYDEDİN
+Download B, özgün dosyanın üzerine yazmadan yeni bir UTF-8 dosyası oluşturur. İndirilen dosyalarda boşluklar, sekmeler, UTF-8 bayt sırası işareti ve değişmemiş metindeki özgün satır sonları korunur. Aktarılan bloklar A'nın satır sonlarını korur. Yeni yazılan satırlar, düzenlenen dosyanın temel satır sonu biçimini kullanır. Panoya kopyalamak için Copy B'yi kullanın; pano satır sonlarını standartlaştırabilir.
+
+GÜNLÜK KOD İNCELEMELERİNDE KULLANIN
+Bir güncellemeyi projenize kopyalamadan önce JavaScript kodunu karşılaştırın. Aktarım sırasında girintiler değişmiş olabilecekse Python dosyasını inceleyin. JSON veya YAML yapılandırma dosyalarını karşılaştırın ve değişen değerleri metin olarak gözden geçirin. JSON karşılaştırması metinseldir: nesneleri anlamlarına göre eşleştirmez ve anahtar sırasını yok saymaz. Bu işlem iki dosyayı denetler, bir kod deposunun tamamını incelemez.
+
+İŞLEME CİHAZINIZDA KALSIN
+Hesap, API anahtarı, harici yapay zekâ hizmeti, analitik veya kod yükleme gerekmez. Uzantı kendi düzenleyici sekmesinde çalışır; diğer sekmeleri veya konuşmaları okumaz. Sohbetten alınan parçalar dahil olmak üzere kodu kendiniz yapıştırın veya açın. ChatGPT, Claude veya Gemini'ye otomatik olarak bağlanmaz.
+
+KAPATMADAN ÖNCE KAYDEDİN
+Metin, geri alma geçmişi ve inceleme durumu oturum boyunca bellekte tutulur. Düzenleyiciyi kapatmak veya yeniden yüklemek çalışmanızı geri getirmez. Sekmeden ayrılmadan önce sonucu indirin. Bulut geçmişi veya arka planda yedekleme yoktur.
+
+BETA DOSYA SINIRLARI
+Her tarafta en fazla 512 KiB, 200.000 UTF-16 kod birimi ve 4.000 satır içeren UTF-8 metin dosyalarını açabilirsiniz. PDF, Word belgeleri, ikili dosyalar ve klasörlerin tamamı desteklenmez. Bildiğiniz iki kod dosyasıyla başlayın: bir fark bulun, düzeltme yapın, Undo'yu deneyin ve B'yi indirin.

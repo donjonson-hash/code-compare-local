@@ -1,0 +1,42 @@
+DENNE UTVIDELSEN ER LAGET FOR BETATESTING.
+
+Sammenlign to kodeversjoner, se gjennom forskjellene og lagre resultatet du vil ha. Code Compare Local er et verktøy for kodesammenligning som fungerer uten nett i nettleseren. Åpne referanseversjonen i A og den endrede versjonen i B, og gå gjennom de uthevede endringene side om side.
+
+START MED ET EKSEMPEL
+Velkomstsiden åpnes etter første installasjon. Åpne redigeringsverktøyet eller prøv et innebygd JavaScript-eksempel uten å klargjøre filer. Redigeringsverktøyet og velkomstsiden er på engelsk. Oversatte butikkbeskrivelser og utvidelsesnavn endrer ikke språket i grensesnittet.
+
+FINN ENDREDE LINJER
+Kodevisningen viser tillegg, slettinger og erstatninger. Listen Differences viser linjenumre for A/B og en forhåndsvisning av hver endret blokk. Velg en oppføring, eller bruk Previous og Next for å gå til den, også når endringene ligger langt fra hverandre i en lengre fil.
+
+VELG HVA B SKAL INNEHOLDE
+Klikk på Use A for å kopiere den valgte blokken til B, eller Keep B for å merke forskjellen som gjennomgått uten å endre den. Use A → B tar én forskjell om gangen; All A → B erstatter hele resultatet. Fremdriften i gjennomgangen hjelper deg med å holde oversikt over valgene i denne økten.
+
+REDIGER OG ANGRE
+Rediger koden direkte i ett av de to panelene. Undo og Redo over redigeringsfeltene gjelder B; Ctrl/Cmd+Z gjelder feltet som har fokus. Du kan også angre overføring av blokker. Keep B er en gjennomgangsmarkering, ikke en tekstendring. Manuell redigering nullstiller fremdriften, slik at tidligere valg ikke ubemerket videreføres til endret tekst.
+
+FÅ KONSISTENTE FORSKJELLER
+Samme endelige tekst i A/B gir de samme forskjellsblokkene, enten du åpner filene direkte, redigerer dem eller angrer og gjør om endringer. Det gjør det enklere å sammenligne koden på nytt etter lagring. Vanskelige forskjeller kan samles i større blokker; en blokk er ikke alltid den minste mulige endringen.
+
+GJØR KODEN LETTERE Å LESE
+Velg tekststørrelse fra 14 til 20 px og slå linjebryting av eller på. Only changes folder sammen lange uendrede partier og viser tre kontekstlinjer rundt forskjellene. Utvid et sammenfoldet parti når du trenger mer sammenheng. Show spaces & tabs viser innrykk uten å endre koden.
+
+SJEKK STØTTET SYNTAKS
+Syntakskontroller kjøres lokalt når du åpner, limer inn, redigerer eller overfører kode. Klikk på Check syntax for å kjøre dem på nytt, og velg deretter en rapportert plassering for å gå til problemet. JavaScript, JSX, TypeScript, TSX, JSON og YAML har syntakskontroll. Python har foreløpige kontroller av grammatikk og innrykk.
+
+FORSTÅ HVA KONTROLLEN BETYR
+Utvidelsen kjører ikke koden og retter den ikke automatisk. Hver side kontrolleres som en selvstendig fil, så en uferdig kodesnutt kan gi feil. Typekontroll for TypeScript og skjemavalidering for YAML er ikke inkludert. Python-kontrollene erstatter ikke validering med Python selv. Andre språk i listen har bare syntaksutheving; gyldig syntaks beviser ikke at koden fungerer riktig.
+
+LAGRE DEN ENDREDE FILEN
+Download B oppretter en ny UTF-8-fil uten å overskrive originalen. Nedlastinger bevarer mellomrom, tabulatorer, UTF-8-byteordensmerket og opprinnelige linjeslutttegn i uendret tekst. Overførte blokker beholder linjesluttene fra A. Nyskrevne linjer bruker den redigerte filens vanligste linjesluttformat. Copy B kopierer til utklippstavlen, som kan normalisere linjeslutt.
+
+BRUK TIL DAGLIG KODEGJENNOMGANG
+Sammenlign JavaScript-kode før du kopierer en oppdatering inn i prosjektet. Se gjennom en Python-fil hvis innrykk kan ha endret seg under en overføring. Sammenlign JSON- eller YAML-konfigurasjonsfiler og se på endrede verdier som tekst. JSON-sammenligning er tekstbasert: den matcher ikke objekter etter betydning og ignorerer ikke nøkkelrekkefølgen. Dette er kontroll av to filer, ikke av et helt kodelager.
+
+BEHOLD BEHANDLINGEN PÅ ENHETEN DIN
+Ingen konto, API-nøkkel, ekstern AI-tjeneste, analyseverktøy eller kodeopplasting er nødvendig. Utvidelsen fungerer i sin egen redigeringsfane og leser ikke andre faner eller samtaler. Lim inn eller åpne koden selv, også kodesnutter fra en chat. Den kobler seg ikke automatisk til ChatGPT, Claude eller Gemini.
+
+LAGRE FØR DU LUKKER
+Tekst, angrehistorikk og gjennomgangsstatus ligger i minnet under økten. Arbeidet gjenopprettes ikke hvis du lukker eller laster inn redigeringsverktøyet på nytt. Last ned resultatet før du forlater fanen. Det finnes ingen skyhistorikk eller sikkerhetskopiering i bakgrunnen.
+
+FILGRENSER I BETAVERSJONEN
+Åpne UTF-8-tekstfiler på opptil 512 KiB, 200 000 UTF-16-kodeenheter og 4 000 linjer per side. PDF, Word-dokumenter, binærfiler og hele mapper støttes ikke. Start med to kodefiler du kjenner: finn en forskjell, gjør en rettelse, prøv Undo og last ned B.

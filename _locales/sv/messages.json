@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — Jämför kod — Beta"
+  },
+  "extensionDescription": {
+    "message": "Jämför kod sida vid sida lokalt. Redigera ändringar, kontrollera syntax och spara filer offline."
+  },
+  "actionTitle": {
+    "message": "Öppna Code Compare Local"
+  }
+}

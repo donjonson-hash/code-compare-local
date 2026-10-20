@@ -1,24 +1,28 @@
-# Code Compare Local 0.8.0 — комплект для Chrome Web Store
+# Code Compare Local 0.9.0 — комплект для Chrome Web Store
 
-Подготовлено 20 октября 2026 для принятой версии 0.8.0, тег `v0.8.0`.
-Перенос изменений, Undo/Redo и сохранение проверены пользователем. CI после
-слияния PR #6 прошёл. Подготовка комплекта не означает отправку на модерацию
-или публикацию расширения.
+Подготовлено 20 октября 2026 для кандидата 0.9.0. Принятая версия 0.8.0
+дополнена welcome page и локализованными метаданными. Это комплект подготовки;
+он ещё не отправлен на модерацию и не опубликован.
 
 ## Файлы
 
 Запустить `npm run package` из корня проекта.
-Комплект `dist/code-compare-local-0.8.0-store-kit.zip` содержит установочный
+Комплект `dist/code-compare-local-0.9.0-store-kit.zip` содержит установочный
 ZIP, изображения и тексты. Сначала распакуйте комплект; в Developer Dashboard
-загружайте только вложенный `code-compare-local-0.8.0-beta.zip`.
+загружайте только вложенный `code-compare-local-0.9.0-beta.zip`.
 
 | Поле / действие | Файл в распакованном комплекте |
 | --- | --- |
-| Загрузка расширения | `code-compare-local-0.8.0-beta.zip` |
+| Загрузка расширения | `code-compare-local-0.9.0-beta.zip` |
 | Скриншот: найденная ошибка | `screenshot-1280x800.png` |
 | Скриншот: после исправления | `screenshot-fixed-1280x800.png` |
 | Промо 440 × 280 | `promo-440x280.png` |
+| Welcome page 1280 × 800 | `screenshot-welcome-1280x800.png` |
+| Дополнительное промо 1400 × 560 | `promo-1400x560.png` |
 | Иконка 128 × 128 | `icon128.png` |
+| Иконки 16/32/48/64/128 | `icons/` |
+| Переводы карточки | `descriptions/`, `metadata/`, `LOCALIZATION-RU.md` |
+| Checklist буткемпа | `BOOTCAMP-CHECKLIST-RU.md` |
 | Полное описание на английском | `FULL-DESCRIPTION-EN.txt` |
 
 В магазин загружается beta ZIP с `manifest.json` в корне. Source ZIP содержит
@@ -26,9 +30,9 @@ ZIP, изображения и тексты. Сначала распакуйте
 
 ## Карточка
 
-- Name: **Code Compare Local — Beta** (из manifest).
-- Short description: **Compare and edit code locally. Check syntax, copy changes, and save. No AI, account, or uploads.** (из manifest).
-- Язык: English.
+- Name: **Code Compare Local — Beta** (английские сообщения `_locales/en/messages.json`).
+- Short description: **Compare code side by side with a local code diff tool. Edit changes, check syntax, and save files offline.** (английские сообщения `_locales/en/messages.json`).
+- Язык по умолчанию: English. Для остальных карточек — 21 перевод из `descriptions/`; редактор и welcome page остаются английскими.
 - Homepage: https://github.com/donjonson-hash/code-compare-local
 - Support: https://github.com/donjonson-hash/code-compare-local/issues
 - Privacy policy: https://github.com/donjonson-hash/code-compare-local/blob/main/PRIVACY.md
@@ -75,7 +79,9 @@ analytics, advertising, telemetry, or remote services.
 
 No account, login, credentials, payment, or external service is required.
 
-1. Install the extension and click its toolbar icon to open the editor.
+1. Install the extension. The local welcome page opens only on first install.
+   Click “Open editor”; updates do not reopen the guide. The toolbar icon also
+   opens the editor directly.
 2. Click “Try an example” to load two valid synthetic JavaScript versions.
 3. Select an entry in “Differences” to jump to the changed lines. Click
    “Keep B” to mark that difference reviewed without changing the code.
@@ -95,11 +101,16 @@ needed for these steps.
 The extension does not execute source code. Python validation is preliminary;
 TypeScript type checking and YAML schema validation are not included.
 
+Welcome page also has “Try an example”, which opens the editor with the built-in
+example. “Getting started” in the editor opens the guide in a separate tab so
+existing edits are retained. Help/privacy links open GitHub only on an explicit click.
+
 ## Последовательность публикации
 
 1. Открыть Chrome Web Store Developer Dashboard нужного аккаунта.
 2. Создать новую карточку и загрузить beta ZIP.
 3. Внести английское описание, изображения и три публичные ссылки выше.
+   Добавить переводы карточки по `LOCALIZATION-RU.md`; сам интерфейс английский.
 4. Заполнить Privacy practices по фактическому поведению из этого документа.
 5. Выбрать распространение и проверить предпросмотр карточки.
 6. Отправить на модерацию. После одобрения сохранить URL карточки и проверить

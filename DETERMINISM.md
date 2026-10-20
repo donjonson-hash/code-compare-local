@@ -4,7 +4,8 @@ Version 0.8.0 is the accepted baseline (tag `v0.8.0`). It adds
 canonical full comparison after every document-changing transaction. It keeps
 versioned transfers, raw-byte history, and the existing editor instances.
 It does not introduce a plugin API or LLM integration. Store materials in
-`store/` now describe 0.8.0; no store submission or approval is claimed.
+`store/` now describe the 0.9.0 onboarding candidate, which retains the same
+comparison and transfer algorithms; no store submission or approval is claimed.
 
 ## Operation map
 

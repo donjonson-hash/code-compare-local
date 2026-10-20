@@ -1,0 +1,42 @@
+TÄMÄ LAAJENNUS ON TARKOITETTU BETATESTAUKSEEN.
+
+Vertaa kahta koodiversiota, tarkista erot ja tallenna haluamasi lopputulos. Code Compare Local on koodin vertailutyökalu, joka toimii selaimessa ilman verkkoyhteyttä. Avaa vertailukohta A:han ja muokattu versio B:hen ja käy korostetut muutokset läpi rinnakkain.
+
+ALOITA ESIMERKISTÄ
+Tervetulosivu avautuu ensimmäisen asennuksen jälkeen. Avaa editori tai kokeile sisäänrakennettua JavaScript-esimerkkiä valmistelematta tiedostoja. Editori ja tervetulosivu ovat englanninkielisiä. Käännetyt kauppakuvaukset ja laajennuksen nimet eivät muuta käyttöliittymän kieltä.
+
+LÖYDÄ MUUTETUT RIVIT
+Koodin vertailunäkymä näyttää lisäykset, poistot ja korvaukset. Differences-luettelo näyttää A:n ja B:n rivinumerot sekä esikatselun kustakin muuttuneesta lohkosta. Valitse kohta tai siirry siihen painikkeilla Previous ja Next myös silloin, kun erot ovat kaukana toisistaan pitkässä tiedostossa.
+
+VALITSE B:HEN JÄÄVÄ SISÄLTÖ
+Kopioi valittu lohko B:hen painamalla Use A tai merkitse ero tarkistetuksi muuttamatta sitä painamalla Keep B. Use A → B käsittelee yhden eron kerrallaan; All A → B korvaa koko lopputuloksen. Tarkistuksen eteneminen auttaa seuraamaan tämän istunnon aikana tekemiäsi päätöksiä.
+
+MUOKKAA JA KUMOA
+Muokkaa koodia suoraan kummassa tahansa paneelissa. Editorien yläpuolella olevat Undo ja Redo koskevat B:tä; Ctrl/Cmd+Z koskee aktiivista editoria. Myös lohkojen siirrot voi kumota. Keep B on tarkistusmerkintä, ei tekstimuutos. Manuaalinen muokkaus nollaa tarkistuksen etenemisen, jotta aiemmat päätökset eivät huomaamatta siirry muuttuneeseen tekstiin.
+
+SAA JOHDONMUKAISET EROT
+Sama lopullinen A/B-teksti tuottaa samat erolohkot riippumatta siitä, avaatko tiedostot suoraan, muokkaatko niitä vai kumoatko ja teetkö muutoksia uudelleen. Koodia on näin helpompi verrata uudelleen tallentamisen jälkeen. Hankalat erot voidaan ryhmitellä suuremmiksi lohkoiksi; lohko ei aina ole pienin mahdollinen muutos.
+
+TEE KOODISTA HELPOMMIN LUETTAVAA
+Valitse tekstikoko 14–20 px ja ota rivien rivitys käyttöön tai poista se käytöstä. Only changes kutistaa pitkät muuttumattomat jaksot ja näyttää erojen ympärillä kolme riviä asiayhteyttä. Laajenna kutistettu jakso, kun tarvitset enemmän asiayhteyttä. Show spaces & tabs näyttää sisennykset muuttamatta koodia.
+
+TARKISTA TUETTU SYNTAKSI
+Syntaksitarkistukset tehdään paikallisesti koodin avaamisen, liittämisen, muokkaamisen ja siirtämisen jälkeen. Suorita tarkistus uudelleen painamalla Check syntax ja siirry ongelmaan valitsemalla ilmoitettu sijainti. Syntaksitarkistus on käytettävissä JavaScriptille, JSX:lle, TypeScriptille, TSX:lle, JSONille ja YAMLille. Pythonille on alustavat kielioppi- ja sisennystarkistukset.
+
+YMMÄRRÄ TARKISTUKSEN RAJAT
+Laajennus ei suorita koodia eikä korjaa sitä automaattisesti. Kumpikin puoli tarkistetaan itsenäisenä tiedostona, joten keskeneräinen koodikatkelma voi tuottaa virheitä. TypeScriptin tyyppitarkistus ja YAMLin skeemavalidointi eivät sisälly toimintoihin. Python-tarkistukset eivät korvaa tarkistamista Pythonilla. Muille luetelluille kielille on vain syntaksin korostus; kelvollinen syntaksi ei todista toiminnan oikeellisuutta.
+
+TALLENNA MUOKATTU TIEDOSTO
+Download B luo uuden UTF-8-tiedoston korvaamatta alkuperäistä. Lataus säilyttää välilyönnit, sarkaimet, UTF-8-tavujärjestysmerkin sekä alkuperäiset rivinvaihdot muuttumattomassa tekstissä. Siirretyt lohkot säilyttävät A:n rivinvaihdot. Uudet kirjoitetut rivit käyttävät muokattavan tiedoston pääasiallista rivinvaihtotapaa. Copy B kopioi leikepöydälle, joka saattaa yhtenäistää rivinvaihdot.
+
+KÄYTÄ ARKISESSA KOODIN TARKISTUKSESSA
+Vertaa JavaScript-koodia ennen päivityksen kopioimista projektiisi. Tarkista Python-tiedosto, jos sisennys on saattanut muuttua siirron aikana. Vertaa JSON- tai YAML-asetustiedostoja ja tarkastele muuttuneita arvoja tekstinä. JSON-vertailu perustuu tekstiin: se ei yhdistä olioita merkityksen mukaan eikä jätä avainten järjestystä huomiotta. Tarkistus koskee kahta tiedostoa, ei kokonaista koodivarastoa.
+
+PIDÄ KÄSITTELY OMALLA LAITTEELLASI
+Tiliä, API-avainta, ulkoista tekoälypalvelua, analytiikkaa tai koodin lähettämistä palvelimelle ei tarvita. Laajennus toimii omassa editorivälilehdessään eikä lue muita välilehtiä tai keskusteluja. Liitä tai avaa koodi itse, myös keskustelusta saadut katkelmat. Laajennus ei yhdistä automaattisesti ChatGPT:hen, Claudeen tai Geminiin.
+
+TALLENNA ENNEN SULKEMISTA
+Teksti, kumoamishistoria ja tarkistustila säilyvät muistissa istunnon ajan. Työtäsi ei palauteta, jos suljet editorin tai lataat sen uudelleen. Lataa lopputulos ennen välilehdeltä poistumista. Pilvihistoriaa tai taustavarmuuskopiointia ei ole.
+
+BETAVERSION TIEDOSTORAJAT
+Avaa UTF-8-tekstitiedostoja, joiden koko on enintään 512 KiB, pituus 200 000 UTF-16-koodiyksikköä ja rivimäärä 4 000 kummallakin puolella. PDF-tiedostoja, Word-asiakirjoja, binääritiedostoja tai kokonaisia kansioita ei tueta. Aloita kahdesta tutusta kooditiedostosta: etsi ero, tee korjaus, kokeile Undo-toimintoa ja lataa B.

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Getting started · Code Compare Local</title>
+  <link rel="icon" href="icons/icon16.png">
+  <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="app.html"><img src="icons/icon128.png" width="48" height="48" alt=""><span>Code Compare <b>Local</b></span></a>
+    <span class="local-note">On your device only</span>
+  </header>
+  <main>
+    <section class="welcome" aria-labelledby="welcome-title">
+      <div class="welcome-copy">
+        <p class="eyebrow">READY WHEN YOU ARE</p>
+        <h1 id="welcome-title">Two versions. <br>One clear result.</h1>
+        <p class="lead">See what changed in your code, choose what to keep, and save the result.</p>
+        <div class="actions">
+          <a id="open-editor" class="button primary" href="app.html">Open editor <span aria-hidden="true">→</span></a>
+          <a id="try-example" class="button secondary" href="app.html?demo=1">Try an example</a>
+        </div>
+        <p class="quiet">No account. No uploads. No AI required.</p>
+      </div>
+      <div class="preview" role="img" aria-label="Illustration of two code versions: A has tax 0.20; B has tax 0.18. Use A copies the selected difference into B.">
+        <div class="preview-top"><span>YOUR NEXT CHANGE, IN FOCUS</span><span aria-hidden="true">{≠}</span></div>
+        <div class="code-panes" aria-hidden="true">
+          <div class="code-pane"><div class="pane-label"><b>A</b><span>Original</span></div><div class="code-lines"><div><span>1</span>const price = 100;</div><div class="removed"><span>2</span>const tax = 0.20;</div><div><span>3</span>price * (1 + tax);</div></div></div>
+          <div class="code-pane"><div class="pane-label"><b>B</b><span>Your result</span></div><div class="code-lines"><div><span>1</span>const price = 100;</div><div class="added"><span>2</span>const tax = 0.18;</div><div><span>3</span>price * (1 + tax);</div></div></div>
+        </div>
+        <div class="preview-bottom" aria-hidden="true"><span class="sample-action">Use A → B</span><span>Choose one change at a time.</span></div>
+        <p class="illustration-note">Example illustration · open the editor to try it</p>
+      </div>
+    </section>
+    <section class="steps" aria-label="Three steps to your result">
+      <article><span class="step-number">01</span><h2>Open two versions</h2><p>Paste code or open a file on each side. Put your reference in A and the version you want to change in B.</p></article>
+      <article><span class="step-number">02</span><h2>Review each difference</h2><p>Jump to highlighted lines. Choose <strong>Use A</strong> to replace a block or <strong>Keep B</strong> to mark it reviewed. Edit either side; Undo and Redo are available.</p></article>
+      <article><span class="step-number">03</span><h2>Download your result</h2><p>Click <strong>Download B</strong> to save a copy. Save before closing or reloading the tab: your session is not stored.</p></article>
+    </section>
+    <section class="getting-ready" aria-label="Before you start">
+      <div><h2>Keep it close</h2><p>Open Chrome’s Extensions menu and pin Code Compare Local. Click its icon whenever you want to compare code.</p></div>
+      <div><h2>Made for code and text</h2><p>Use UTF-8 text files, not PDF or Word documents. Supported syntax checks run locally; code is never executed. The editor and this guide are in English.</p></div>
+    </section>
+  </main>
+  <footer>
+    <span>Code Compare Local · Getting started</span>
+    <nav aria-label="Help links"><a href="https://github.com/donjonson-hash/code-compare-local/issues" target="_blank" rel="noopener noreferrer">Support on GitHub ↗</a><a href="https://github.com/donjonson-hash/code-compare-local/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy on GitHub ↗</a></nav>
+  </footer>
+</body>
+</html>

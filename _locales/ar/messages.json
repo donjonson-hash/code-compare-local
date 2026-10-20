@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Code Compare Local — مقارنة الشفرة — Beta"
+  },
+  "extensionDescription": {
+    "message": "قارن الشفرة جنبًا إلى جنب محليًا. عدّل التغييرات، وافحص الصياغة، واحفظ الملفات دون اتصال."
+  },
+  "actionTitle": {
+    "message": "فتح Code Compare Local"
+  }
+}

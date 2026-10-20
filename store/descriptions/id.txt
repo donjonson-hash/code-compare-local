@@ -1,0 +1,42 @@
+EKSTENSI INI DITUJUKAN UNTUK PENGUJIAN BETA.
+
+Bandingkan dua versi kode, tinjau perbedaannya, lalu simpan hasil yang Anda inginkan. Code Compare Local adalah alat pembanding kode yang bekerja secara offline di browser. Buka versi acuan di A dan versi revisi di B, lalu periksa perubahan yang disorot secara berdampingan.
+
+MULAI DENGAN CONTOH
+Halaman sambutan terbuka setelah pemasangan pertama. Buka editor atau coba contoh JavaScript bawaan tanpa menyiapkan berkas. Editor dan halaman sambutan menggunakan bahasa Inggris. Terjemahan deskripsi toko dan nama ekstensi tidak mengubah bahasa antarmuka.
+
+TEMUKAN BARIS YANG BERUBAH
+Tampilan perbedaan kode menunjukkan penambahan, penghapusan, dan penggantian. Daftar Differences menampilkan nomor baris A/B dan pratinjau setiap blok yang berubah. Pilih entri atau gunakan Previous dan Next untuk berpindah ke sana, termasuk perubahan yang berjauhan dalam berkas panjang.
+
+PILIH ISI HASIL B
+Klik Use A untuk menyalin blok terpilih ke B, atau Keep B untuk menandai perbedaan sebagai sudah ditinjau tanpa mengubahnya. Use A → B menangani satu perbedaan pada satu waktu; All A → B mengganti seluruh hasil. Progres peninjauan membantu Anda melacak keputusan selama sesi ini.
+
+EDIT DAN URUNGKAN
+Edit kode langsung di salah satu panel. Undo dan Redo di atas editor berlaku untuk B; Ctrl/Cmd+Z bekerja pada editor yang sedang aktif. Pemindahan blok juga dapat diurungkan. Keep B adalah tanda peninjauan, bukan edit teks. Edit manual memulai ulang progres peninjauan agar keputusan lama tidak diam-diam diterapkan pada teks yang telah berubah.
+
+DAPATKAN PERBEDAAN YANG KONSISTEN
+Teks akhir A/B yang sama menghasilkan blok perbedaan yang sama, baik berkas dimuat langsung, diedit, maupun perubahannya diurungkan dan diulang. Ini memudahkan perbandingan kode kembali setelah disimpan. Perbedaan yang rumit dapat dikelompokkan menjadi blok lebih besar; satu blok tidak selalu merupakan perubahan terkecil yang mungkin.
+
+BUAT KODE LEBIH MUDAH DIBACA
+Pilih ukuran kode 14–20 px dan aktifkan atau nonaktifkan pembungkusan baris. Only changes melipat bagian panjang yang tidak berubah, dengan tiga baris konteks di sekitar perbedaan. Buka bagian terlipat kapan pun Anda membutuhkan konteks tambahan. Show spaces & tabs memperlihatkan indentasi tanpa mengubah kode.
+
+PERIKSA SINTAKS YANG DIDUKUNG
+Pemeriksaan sintaks berjalan secara lokal setelah kode dimuat, ditempel, diedit, atau dipindahkan. Klik Check syntax untuk memeriksa lagi, lalu pilih lokasi yang dilaporkan untuk menuju masalah. Pemeriksaan sintaks tersedia untuk JavaScript, JSX, TypeScript, TSX, JSON, dan YAML. Python memiliki pemeriksaan awal tata bahasa dan indentasi.
+
+PAHAMI ARTI PEMERIKSAAN
+Ekstensi tidak menjalankan kode atau memperbaikinya secara otomatis. Setiap sisi diperiksa sebagai berkas mandiri, sehingga cuplikan yang belum lengkap dapat memunculkan kesalahan. Pemeriksaan tipe TypeScript dan validasi skema YAML tidak disertakan. Pemeriksaan Python tidak menggantikan validasi menggunakan Python sendiri. Bahasa lain dalam daftar hanya mendapat penyorotan sintaks; sintaks yang valid tidak membuktikan perilaku program benar.
+
+SIMPAN BERKAS REVISI
+Download B membuat berkas UTF-8 baru tanpa menimpa berkas asli. Unduhan mempertahankan spasi, tab, tanda urutan byte UTF-8, dan akhir baris asli pada teks yang tidak berubah. Blok yang dipindahkan mempertahankan akhir baris dari A. Baris baru yang diketik memakai gaya akhir baris utama berkas yang diedit. Gunakan Copy B untuk menyalin ke papan klip; papan klip dapat menormalkan akhir baris.
+
+GUNAKAN UNTUK PENINJAUAN KODE SEHARI-HARI
+Bandingkan kode JavaScript sebelum menyalin pembaruan ke proyek Anda. Tinjau berkas Python jika indentasinya mungkin berubah saat dipindahkan. Bandingkan berkas konfigurasi JSON atau YAML dan periksa nilai yang berubah sebagai teks. Perbandingan JSON bersifat tekstual: tidak mencocokkan objek berdasarkan makna atau mengabaikan urutan kunci. Ini adalah pemeriksaan dua berkas, bukan peninjauan seluruh repositori.
+
+PROSES TETAP DI PERANGKAT ANDA
+Tidak memerlukan akun, kunci API, layanan AI eksternal, analitik, atau unggahan kode. Ekstensi bekerja di tab editornya sendiri dan tidak membaca tab atau percakapan lain. Tempel atau buka kode sendiri, termasuk cuplikan dari percakapan. Ekstensi tidak terhubung otomatis ke ChatGPT, Claude, atau Gemini.
+
+SIMPAN SEBELUM MENUTUP
+Teks, riwayat pembatalan, dan status peninjauan berada dalam memori selama sesi. Menutup atau memuat ulang editor tidak memulihkan pekerjaan Anda. Unduh hasil sebelum meninggalkan tab. Tidak ada riwayat cloud atau pencadangan latar belakang.
+
+BATAS BERKAS BETA
+Buka berkas teks UTF-8 hingga 512 KiB, 200.000 unit kode UTF-16, dan 4.000 baris per sisi. PDF, dokumen Word, berkas biner, dan folder utuh tidak didukung. Mulai dengan dua berkas kode yang Anda kenal: temukan perbedaan, lakukan koreksi, coba Undo, lalu unduh B.

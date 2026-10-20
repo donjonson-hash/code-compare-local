@@ -11,7 +11,7 @@
 <body>
   <header class="topbar">
     <a class="brand" href="app.html" aria-label="Code Compare Local"><span class="brand-icon">{≠}</span><span>Code Compare <b>Local</b></span></a>
-    <div class="header-right"><span class="local-badge"><i></i>On your device only</span><span class="version">Beta 0.8.0</span></div>
+    <div class="header-right"><span class="local-badge"><i></i>On your device only</span><span class="version">Beta 0.9.0</span></div>
   </header>
   <main>
     <section class="intro">
@@ -63,7 +63,7 @@
     </section>
     </div>
     <div class="below-workspace"><div class="legend"><span><i class="removed"></i>Version A</span><span><i class="added"></i>Version B</span><span class="hint-arrow">→</span><span>Select a difference, then use A to fix that block in B</span></div><button id="clear" class="text-button">Clear both editors</button></div>
-    <footer><span>No account, server, or AI. Your code is never run or sent online.</span><span>Save your result before closing this tab.</span></footer>
+    <footer><span>No account, server, or AI. Your code is never run or sent online.</span><span>Save your result before closing this tab. · <a id="getting-started" href="welcome.html" target="_blank" rel="noopener noreferrer">Getting started ↗</a></span></footer>
     <details class="help"><summary>Features and limitations</summary><p>Comparison includes spaces, tabs, and the final newline. Downloads preserve the original LF / CRLF / CR line endings, mixed line endings, and UTF-8 BOM. New lines typed in an editor use that file’s main line-ending format.</p><p>Syntax is checked automatically after edits and block transfers for JavaScript/JSX, TypeScript/TSX, JSON, and YAML. Python has a preliminary grammar and indentation check; it does not replace validation with Python itself. Click a diagnostic to go to its line. The selected language applies to both versions.</p><p>Each text is checked as a complete file, so incomplete snippets may be reported as errors. Code is never corrected automatically. Valid syntax does not guarantee correct behavior: moving a Python line into another valid block can change its meaning without a syntax error. TypeScript checks do not include type checking. Other languages have highlighting only.</p><p>Open UTF-8 text files up to 512 KB, 200,000 characters, and 4,000 lines per side. Code is not run or checked for logic errors. For large differences, several changes may be grouped into one block.</p><p>Ctrl/Cmd+Z undoes an edit in the active editor. Tab indents; press Esc, then Tab to leave the editor. Copy and paste snippets from ChatGPT, Claude, or Gemini. Chats are not accessed automatically. The clipboard may change line endings; use Download B to preserve them exactly.</p></details>
   </main>
   <div id="toast" role="status" aria-live="polite" hidden></div>
