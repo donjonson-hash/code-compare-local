@@ -1,6 +1,6 @@
 # Code Compare Local privacy statement
 
-Version 0.5.0 · 19 October 2026
+Versions 0.5.0 and 0.6.0 pilot · 20 October 2026
 
 Code Compare Local compares and edits text within its own browser-extension
 tab. This statement describes the included beta build.
@@ -12,7 +12,8 @@ processes text you paste or type into the editors. Comparison and syntax
 checking run locally using bundled code and a local worker. The extension does
 not execute the code being compared or send it to a server or LLM.
 
-Editor text and undo history remain in memory while the editor tab is open.
+Editor text, undo history, prepared change snapshots, and applied-command IDs
+remain in memory while the editor tab is open.
 There is no persistent session database, cloud history, or automatic recovery
 after closing or reloading the editor. Save your work before leaving the tab.
 

@@ -13,16 +13,21 @@ import { cpp } from '@codemirror/lang-cpp';
 import { sql } from '@codemirror/lang-sql';
 import { markdown } from '@codemirror/lang-markdown';
 import { yaml } from '@codemirror/legacy-modes/mode/yaml';
-import { normalize, makeDocument, decodeFile, encodeFile, applyEdits, chunkEdits, formatLabel, safeFilename, validate } from './document.mjs';
+import { normalize, makeDocument, decodeFile, encodeFile, formatLabel, safeFilename, validate } from './document.mjs';
 import { rawField, rawHistory, restoreRaw } from './raw-state.mjs';
 import { lintGutter } from '@codemirror/lint';
 import { createSyntaxController } from './syntax-ui.mjs';
 import { createChangesController } from './changes-ui.mjs';
 import { accessibleCollapsedContext } from './focus-view.mjs';
+import { prepareBlockTransfer, checkBlockTransfer } from './block-transfer.mjs';
 
 const $ = id => document.getElementById(id);
 const compartments = { a: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() }, b: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() } };
 const revisions = { a: 0, b: 0 };
+// Content versions are separate from async file-loading cancellation tokens.
+const transferRevisions = { a: 0, b: 0 };
+const appliedOperationIds = new Set();
+let operationSequence = 0, controlsRevision = '';
 let merge, syntax, changes, revealRequested = false, updateQueued = false, toastTimer, dirty = false;
 
 function notify(message) {
@@ -53,6 +58,7 @@ function extensions(side, doc) {
     EditorView.updateListener.of(update => {
       if (update.docChanged || update.transactions.some(tr => tr.effects.some(e => e.is(restoreRaw)))) {
         revisions[side]++;
+        transferRevisions[side]++;
         changes?.documentChanged(update);
         dirty = true;
         syntax?.schedule();
@@ -68,28 +74,62 @@ function renderRevertControl() {
   button.type = 'button';
   button.title = 'Copy this block from A to B';
   button.setAttribute('aria-label', 'Copy this block from A to B');
+  // Disable CodeMirror's parent mousedown handler: all transfers must pass
+  // through the same checked command, including pointer and keyboard actions.
+  button.addEventListener('mousedown', event => { event.stopPropagation(); event.preventDefault(); });
+  let applyDisplayed = null;
+  queueMicrotask(() => {
+    // CodeMirror assigns data-chunk immediately after this render callback.
+    // Capture once; a detached old button must never resolve a newer index.
+    const chunk = merge.chunks[Number(button.dataset.chunk)];
+    applyDisplayed = chunk ? changes.captureForChunk(chunk) : null;
+    button.disabled = !applyDisplayed;
+  });
   button.addEventListener('click', event => {
     event.stopPropagation();
     event.preventDefault();
-    // MergeView attaches the current chunk index on each layout. Dependencies
-    // are pinned, and this integration is covered by a real browser test.
-    const chunk = merge.chunks[Number(button.dataset.chunk)];
-    if (!chunk) return;
-    changes.applyForChunk(chunk);
+    if (event.detail <= 1) applyDisplayed?.();
   });
   return button;
 }
 
-function applyChunk(chunk) {
-  if (!merge.chunks.includes(chunk)) return;
-  const edits = chunkEdits(chunk, merge.a.state.field(rawField));
-  const next = applyEdits(merge.b.state.field(rawField), edits);
-  merge.b.dispatch({
-    changes: edits.map(e => ({ from: e.from, to: e.to, insert: normalize(e.rawInsert) })),
-    effects: restoreRaw.of(next), annotations: isolateHistory.of('full'), userEvent: 'input.merge'
-  });
+function transferSnapshot() {
+  return {
+    source: merge.a.state.field(rawField), target: merge.b.state.field(rawField),
+    sourceRevision: transferRevisions.a, targetRevision: transferRevisions.b
+  };
+}
+
+function prepareChunk(chunk) {
+  return prepareBlockTransfer({ id: `block-${++operationSequence}`, ...transferSnapshot(), chunk });
+}
+
+function applyChunk(operation) {
+  const result = checkBlockTransfer(operation, { ...transferSnapshot(), appliedIds: appliedOperationIds });
+  if (result.status !== 'ready') {
+    notify(result.message);
+    return false;
+  }
+  try {
+    merge.b.dispatch({
+      changes: result.edits.map(e => ({ from: e.from, to: e.to, insert: normalize(e.rawInsert) })),
+      effects: restoreRaw.of(result.document), annotations: isolateHistory.of('full'), userEvent: 'input.merge'
+    });
+  } catch {
+    notify('This change could not be applied. Select the difference again.');
+    return false;
+  }
+  const actual = merge.b.state.field(rawField);
+  if (actual.raw !== result.document.raw || actual.bom !== result.document.bom ||
+      actual.eol !== result.document.eol || merge.b.state.doc.toString() !== normalize(result.document.raw)) {
+    notify('This change was not applied. Check the file limits and select the difference again.');
+    return false;
+  }
+  // Consume the command only after the editor accepted the complete transaction.
+  appliedOperationIds.add(operation.id);
   merge.b.focus();
   notify('Block copied to B. You can undo this edit.');
+  return true;
 }
 
 function initialize() {
@@ -125,6 +165,12 @@ function updateStats() {
   $('redo').disabled = !redoDepth(merge.b.state);
   $('copy-all').disabled = sameRaw;
   changes?.update();
+  const nextControlsRevision = `${transferRevisions.a}:${transferRevisions.b}`;
+  if (controlsRevision !== nextControlsRevision) {
+    controlsRevision = nextControlsRevision;
+    // CodeMirror otherwise reuses arrow DOM nodes by chunk index.
+    merge.reconfigure({ renderRevertControl });
+  }
   if (revealRequested) {
     revealRequested = false;
     if ($('changes-only').checked) setChangesOnly(true);
@@ -198,10 +244,10 @@ $('show-whitespace').addEventListener('change', event => {
   });
   $('whitespace-hint').hidden = !event.target.checked;
 });
-$('keep-current').addEventListener('click', () => changes.keepCurrent());
+$('keep-current').addEventListener('click', event => { if (event.detail <= 1) changes.keepCurrent(); });
 $('next').addEventListener('click', () => changes.next());
 $('prev').addEventListener('click', () => changes.previous());
-$('use-current').addEventListener('click', () => changes.applyCurrent());
+$('use-current').addEventListener('click', event => { if (event.detail <= 1) changes.applyCurrent(); });
 $('font-size').addEventListener('change', event => {
   const size = Number(event.target.value);
   if (![14, 16, 18, 20].includes(size)) return;
@@ -229,6 +275,7 @@ $('confirm-clear').addEventListener('close', () => {
   revealRequested = false;
   $('changes-only').checked = false; $('focus-hint').hidden = true;
   changes.reset();
+  appliedOperationIds.clear();
   merge.destroy();
   initialize();
   $('filename').value = 'result.txt'; $('language').value = 'text'; $('wrap').checked = false;
@@ -236,6 +283,7 @@ $('confirm-clear').addEventListener('close', () => {
   $('name-b').textContent = 'Edit directly here';
   dirty = false;
   revisions.a++; revisions.b++;
+  transferRevisions.a++; transferRevisions.b++;
   syntax.schedule();
   notify('Both editors cleared.');
 });
@@ -250,7 +298,7 @@ $('demo').addEventListener('click', () => {
 });
 window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
 initialize();
-changes = createChangesController({ getMerge: () => merge, applyChunk });
+changes = createChangesController({ getMerge: () => merge, prepareChunk, applyChunk, notify });
 syntax = createSyntaxController({ getView: side => merge[side], getLanguage: () => $('language').value, beforeReveal: () => {
   if ($('changes-only').checked) { setChangesOnly(false); notify('Showing full files for this syntax issue.'); }
 } });

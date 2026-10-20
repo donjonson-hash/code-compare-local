@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0 — 20 October 2026
+
+- Introduced a versioned, immutable A → B block-transfer proposal with exact document snapshots and UTF-16 ranges.
+- Validate source/target revisions, raw text, BOM, expected fragments, replacement provenance and result limits before one editor transaction.
+- Reject stale proposals and replayed commands; pointer double-clicks cannot consume the next automatically selected block.
+- Preserve raw-byte Undo/Redo and review progress. Separate content revisions from asynchronous file-loading cancellation tokens.
+- Document the operation map and the pilot boundary: applying an explicit proposal is deterministic; current time-limited diff grouping is not claimed to be fully deterministic.
+- Keep the prepared 0.5.0 store materials as the publication baseline.
+
+
 ## 0.5.0 — 19 October 2026
 
 - Only changes mode folds unchanged sections with three context lines and keyboard-accessible expansion.
