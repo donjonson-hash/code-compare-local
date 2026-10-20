@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.1 — 20 October 2026
+
+- Group Use A, Keep B, Undo, Redo and Download B above the editors; add visible Undo/Redo labels.
+- Prevent compact difference cards from shrinking and clipping their action buttons.
+- Keep the pilot version visible in narrower windows.
+- Test control visibility before scrolling at laptop sizes, then double-click Use A, Undo, Redo and verify downloaded bytes.
+
 ## 0.6.0 — 20 October 2026
 
 - Introduced a versioned, immutable A → B block-transfer proposal with exact document snapshots and UTF-16 ranges.

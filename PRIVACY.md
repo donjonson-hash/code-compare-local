@@ -1,6 +1,6 @@
 # Code Compare Local privacy statement
 
-Versions 0.5.0 and 0.6.0 pilot · 20 October 2026
+Versions 0.5.0 and 0.6.1 pilot · 20 October 2026
 
 Code Compare Local compares and edits text within its own browser-extension
 tab. This statement describes the included beta build.

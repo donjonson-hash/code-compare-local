@@ -73,9 +73,37 @@ export async function checkDeterministicTransfer({ page, open, download }) {
   assert.equal((await download()).bytes.toString(), firstApplied, 'old arrow cannot resolve a newer chunk index');
   await arrow.dispose();
 
-  await reset();
-  await page.locator('#use-current').dblclick();
-  await progress(1, 3);
-  assert.equal((await download()).bytes.toString(), firstApplied, 'double click must not consume the next block');
+  const originalViewport = page.viewportSize();
+  for (const width of [1440, 1280, 1100, 900]) {
+    await page.setViewportSize({ width, height: 720 });
+    await reset();
+    // Let CodeMirror finish revealing the selected line before checking the page top.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+      document.getElementById('changes-list').scrollTop = 0;
+    });
+    // Locator.click() auto-scrolls: assert discoverability before any such click.
+    for (const [selector, label] of [
+      ['#use-current', 'Use A'], ['#undo', 'Undo'], ['#redo', 'Redo'],
+      ['#download', 'Download B'], ['#changes-list .change-apply', 'Use A'],
+    ]) {
+      const control = page.locator(selector).first();
+      assert.ok((await control.innerText()).includes(label), `${selector} has a visible label`);
+      assert.ok(await control.evaluate(el => {
+        const r = el.getBoundingClientRect();
+        const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return r.top >= 0 && r.bottom <= innerHeight && r.left >= 0 && r.right <= innerWidth
+          && hit && el.contains(hit);
+      }), `${selector} must be in the viewport and not clipped at ${width}px`);
+    }
+    await page.locator('#use-current').dblclick();
+    await progress(1, 3);
+    await page.locator('#undo').click(); await progress(0, 3);
+    assert.equal((await download()).bytes.toString(), b, 'Undo restores the original B bytes');
+    await page.locator('#redo').click(); await progress(1, 3);
+    assert.equal((await download()).bytes.toString(), firstApplied, 'double click → Undo → Redo downloads exactly one applied block');
+  }
+  await page.setViewportSize(originalViewport);
   await consumed.dispose(); await staleA.dispose(); await staleB.dispose(); await rawOnly.dispose();
 }

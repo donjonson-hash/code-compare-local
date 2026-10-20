@@ -1,6 +1,10 @@
-# Deterministic transfer pilot 0.6.0 — 20 October 2026
+# Deterministic transfer pilot 0.6.1 — 20 October 2026
 
 ## Completed locally
+
+- Reproduced 0.6.0 controls hidden by compact grid-card clipping and icon-only Undo/Redo below the initial viewport.
+- Version 0.6.1 puts labeled Use A, Keep B, Undo, Redo and Download B above the editors and prevents compact cards from shrinking.
+- At 1440, 1280, 1100 and 900 px width (720 px height), browser checks assert visible labels and unclipped controls before clicks, then double-click Use A → Undo → Redo and verify actual downloaded bytes. CodeMirror line-reveal layout is allowed to settle before measuring the page top.
 
 - `npm run build`: bundled editor, syntax worker, and third-party notices with the existing pinned dependencies.
 - `npm test`: all 46 tests passed, including 11 proposal-validation tests and the existing diff, byte-preservation, review-state and syntax tests.
@@ -18,9 +22,9 @@ silently fall back to local-page mode. Consult this pilot pull request's checks
 for installed-extension status and the exact tested commit. This document records
 the local results before upload and does not claim a remote result in advance.
 
-The user confirmed the previous 0.5.0 behavior on 19 October 2026. The 0.6.0
+The user confirmed the previous 0.5.0 behavior on 19 October 2026. The 0.6.1
 pilot still needs the user's own-file acceptance before replacing that baseline.
-Store materials in `store/` describe 0.5.0; no 0.6.0 store submission is claimed.
+Store materials in `store/` describe 0.5.0; no 0.6.1 store submission is claimed.
 
 ## Scope and known boundary
 
