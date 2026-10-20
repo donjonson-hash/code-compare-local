@@ -1,12 +1,15 @@
-# Code Compare Local · beta 0.7.0
+# Code Compare Local · beta 0.8.0
 
-## Clock-independent comparison pilot
+## Canonical comparison pilot
 
-Version 0.7.0 replaces the comparison's elapsed-time cutoff with the existing
-fixed search-depth limit. Replaying the same comparison and edit sequence no
-longer changes grouping because the computer is busy or the clock jumps.
-Difficult regions can still be grouped; different editing histories may still
-group the same final files differently. See [DETERMINISM.md](DETERMINISM.md).
+Version 0.8.0 rebuilds differences from the complete current A/B text after each
+edit. Identical final texts now produce the same blocks whether loaded directly,
+edited, copied from A, undone or redone. The same editor instances retain their
+selection and Undo/Redo history. Original line endings and BOM are preserved.
+
+The comparison keeps a fixed search-depth limit, so difficult regions may be
+grouped. The canonical build adapter is guarded against unreviewed dependency
+changes. See [DETERMINISM.md](DETERMINISM.md) for the exact scope and limits.
 
 ## Deterministic transfer pilot
 

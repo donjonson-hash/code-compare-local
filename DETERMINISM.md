@@ -1,16 +1,17 @@
 # Deterministic operations — comparison policy and transfers
 
-The 0.6.1 pilot introduced checked, versioned block transfers and was verified
-against the user's corrected B file: it matched A byte-for-byte. The 0.7.0 pilot
-adds a clock-independent comparison policy. It does not implement a shared
-plugin API or LLM integration. Store materials remain the prepared 0.5.0 set.
+Version 0.7.0 is the accepted baseline (tag `v0.7.0`). The 0.8.0 pilot adds
+canonical full comparison after every document-changing transaction. It keeps
+versioned transfers, raw-byte history, and the existing editor instances.
+It does not introduce a plugin API or LLM integration. Store materials remain
+the prepared 0.5.0 set.
 
 ## Operation map
 
 | Operation | Inputs and rules | Result / boundary |
 | --- | --- | --- |
 | Decode a file | UTF-8, optional BOM; explicit byte/character/line limits | Raw text, BOM, preferred line ending; unsupported input is rejected |
-| Compare | LF-normalized UTF-16 text; pinned CodeMirror version and diff configuration | Difference blocks under `clock-independent-v1`; fixed search-depth fallback, no elapsed-time cutoff; incremental updates also depend on previous chunks and edits |
+| Compare | LF-normalized UTF-16 text; pinned CodeMirror version and diff configuration | Canonical difference blocks under `canonical-full-v1`; full comparison of current normalized A/B, fixed search-depth fallback, no elapsed-time cutoff |
 | Prepare a block transfer | A and B snapshots, content revisions, selected chunk, caller-provided command ID | Immutable schema-v1 proposal; no editor mutation |
 | Check a proposal | Exact snapshots/revisions, ranges, expected text and consumed IDs | Ready candidate or explicit rejection; no editor mutation |
 | Commit a proposal | Accepted candidate and normalized editor changes | One isolated CodeMirror transaction; consume ID only after successful commit |
@@ -21,40 +22,57 @@ plugin API or LLM integration. Store materials remain the prepared 0.5.0 set.
 The transfer contract guarantees repeatable **evaluation of a specified proposal**
 for the same inputs, revisions and consumed-ID set.
 
-## Comparison policy — stage 2
+## Comparison policy — stage 3
 
-`src/diff-policy.mjs` defines `clock-independent-v1`: a frozen CodeMirror
-configuration with `scanLimit: 1500` and `timeout: 0`. The installed dependency
-remains pinned in the lockfile. The UI and comparison/transfer tests share this
-policy. Changing dependency versions or policy can change grouping and requires
-review of the regression corpus.
+`src/diff-policy.mjs` identifies `canonical-full-v1`. The diff configuration
+remains frozen: `scanLimit: 1500`, `timeout: 0`, with the dependency pinned in
+the lockfile. The UI and core comparison tests share this configuration.
 
-The former 100 ms cutoff made grouping depend on elapsed wall-clock time.
-The new policy retains the existing search-depth cutoff and deterministic
-fallback for difficult regions. `scanLimit` bounds detailed search per
-subproblem; it is not a hard limit on total operations or milliseconds. Existing
-200,000-character / 4,000-line input limits remain enforced. Where the library
-reports reduced precision, the UI retains the grouped label. Its precision flag
-is not a promise of a minimal diff: some very-large-range fallback paths return
-a single block without lowering that flag. Transfers must still reconstruct
-the expected contents without loss.
+Version 0.7.0 removed the wall-clock cutoff but retained incremental grouping.
+That allowed different edit histories to produce different blocks for identical
+final files. Version 0.8.0 computes `Chunk.build(currentA, currentB, policy)`
+after every document-changing transaction batch, including typing, file loads,
+block transfers and Undo/Redo. Selection-only/configuration transactions keep
+the current blocks because text is unchanged.
 
-Guarantees with pinned code and the same policy:
+For identical **LF-normalized UTF-16 A/B text**, pinned dependency and policy,
+block ranges, character-change ranges and precision flags are now identical,
+regardless of load order, edit history or system-clock behavior. BOM and original
+line endings remain separate raw-document data; a format-only change does not
+change these text-difference blocks. The format notice and exact download still
+preserve that distinction. History, review decisions, active selection and
+syntax-worker timing are separate state and are not promised identical.
 
-- A full `Chunk.build(A, B)` returns the same ranges and precision flags without
-  consulting the clock.
-- An incremental update returns the same result for the same previous chunks,
-  documents and change set. A replay of the same edit trace is repeatable.
-- CPU load and forward/backward wall-clock jumps do not select a different
-  fallback branch.
+### Guarded integration
 
-**Boundary:** CodeMirror updates only affected regions and retains existing
-chunks. Different edit histories can produce different grouping for the same
-final A/B. This stage does not promise a canonical, history-independent grouping.
-No private editor APIs are patched to force one. A later stage can evaluate a
-canonical full-comparison adapter separately from editor history and selection.
-Syntax-worker timeouts and asynchronous UI scheduling are also outside this
-comparison guarantee. No guarantee about runtime or type correctness is added.
+The pinned MergeView has no public API to replace the chunk state in both
+editors while retaining their states. `scripts/canonical-merge-plugin.mjs`
+applies one build-time modification to `@codemirror/merge` 6.12.2:
+
+- Check the full upstream distribution SHA-256, version and exact-one target.
+- Replace only the incremental chunk calculation inside transaction dispatch
+  with full `Chunk.build` on the current pair.
+- Preserve the original transaction delivery, shared chunk effects, selection,
+  history, raw-document effects and layout scheduling.
+- Fail the build if upstream source changes or the adapter is not applied exactly
+  once. Never silently fall back to incremental comparison.
+
+No installed dependency file is rewritten and no private method is monkey-patched
+at runtime. Third-party notices retain the original license and disclose the
+modification. A dependency upgrade requires explicit adapter review.
+
+### Limits
+
+The search-depth cutoff and grouped fallback remain. `scanLimit` bounds detailed
+search per subproblem, not total work or milliseconds. Existing 200,000-character
+and 4,000-line input limits remain enforced. Full comparison can cost more than
+incremental updates on slow devices; no hard latency guarantee is made.
+
+Where the library reports reduced precision, the UI shows the grouped label.
+Its precision flag does not promise a minimal diff: some very-large-range
+fallback paths return a single block without lowering that flag. Canonical means
+repeatable, not necessarily the smallest possible set of changes. Every accepted
+transfer must still preserve the expected contents without loss.
 
 ## Proposal contract
 

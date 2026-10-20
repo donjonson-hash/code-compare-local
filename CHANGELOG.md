@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0 — 20 October 2026
+
+- Rebuild all difference blocks from current A/B after document edits, transfers and Undo/Redo, removing grouping dependence on edit history.
+- Keep editor instances, selection, raw-document effects and history through the original transaction delivery.
+- Guard the narrow build-time merge adapter by dependency version, full source hash and exact-once application; disclose the local modification in license notices.
+- Retain the fixed search-depth budget, file limits and existing transfer validation.
+
 ## 0.7.0 — 20 October 2026
 
 - Share a versioned, clock-independent comparison policy across the editor and core tests.
