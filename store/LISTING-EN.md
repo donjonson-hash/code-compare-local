@@ -1,7 +1,8 @@
-# Store listing draft · Code Compare Local 0.5.0
+# Store listing draft · Code Compare Local 0.8.0
 
-Draft for a desktop Chromium beta. This document does not indicate that the
-extension has been submitted, approved, or published.
+Prepared on 20 October 2026 for the accepted 0.8.0 desktop Chromium beta.
+This document does not indicate that the extension has been submitted, approved,
+or published. Copy only the Full description section into that store field.
 
 ## Name
 
@@ -15,21 +16,25 @@ Compare and edit code locally. Check syntax, copy changes, and save. No AI, acco
 
 THIS EXTENSION IS FOR BETA TESTING.
 
+Free to use. All included features are available without payment.
+
 Compare two versions of code and build the result you want.
 
 Open or paste your reference in A and the updated version in B. Review the
 highlighted differences, transfer an individual block from A to B, or edit
 either side directly. Download B when you are done.
 
-Code Compare Local works locally in your browser. No account, API key, LLM,
+Code Compare Local works offline in your browser. No account, API key, AI,
 or server is needed.
 
 WHAT YOU CAN DO
 
 - Compare and edit two code files side by side.
 - Move individual changes from A to B or copy the whole A document.
-- Undo and redo changes.
-- Review each difference with Use A or Keep B and track progress.
+- Undo and redo edits and block transfers while you work.
+- See consistent difference blocks for the same code, whether you open files
+  directly, edit them, or undo and redo your changes.
+- Review each difference with Use A or Keep B and track your session progress.
 - Collapse unchanged sections and reveal spaces and tabs without modifying code.
 - See a difference list with A/B line numbers and jump to any changed block.
 - Choose a readable code size (14–20 px) and turn line wrapping on or off.
@@ -57,14 +62,18 @@ the editor; session recovery is not included.
 
 BETA LIMITS
 
-Open UTF-8 text files up to 512 KiB, 200,000 UTF-16 code units, and 4,000 lines
-per side. This beta compares two text documents, not entire repositories. It
+Open UTF-8 text files up to 512 KiB and 4,000 lines per side. There is also a
+200,000 UTF-16 code-unit limit per side. Large differences may be grouped
+into broader blocks. This beta compares two text documents, not entire repositories. It
 does not access ChatGPT, Claude, or Gemini conversations automatically; paste
 or load the code you want to compare.
 
-## Screenshot
+## Screenshots
 
-The prepared screenshot shows the actual English beta with the supplied JavaScript files, highlighted differences, the A → B transfer control, a syntax message, and the Download B button.
+Use a capture of the actual English 0.8.0 interface with synthetic JavaScript
+files. Keep highlighted differences, line numbers, Use A / Keep B, Undo / Redo,
+and Download B visible. Screenshots must match the uploaded package; do not
+include user files or private code.
 
 ## Publication checklist
 
@@ -78,10 +87,12 @@ The prepared screenshot shows the actual English beta with the supplied JavaScri
 ## Prepared assets
 
 - `screenshot-1280x800.png`: actual packaged interface with the supplied JavaScript example.
+- `screenshot-fixed-1280x800.png`: the same example after Use A, with matching versions, no reported syntax issues and Undo available.
 - `promo-440x280.png`: promotional tile.
 - `../icons/icon128.png`: extension icon.
 
-Image dimensions were checked against the [official Chrome Web Store image guide](https://developer.chrome.com/docs/webstore/images) on 18 October 2026.
+Image specifications: [official Chrome Web Store image guide](https://developer.chrome.com/docs/webstore/images).
+See the submission worksheet for the current preparation and verification status.
 
 ## Submission worksheet
 

@@ -1,19 +1,25 @@
-# Code Compare Local 0.5.0 — комплект для Chrome Web Store
+# Code Compare Local 0.8.0 — комплект для Chrome Web Store
 
-Подготовлено 19 октября 2026. Это инструкция для загрузки; карточка магазина
-ещё не создана и расширение не отправлено на модерацию.
+Подготовлено 20 октября 2026 для принятой версии 0.8.0, тег `v0.8.0`.
+Перенос изменений, Undo/Redo и сохранение проверены пользователем. CI после
+слияния PR #6 прошёл. Подготовка комплекта не означает отправку на модерацию
+или публикацию расширения.
 
 ## Файлы
 
 Запустить `npm run package` из корня проекта.
+Комплект `dist/code-compare-local-0.8.0-store-kit.zip` содержит установочный
+ZIP, изображения и тексты. Сначала распакуйте комплект; в Developer Dashboard
+загружайте только вложенный `code-compare-local-0.8.0-beta.zip`.
 
-| Поле / действие | Файл |
+| Поле / действие | Файл в распакованном комплекте |
 | --- | --- |
-| Загрузка расширения | `dist/code-compare-local-0.5.0-beta.zip` |
-| Скриншот 1280 × 800 | `store/screenshot-1280x800.png` |
-| Промо 440 × 280 | `store/promo-440x280.png` |
-| Иконка 128 × 128 | `icons/icon128.png` |
-| Полное описание на английском | `store/LISTING-EN.md`, раздел Full description |
+| Загрузка расширения | `code-compare-local-0.8.0-beta.zip` |
+| Скриншот: найденная ошибка | `screenshot-1280x800.png` |
+| Скриншот: после исправления | `screenshot-fixed-1280x800.png` |
+| Промо 440 × 280 | `promo-440x280.png` |
+| Иконка 128 × 128 | `icon128.png` |
+| Полное описание на английском | `FULL-DESCRIPTION-EN.txt` |
 
 В магазин загружается beta ZIP с `manifest.json` в корне. Source ZIP содержит
 исходники и документацию и не предназначен для этого поля.
@@ -70,13 +76,22 @@ analytics, advertising, telemetry, or remote services.
 No account, login, credentials, payment, or external service is required.
 
 1. Install the extension and click its toolbar icon to open the editor.
-2. Click “Try an example” to load two synthetic JavaScript versions.
-3. Select an entry in “Differences” to jump to the changed lines.
-4. Click “Keep B” to retain a change, or “Use A” to replace it with version A.
-5. Toggle “Only changes” and “Show spaces & tabs”.
-6. Edit B, click “Check syntax”, and use a reported location to navigate.
+2. Click “Try an example” to load two valid synthetic JavaScript versions.
+3. Select an entry in “Differences” to jump to the changed lines. Click
+   “Keep B” to mark that difference reviewed without changing the code.
+4. Select another difference and click “Use A → B” to copy that block to B.
+   Click “Undo”, then “Redo”, and confirm the change is removed and restored.
+   These toolbar buttons act on B; Ctrl/Cmd+Z acts on the focused editor.
+5. Toggle “Only changes” and “Show spaces & tabs”, then turn them off.
+6. In B, paste a new line containing `const broken = ;`. Click “Check syntax”.
+   Open “Show locations” under B and click the reported error to jump to it.
+   Click “Undo” to remove the added line; the syntax check runs again.
 7. Click “Download B”, then reopen the saved file with B's “Open file” button.
+   The text and difference blocks should match the result before downloading.
 
+“Keep B” is a review mark, not an edit; the editor's Undo does not remove that
+mark. Manual text edits restart review progress. No external test files are
+needed for these steps.
 The extension does not execute source code. Python validation is preliminary;
 TypeScript type checking and YAML schema validation are not included.
 
@@ -98,4 +113,6 @@ TypeScript type checking and YAML schema validation are not included.
 - https://developer.chrome.com/docs/webstore/images
 - https://developer.chrome.com/docs/webstore/cws-dashboard-distribution
 
-Поля и правила сверены 19 октября 2026. Решение о публикации принимает магазин.
+Размеры изображений, требования к beta-обозначению, режим Unlisted и поля
+Privacy practices сверены с официальными страницами 20 октября 2026.
+Решение о публикации принимает магазин.

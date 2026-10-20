@@ -1,10 +1,10 @@
 # Deterministic operations — comparison policy and transfers
 
-Version 0.7.0 is the accepted baseline (tag `v0.7.0`). The 0.8.0 pilot adds
+Version 0.8.0 is the accepted baseline (tag `v0.8.0`). It adds
 canonical full comparison after every document-changing transaction. It keeps
 versioned transfers, raw-byte history, and the existing editor instances.
-It does not introduce a plugin API or LLM integration. Store materials remain
-the prepared 0.5.0 set.
+It does not introduce a plugin API or LLM integration. Store materials in
+`store/` now describe 0.8.0; no store submission or approval is claimed.
 
 ## Operation map
 

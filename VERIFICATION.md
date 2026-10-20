@@ -14,12 +14,18 @@
 
 ## Acceptance and remote gate
 
-Version 0.7.0 was accepted by the user and tagged `v0.7.0` on main. This 0.8.0
-pilot still needs the user's own-file acceptance. The GitHub `Beta checks`
-workflow requires `REQUIRE_EXTENSION=1`, so it cannot silently fall back to a
-local page. Consult the pilot pull request checks for the exact installed-
-extension commit/result. This document records local results before upload.
-Store materials remain the prepared 0.5.0 set; no store submission is claimed.
+Version 0.8.0 was accepted by the user on 20 October 2026 after transfers,
+Undo/Redo and Download B. The submitted A/B outputs matched byte for byte and
+both parsed as Python. These files were checked locally and were not committed.
+PR #6 merged at `dccd0c25ed0cd11514e6fb55e76470e02e3bbabb`; the user pushed
+`v0.8.0` at that commit.
+
+Installed-extension checks passed on the PR head and on main:
+https://github.com/donjonson-hash/code-compare-local/actions/runs/39408116810
+The workflow requires `REQUIRE_EXTENSION=1`, so it cannot silently fall back to
+a local page. Store assets now show 0.8.0 with synthetic JavaScript files only.
+The store preparation changes documentation and asset generation, not runtime
+code, icons, dependencies, permissions or version. No store submission is claimed.
 
 ## Scope and cost
 

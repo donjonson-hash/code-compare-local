@@ -21,8 +21,9 @@ raw bytes and review progress; applying again after Undo creates a fresh proposa
 
 See [DETERMINISM.md](DETERMINISM.md) for the operation map, schema, boundaries,
 and acceptance checks. No API, account, AI call or persistent storage is added.
-This is a development pilot; `store/` retains the prepared 0.5.0 listing/assets.
-The previously tested 0.5.0 store candidate is commit `7de941c`.
+Version 0.8.0 was accepted and tagged `v0.8.0`. The `store/` directory contains
+its English listing, screenshots and Russian submission worksheet. The store
+kit is prepared for free beta testing; it has not been submitted or published.
 
 
 Compare two versions of code, edit them side by side, move changes from A to B,
