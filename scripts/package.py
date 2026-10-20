@@ -1,5 +1,6 @@
 """Create deterministic installation and source ZIPs from the current build."""
 import json
+import hashlib
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
@@ -37,3 +38,30 @@ archive(f"code-compare-local-{version}-source.zip", source, "code-compare-local/
 
 archive(f"code-compare-local-{version}-test-files.zip",
         [f for f in (ROOT / "examples").rglob("*") if f.is_file()])
+
+# Keep the store upload and the supporting materials in one delivery archive.
+# The outer kit itself is not an installable extension.
+store_files = {
+    f"code-compare-local-{version}-beta.zip": (out / f"code-compare-local-{version}-beta.zip").read_bytes(),
+    "icon128.png": (ROOT / "icons/icon128.png").read_bytes(),
+}
+for name in ("LISTING-EN.md", "SUBMISSION-RU.md", "screenshot-1280x800.png",
+             "screenshot-fixed-1280x800.png", "promo-440x280.png"):
+    store_files[name] = (ROOT / "store" / name).read_bytes()
+listing = store_files["LISTING-EN.md"].decode("utf-8")
+description = listing.split("## Full description\n", 1)[1].split("\n## ", 1)[0].strip()
+store_files["FULL-DESCRIPTION-EN.txt"] = (description + "\n").encode("utf-8")
+store_files["SHA256SUMS.txt"] = "".join(
+    f"{hashlib.sha256(data).hexdigest()}  {name}\n"
+    for name, data in sorted(store_files.items())
+).encode("utf-8")
+kit = out / f"code-compare-local-{version}-store-kit.zip"
+with ZipFile(kit, "w", compression=ZIP_DEFLATED) as zipped:
+    for name, data in sorted(store_files.items()):
+        entry = ZipInfo(name, (2026, 1, 1, 0, 0, 0))
+        entry.compress_type = ZIP_DEFLATED
+        entry.external_attr = 0o100644 << 16
+        zipped.writestr(entry, data)
+with ZipFile(kit) as zipped:
+    assert zipped.testzip() is None
+print(kit)
