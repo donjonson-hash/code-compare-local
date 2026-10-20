@@ -1,37 +1,38 @@
-# Deterministic transfer pilot 0.6.1 — 20 October 2026
+# Clock-independent comparison pilot 0.7.0 — 20 October 2026
 
 ## Completed locally
 
-- Reproduced 0.6.0 controls hidden by compact grid-card clipping and icon-only Undo/Redo below the initial viewport.
-- Version 0.6.1 puts labeled Use A, Keep B, Undo, Redo and Download B above the editors and prevents compact cards from shrinking.
-- At 1440, 1280, 1100 and 900 px width (720 px height), browser checks assert visible labels and unclipped controls before clicks, then double-click Use A → Undo → Redo and verify actual downloaded bytes. CodeMirror line-reveal layout is allowed to settle before measuring the page top.
+- `npm run build`: editor and syntax worker bundled using unchanged pinned dependencies.
+- `npm test`: all 49 tests passed, including 3 new comparison-policy tests.
+- Full comparisons retain their ranges and precision flags under frozen, jumping and unavailable clocks; interleaving a grouped comparison does not leak its state.
+- The same incremental A/B edit and undo trace produces the same intermediate results under those clocks.
+- Depth-limited and large-range fallback transfers reconstruct source contents without losing the target BOM.
+- `npm run test:browser`: the complete offline suite passed in local-page Chromium 138.0.7204.0. This is not an installed-extension result.
+- The real UI compares 120 changed JavaScript lines under normal and rapidly advancing clocks. Visible grouping/cards match, the untouched download remains B, and Use A downloads A exactly.
+- Existing five-language correction/download/reopen, stale/replayed proposals, Undo/Redo, review progress, whitespace, context folding and limits passed.
+- Visible controls remain checked at 1440, 1280, 1100 and 900 × 720 before clicks, followed by double-click Use A → Undo → Redo and download-byte assertions.
+- No external HTTP(S) requests or uncaught page errors in the passing browser run.
 
-- `npm run build`: bundled editor, syntax worker, and third-party notices with the existing pinned dependencies.
-- `npm test`: all 46 tests passed, including 11 proposal-validation tests and the existing diff, byte-preservation, review-state and syntax tests.
-- `npm run test:browser`: the complete offline suite passed in local-page Chromium 138.0.7204.0. This local run is not an installed-extension check.
-- New end-to-end checks replay a consumed list button and inline arrow, edit A/B after a proposal is displayed, reload B with unchanged visible text but different BOM/line endings, apply a fresh proposal, and double-click the selected-block action. Each scenario checks actual downloaded B bytes.
-- Undo/Redo restores both the expected raw document and review progress. An old command remains consumed after Undo; a fresh proposal can be applied normally.
-- The real long-file regression covers signed relative CodeMirror change offsets for deleted lines, while absolute positions remain bounded.
-- Existing five-language correction/download/reopen, syntax navigation, collapsed context, whitespace display, limits, compact layout and clear-session checks passed.
-- No external HTTP(S) requests or uncaught page errors during the passing browser run.
+## Prior acceptance and remaining gate
 
-## Remote and manual gates
+The user's corrected B file from the 0.6.1 pilot matched the original A
+byte-for-byte and compiled successfully with Python 3.12.14. Uploaded file
+contents are not included in the repository or this regression corpus.
 
-The GitHub `Beta checks` workflow runs with `REQUIRE_EXTENSION=1` and cannot
-silently fall back to local-page mode. Consult this pilot pull request's checks
-for installed-extension status and the exact tested commit. This document records
-the local results before upload and does not claim a remote result in advance.
+The GitHub `Beta checks` workflow requires `REQUIRE_EXTENSION=1`; it cannot
+silently fall back to local-page mode. Consult this stage's pull request checks
+for the exact tested commit and installed-extension status. This document
+records local results before upload. The 0.7.0 pilot has not yet received the
+user's own-file acceptance. Store materials still describe 0.5.0.
 
-The user confirmed the previous 0.5.0 behavior on 19 October 2026. The 0.6.1
-pilot still needs the user's own-file acceptance before replacing that baseline.
-Store materials in `store/` describe 0.5.0; no 0.6.1 store submission is claimed.
+## Scope
 
-## Scope and known boundary
-
-The contract and operation map are in `DETERMINISM.md`. This pilot validates
-application of an explicit versioned block proposal. The existing time-limited
-diff grouping is not claimed to be fully deterministic. No external plugin API,
-LLM call, new permission, dependency or persistent source storage is introduced.
+`DETERMINISM.md` defines `clock-independent-v1` and its boundary: a full build,
+or the same incremental history, no longer depends on wall-clock time. Different
+edit histories can still group identical final documents differently. Search
+depth is bounded, not total elapsed time. The library precision flag is not a
+minimal-diff guarantee. Syntax-worker timeout behavior is outside this stage.
+No new dependencies, network calls, permissions or persistent code storage.
 
 ## Reproduce
 
@@ -44,10 +45,7 @@ REQUIRE_EXTENSION=1 npm run test:browser
 npm run package
 ```
 
-For the local-page fallback, omit `REQUIRE_EXTENSION` and set
-`CHROMIUM_EXECUTABLE`. `TEST_OUTPUT` controls temporary profiles/screenshots;
-they are excluded from distribution ZIPs. Test files are synthetic.
-
-The beta archive has `manifest.json` at its root. The source archive includes
-implementation, tests and the contract; it excludes installed dependencies,
-browser profiles and generated archives.
+For the local-page fallback omit `REQUIRE_EXTENSION` and set
+`CHROMIUM_EXECUTABLE`. `TEST_OUTPUT` controls temporary screenshots/profiles.
+Distribution archives exclude dependencies, browser profiles and other ZIPs.
+The installation archive has `manifest.json` at its root.

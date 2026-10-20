@@ -1,3 +1,4 @@
+import { DIFF_CONFIG } from '../src/diff-policy.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Text } from '@codemirror/state';
@@ -8,7 +9,7 @@ import { prepareBlockTransfer, checkBlockTransfer } from '../src/block-transfer.
 const clone = value => JSON.parse(JSON.stringify(value));
 function fixture(a = 'one\nnew\nlast', b = 'one\nold\nlast', options = {}) {
   const source = makeDocument(a, options.sourceBOM ?? false), target = makeDocument(b, options.targetBOM ?? false);
-  const chunk = Chunk.build(Text.of(normalize(a).split('\n')), Text.of(normalize(b).split('\n')))[0] ??
+  const chunk = Chunk.build(Text.of(normalize(a).split('\n')), Text.of(normalize(b).split('\n')), DIFF_CONFIG)[0] ??
     { fromA: 0, fromB: 0, changes: [] };
   const context = { source, target, sourceRevision: 4, targetRevision: 9, appliedIds: new Set() };
   const operation = prepareBlockTransfer({ ...context, id: 'session-1:change-1', chunk });
@@ -121,7 +122,7 @@ test('real line deletions allow signed relative chunk offsets while validating a
   const b = a.replace('value_30 = 30', 'value_30 = 999').replace(removed, '')
     .replace('value_200 = 200', 'value_200 = 888');
   const source = makeDocument(a), target = makeDocument(b);
-  const chunks = Chunk.build(Text.of(a.split('\n')), Text.of(b.split('\n')));
+  const chunks = Chunk.build(Text.of(a.split('\n')), Text.of(b.split('\n')), DIFF_CONFIG);
   const chunk = chunks.find(chunk => chunk.changes.some(change => change.fromA < 0 || change.fromB < 0));
   assert.ok(chunk, 'the library fixture must exercise a signed relative offset');
   const context = { source, target, sourceRevision: 0, targetRevision: 0 };

@@ -1,4 +1,12 @@
-# Code Compare Local · beta 0.6.1
+# Code Compare Local · beta 0.7.0
+
+## Clock-independent comparison pilot
+
+Version 0.7.0 replaces the comparison's elapsed-time cutoff with the existing
+fixed search-depth limit. Replaying the same comparison and edit sequence no
+longer changes grouping because the computer is busy or the clock jumps.
+Difficult regions can still be grouped; different editing histories may still
+group the same final files differently. See [DETERMINISM.md](DETERMINISM.md).
 
 ## Deterministic transfer pilot
 

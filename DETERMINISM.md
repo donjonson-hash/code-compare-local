@@ -1,15 +1,16 @@
-# Deterministic operations — first pilot
+# Deterministic operations — comparison policy and transfers
 
-The 0.6.0 pilot covers one action: copy a displayed difference block from A to B.
-The 0.5.0 store candidate remains available on its existing commit. This pilot
-does not implement a shared library, external plugin API, or LLM integration.
+The 0.6.1 pilot introduced checked, versioned block transfers and was verified
+against the user's corrected B file: it matched A byte-for-byte. The 0.7.0 pilot
+adds a clock-independent comparison policy. It does not implement a shared
+plugin API or LLM integration. Store materials remain the prepared 0.5.0 set.
 
 ## Operation map
 
 | Operation | Inputs and rules | Result / boundary |
 | --- | --- | --- |
 | Decode a file | UTF-8, optional BOM; explicit byte/character/line limits | Raw text, BOM, preferred line ending; unsupported input is rejected |
-| Compare | LF-normalized UTF-16 text; pinned CodeMirror version and diff configuration | Difference blocks; the current time-limited diff may group difficult changes differently under load |
+| Compare | LF-normalized UTF-16 text; pinned CodeMirror version and diff configuration | Difference blocks under `clock-independent-v1`; fixed search-depth fallback, no elapsed-time cutoff; incremental updates also depend on previous chunks and edits |
 | Prepare a block transfer | A and B snapshots, content revisions, selected chunk, caller-provided command ID | Immutable schema-v1 proposal; no editor mutation |
 | Check a proposal | Exact snapshots/revisions, ranges, expected text and consumed IDs | Ready candidate or explicit rejection; no editor mutation |
 | Commit a proposal | Accepted candidate and normalized editor changes | One isolated CodeMirror transaction; consume ID only after successful commit |
@@ -17,11 +18,43 @@ does not implement a shared library, external plugin API, or LLM integration.
 | Syntax check | Selected language, pinned parser and source text | Diagnostics within parser coverage; not a runtime or type-correctness guarantee |
 | Download B | Raw B plus its BOM flag, UTF-8 encoder | Saved bytes; filename and browser download location are outside the text transformation |
 
-The pilot guarantees repeatable **evaluation of a specified proposal** for the
-same inputs, revisions and consumed-ID set. It does not claim that all current
-diff grouping, asynchronous UI timing, or parser behavior is independent of
-environment/version. Removing the diff wall-clock budget requires a separate
-performance and grouping decision.
+The transfer contract guarantees repeatable **evaluation of a specified proposal**
+for the same inputs, revisions and consumed-ID set.
+
+## Comparison policy — stage 2
+
+`src/diff-policy.mjs` defines `clock-independent-v1`: a frozen CodeMirror
+configuration with `scanLimit: 1500` and `timeout: 0`. The installed dependency
+remains pinned in the lockfile. The UI and comparison/transfer tests share this
+policy. Changing dependency versions or policy can change grouping and requires
+review of the regression corpus.
+
+The former 100 ms cutoff made grouping depend on elapsed wall-clock time.
+The new policy retains the existing search-depth cutoff and deterministic
+fallback for difficult regions. `scanLimit` bounds detailed search per
+subproblem; it is not a hard limit on total operations or milliseconds. Existing
+200,000-character / 4,000-line input limits remain enforced. Where the library
+reports reduced precision, the UI retains the grouped label. Its precision flag
+is not a promise of a minimal diff: some very-large-range fallback paths return
+a single block without lowering that flag. Transfers must still reconstruct
+the expected contents without loss.
+
+Guarantees with pinned code and the same policy:
+
+- A full `Chunk.build(A, B)` returns the same ranges and precision flags without
+  consulting the clock.
+- An incremental update returns the same result for the same previous chunks,
+  documents and change set. A replay of the same edit trace is repeatable.
+- CPU load and forward/backward wall-clock jumps do not select a different
+  fallback branch.
+
+**Boundary:** CodeMirror updates only affected regions and retains existing
+chunks. Different edit histories can produce different grouping for the same
+final A/B. This stage does not promise a canonical, history-independent grouping.
+No private editor APIs are patched to force one. A later stage can evaluate a
+canonical full-comparison adapter separately from editor history and selection.
+Syntax-worker timeouts and asynchronous UI scheduling are also outside this
+comparison guarantee. No guarantee about runtime or type correctness is added.
 
 ## Proposal contract
 

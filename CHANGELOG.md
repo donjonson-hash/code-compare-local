@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0 — 20 October 2026
+
+- Share a versioned, clock-independent comparison policy across the editor and core tests.
+- Remove the 100 ms wall-clock cutoff while retaining the fixed search-depth limit and grouped fallback.
+- Document the incremental-history boundary: identical final files are not promised identical grouping after different edit histories.
+- Preserve existing transfer proposals, raw-byte Undo/Redo, syntax checks and visible controls.
+
 ## 0.6.1 — 20 October 2026
 
 - Group Use A, Keep B, Undo, Redo and Download B above the editors; add visible Undo/Redo labels.

@@ -1,3 +1,4 @@
+import { DIFF_CONFIG } from '../src/diff-policy.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EditorState, Text } from '@codemirror/state';
@@ -31,7 +32,7 @@ test('a selected chunk preserves untouched B and copies source line endings', ()
   const a = makeDocument('a\r\nfirst\r\nsame\nlast\r\n');
   const b = makeDocument('a\nFIRST\nsame\nLAST\n');
   let raw = b;
-  const chunks = Chunk.build(Text.of(normalize(a.raw).split('\n')), Text.of(normalize(b.raw).split('\n')));
+  const chunks = Chunk.build(Text.of(normalize(a.raw).split('\n')), Text.of(normalize(b.raw).split('\n')), DIFF_CONFIG);
   for (const chunk of [...chunks].reverse()) raw = applyEdits(raw, chunkEdits(chunk, a));
   assert.equal(normalize(raw.raw), normalize(a.raw));
   assert.ok(raw.raw.startsWith('a\n')); // An unchanged B line is not rewritten.
@@ -42,7 +43,7 @@ test('all chunk transfers reconstruct A, including empty files and trailing newl
   for (const a of values) for (const b of values) {
     const source = makeDocument(a);
     let target = makeDocument(b);
-    const chunks = Chunk.build(Text.of(normalize(a).split('\n')), Text.of(normalize(b).split('\n')));
+    const chunks = Chunk.build(Text.of(normalize(a).split('\n')), Text.of(normalize(b).split('\n')), DIFF_CONFIG);
     for (const chunk of [...chunks].reverse()) target = applyEdits(target, chunkEdits(chunk, source));
     assert.equal(normalize(target.raw), normalize(a), JSON.stringify({ a, b }));
   }
@@ -56,7 +57,7 @@ test('random bounded diffs are lossless after block transfer', () => {
     const a = Array.from({ length: rand() % 80 }, () => atoms[rand() % atoms.length]).join('');
     const b = Array.from({ length: rand() % 80 }, () => atoms[rand() % atoms.length]).join('');
     const source = makeDocument(a); let target = makeDocument(b);
-    const chunks = Chunk.build(Text.of(normalize(a).split('\n')), Text.of(normalize(b).split('\n')), { scanLimit: 100, timeout: 30 });
+    const chunks = Chunk.build(Text.of(normalize(a).split('\n')), Text.of(normalize(b).split('\n')), DIFF_CONFIG);
     for (const chunk of [...chunks].reverse()) target = applyEdits(target, chunkEdits(chunk, source));
     assert.equal(normalize(target.raw), normalize(a));
   }
