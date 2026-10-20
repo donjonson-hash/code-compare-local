@@ -1,3 +1,6 @@
+import { decodeUtf8Bytes, encodeUtf8Text } from './vendor/deterministic-extensions/utf8.mjs';
+
+// Product policy stays here; the shared codec only handles UTF-8 and its BOM.
 // Code offsets use UTF-16, matching CodeMirror and JavaScript string offsets.
 export const MAX_BYTES = 512 * 1024;
 export const MAX_CHARS = 200_000;
@@ -21,15 +24,22 @@ export function makeDocument(raw = '', bom = false) {
 
 export function decodeFile(bytes) {
   if (bytes.byteLength > MAX_BYTES) throw new Error('The file exceeds 512 KB. Choose a smaller file.');
-  let text;
-  try { text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes); }
+  let decoded;
+  try {
+    // Preserve the BufferSource inputs accepted by the previous decoder,
+    // including views with nonzero offsets; never decode the whole backing buffer.
+    let view;
+    if (ArrayBuffer.isView(bytes)) view = new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    else if (bytes instanceof ArrayBuffer || (typeof SharedArrayBuffer !== 'undefined' && bytes instanceof SharedArrayBuffer)) view = new Uint8Array(bytes);
+    else throw new TypeError('Expected UTF-8 bytes');
+    decoded = decodeUtf8Bytes(view);
+  }
   catch { throw new Error('Use a UTF-8 file. Save it with UTF-8 encoding first.'); }
-  const bom = text.startsWith('\uFEFF');
-  return makeDocument(bom ? text.slice(1) : text, bom);
+  return makeDocument(decoded.raw, decoded.bom);
 }
 
 export function encodeFile(doc) {
-  return new TextEncoder().encode((doc.bom ? '\uFEFF' : '') + doc.raw);
+  return encodeUtf8Text(doc.raw, doc.bom);
 }
 
 export function rawOffset(raw, position) {

@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/donjonson-hash/deterministic-extensions",
+  "commit": "ab9db6eb0952c55e3693fb8856e8295059ec2960",
+  "path": "src/core/utf8.mjs",
+  "codecVersion": "utf8-v1",
+  "sha256": "d1cd339c575184be488bbcf2c6d30acf087d68f4b1c657ebb45043f37f332643"
+}
