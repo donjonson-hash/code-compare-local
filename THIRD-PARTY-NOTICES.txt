@@ -2,6 +2,10 @@ Local modification: @codemirror/merge 6.12.2 is bundled with a guarded build-tim
 
 ========================================================================
 
+Shared first-party UTF-8 codec: https://github.com/donjonson-hash/deterministic-extensions, commit ab9db6eb0952c55e3693fb8856e8295059ec2960, src/core/utf8.mjs, SHA-256 d1cd339c575184be488bbcf2c6d30acf087d68f4b1c657ebb45043f37f332643. Vendored unchanged; project license remains UNLICENSED. See docs/SHARED-UTF8.md.
+
+========================================================================
+
 @babel/parser 8.0.7
 Copyright (C) 2012-2014 by various contributors (see AUTHORS)
 
