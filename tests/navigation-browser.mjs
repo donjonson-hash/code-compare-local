@@ -27,7 +27,18 @@ export async function checkDownloadNavigation({ page, open, download, url }) {
   };
   const clear = async () => {
     await page.locator('#clear').click();
+    // Empty metadata can already match before the dialog's queued close event
+    // resets the editors and file-load revisions. Observe that event explicitly
+    // before allowing another file load to start.
+    await page.locator('#confirm-clear').evaluate(dialog => {
+      dialog.dataset.navigationTestClosed = 'pending';
+      dialog.addEventListener('close', () => {
+        queueMicrotask(() => { dialog.dataset.navigationTestClosed = 'complete'; });
+      }, { once: true });
+    });
     await page.getByRole('button', { name: 'Clear', exact: true }).click();
+    await page.waitForFunction(() => document.getElementById('confirm-clear').dataset.navigationTestClosed === 'complete');
+    await page.locator('#confirm-clear').evaluate(dialog => { delete dialog.dataset.navigationTestClosed; });
     for (const side of ['a', 'b']) await assertEmpty(side);
   };
   const append = async (side, text) => {
