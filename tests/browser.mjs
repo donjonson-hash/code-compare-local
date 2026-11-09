@@ -5,6 +5,7 @@ import { checkFocusedReview } from './review-browser.mjs';
 import { checkDeterministicTransfer } from './transfer-browser.mjs';
 import { checkClockIndependentComparison } from './diff-browser.mjs';
 import { checkCanonicalComparison } from './canonical-browser.mjs';
+import { checkStudioContrast } from './theme-browser.mjs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
@@ -45,21 +46,6 @@ let extensionWorker = webBuild ? undefined : context.serviceWorkers()[0];
 if (process.env.REQUIRE_EXTENSION && !extensionWorker) extensionWorker = await context.waitForEvent('serviceworker', { timeout: 15000 });
 const url = extensionWorker ? new URL('app.html', extensionWorker.url()).href : `${localOrigin}/app.html`;
 const homeUrl = new URL('index.html', url).href;
-await page.goto(homeUrl);
-await page.waitForFunction(() => {
-  const image = document.querySelector('img[src="assets/anime-studio.png"]');
-  return image?.complete && image.naturalWidth > 0;
-});
-await page.screenshot({ path: `${output}/studio-home.png`, fullPage: true });
-await page.setViewportSize({ width: 375, height: 812 });
-assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'The studio home fits a narrow window');
-await page.screenshot({ path: `${output}/studio-mobile.png`, fullPage: true });
-await page.setViewportSize({ width: 1440, height: 1000 });
-await page.locator('a[href="app.html?demo=1"]').first().click();
-await page.waitForFunction(() => document.getElementById('diff-count')?.textContent.includes('4 change blocks'));
-assert.equal(page.url(), url, 'The landing example opens the editor and consumes its one-time URL flag');
-await page.waitForFunction(() => document.getElementById('syntax-report').dataset.worker === 'ready');
-await context.setOffline(true);
 const open = async (side, text, name = 'sample.py') => {
   await page.locator(`#file-${side}`).setInputFiles({ name, mimeType: 'text/plain', buffer: Buffer.from(text) });
   await page.waitForFunction(({side, text}) => document.getElementById(`meta-${side}`).textContent.includes(`${text.replace(/\r\n|\r/g,'\n').replace(/^\uFEFF/,'').length.toLocaleString('en-US')} chars`), { side, text });
@@ -74,9 +60,26 @@ const download = async () => {
 };
 
 try {
+  await page.goto(homeUrl);
+  await page.waitForFunction(() => {
+    const image = document.querySelector('img[src="assets/anime-studio.png"]');
+    return image?.complete && image.naturalWidth > 0;
+  });
+  await page.screenshot({ path: `${output}/studio-home.png`, fullPage: true });
+  await page.setViewportSize({ width: 375, height: 812 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'The studio home fits a narrow window');
+  await page.screenshot({ path: `${output}/studio-mobile.png`, fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.locator('a[href="app.html?demo=1"]').first().click();
+  await page.waitForFunction(() => document.getElementById('diff-count')?.textContent.includes('4 change blocks'));
+  assert.equal(page.url(), url, 'The landing example opens the editor and consumes its one-time URL flag');
+  await page.waitForFunction(() => document.getElementById('syntax-report').dataset.worker === 'ready');
+  await context.setOffline(true);
+
   await page.locator('#demo').click();
   await page.locator('.cm-merge-revert button').first().waitFor();
   assert.match(await page.locator('#diff-count').innerText(), /4 change blocks/);
+  await checkStudioContrast(page);
   await page.screenshot({ path: `${output}/desktop.png`, fullPage: true });
   const demoBefore = await download();
   await page.locator('.cm-merge-revert button').first().click();
@@ -294,12 +297,17 @@ try {
   await page.locator('a[href="app.html"]').first().click();
   await page.waitForFunction(() => document.getElementById('syntax-report')?.dataset.worker === 'ready');
   assert.equal(page.url(), url);
-  assert.equal(await page.getByRole('textbox', { name: 'Code B', exact: true }).textContent(), '', 'Normal entry does not reload the example');
+  assert.match(await page.locator('#meta-b').textContent(), /^0 chars\b/, 'Normal entry does not reload the example');
+  assert.equal((await download()).bytes.length, 0, 'Normal entry exports an empty file, not placeholder text');
   assert.deepEqual(requests, [], 'No network requests while using the app');
   assert.deepEqual(errors, [], 'No uncaught browser errors');
-  console.log(JSON.stringify({ passed: true, mode: webBuild ? 'website' : extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['home-demo-navigation', 'focus-preserves-bytes-and-history', 'local-home-editor-navigation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
+  console.log(JSON.stringify({ passed: true, mode: webBuild ? 'website' : extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['home-demo-navigation', 'rendered-token-contrast', 'focus-preserves-bytes-and-history', 'local-home-editor-navigation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
 } catch(error) {
-  console.error({errors, requests, status: await page.locator('#diff-count').textContent(), toast: await page.locator('#toast').textContent()});
-  await page.screenshot({path: `${output}/failure.png`, fullPage:true});
+  const state = await page.evaluate(() => ({
+    status: document.getElementById('diff-count')?.textContent ?? null,
+    toast: document.getElementById('toast')?.textContent ?? null,
+  })).catch(() => ({}));
+  console.error({ errors, requests, ...state });
+  await page.screenshot({path: `${output}/failure.png`, fullPage:true}).catch(() => {});
   throw error;
 } finally { await context.close(); await new Promise(resolve => server.close(resolve)); }

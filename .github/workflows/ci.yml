@@ -17,6 +17,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-runtime
+          path: |
+            app.js
+            syntax-worker.js
+            THIRD-PARTY-NOTICES.txt
+          if-no-files-found: error
       - run: npm test
       - run: npm run build:web
       - run: npx playwright install --with-deps chromium

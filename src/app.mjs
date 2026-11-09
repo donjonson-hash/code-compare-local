@@ -1,7 +1,7 @@
 import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, placeholder, drawSelection, highlightWhitespace } from '@codemirror/view';
 import { history, historyKeymap, defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, isolateHistory } from '@codemirror/commands';
-import { syntaxHighlighting, defaultHighlightStyle, bracketMatching, StreamLanguage } from '@codemirror/language';
+import { syntaxHighlighting, bracketMatching, StreamLanguage } from '@codemirror/language';
 import { MergeView } from '@codemirror/merge';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
@@ -21,6 +21,7 @@ import { createChangesController } from './changes-ui.mjs';
 import { accessibleCollapsedContext } from './focus-view.mjs';
 import { prepareBlockTransfer, checkBlockTransfer } from './block-transfer.mjs';
 import { DIFF_CONFIG } from './diff-policy.mjs';
+import { studioHighlightStyle } from './editor-theme.mjs';
 
 const $ = id => document.getElementById(id);
 const compartments = { a: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() }, b: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() } };
@@ -42,7 +43,7 @@ function extensions(side, doc) {
   return [
     rawField.init(() => doc), rawHistory, history({ minDepth: 40 }),
     lineNumbers(), lintGutter(), highlightActiveLineGutter(), drawSelection(), bracketMatching(),
-    syntaxHighlighting(defaultHighlightStyle),
+    EditorView.theme({}, { dark: true }), syntaxHighlighting(studioHighlightStyle),
     keymap.of([...historyKeymap, ...defaultKeymap, indentWithTab]),
     EditorState.tabSize.of(4), EditorState.lineSeparator.of('\n'),
     compartments[side].language.of([]), compartments[side].wrap.of([]),

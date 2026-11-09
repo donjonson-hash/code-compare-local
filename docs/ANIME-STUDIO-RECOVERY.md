@@ -31,8 +31,10 @@ Original asset SHA-256:
 The engine comes from GitHub main `0e7884c7239a725c22a2ea32028037e69ba20860`,
 including the shared UTF-8 codec. No older prototype engine or 0.2.0 archive is
 substituted. Comparison, transfer validation, review history and byte-preserving
-export are unchanged. No new permission, dependency, API call or persistent
-source storage is introduced.
+export are unchanged. No new permission, API call or persistent source storage is introduced.
+The editor now uses a high-contrast dark syntax palette. Its existing locked
+`@lezer/highlight` 1.2.5 dependency is declared directly for semantic color tags;
+no dependency version changes. Browser tests check rendered token contrast.
 
 The toolbar icon continues to open the local editor. Studio opens the bundled
 home page; the extension does not need the hosted site to use its interface.
