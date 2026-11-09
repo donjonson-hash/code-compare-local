@@ -35,8 +35,8 @@ jobs:
           path: dist/*.zip
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
-          name: browser-check-failure
+          name: browser-check-screenshots
           path: test-output/**/*.png
           if-no-files-found: ignore

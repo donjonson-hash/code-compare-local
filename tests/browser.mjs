@@ -46,6 +46,15 @@ if (process.env.REQUIRE_EXTENSION && !extensionWorker) extensionWorker = await c
 const url = extensionWorker ? new URL('app.html', extensionWorker.url()).href : `${localOrigin}/app.html`;
 const homeUrl = new URL('index.html', url).href;
 await page.goto(homeUrl);
+await page.waitForFunction(() => {
+  const image = document.querySelector('img[src="assets/anime-studio.png"]');
+  return image?.complete && image.naturalWidth > 0;
+});
+await page.screenshot({ path: `${output}/studio-home.png`, fullPage: true });
+await page.setViewportSize({ width: 375, height: 812 });
+assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'The studio home fits a narrow window');
+await page.screenshot({ path: `${output}/studio-mobile.png`, fullPage: true });
+await page.setViewportSize({ width: 1440, height: 1000 });
 await page.locator('a[href="app.html?demo=1"]').first().click();
 await page.waitForFunction(() => document.getElementById('diff-count')?.textContent.includes('4 change blocks'));
 assert.equal(page.url(), url, 'The landing example opens the editor and consumes its one-time URL flag');
