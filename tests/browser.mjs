@@ -6,6 +6,7 @@ import { checkDeterministicTransfer } from './transfer-browser.mjs';
 import { checkClockIndependentComparison } from './diff-browser.mjs';
 import { checkCanonicalComparison } from './canonical-browser.mjs';
 import { checkStudioContrast } from './theme-browser.mjs';
+import { checkDownloadNavigation } from './navigation-browser.mjs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
@@ -280,6 +281,10 @@ try {
   await page.locator('#demo').click();
   await page.screenshot({ path: `${output}/compact.png`, fullPage: true });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  await page.setViewportSize({ width: 375, height: 812 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'The editor fits a narrow window');
+  await page.screenshot({ path: `${output}/workspace-mobile.png`, fullPage: true });
+  await page.setViewportSize({ width: 900, height: 900 });
   await page.locator('#clear').click();
   await page.getByRole('button', { name: 'Clear', exact: true }).click();
   assert.equal((await download()).bytes.length, 0);
@@ -287,6 +292,7 @@ try {
   // An installed extension must keep its home page, image, and editor local.
   // The website needs the server for a full navigation; no offline reload is claimed.
   if (!extensionWorker) await context.setOffline(false);
+  await checkDownloadNavigation({ page, open, download, url });
   await page.locator('a.brand[href="index.html"]').click();
   assert.equal(page.url(), homeUrl);
   await page.locator('img[src="assets/anime-studio.png"]').waitFor();
@@ -299,7 +305,7 @@ try {
   assert.equal(page.url(), url);
   for (const side of ['a', 'b']) {
     await page.waitForFunction(side => /\b0 chars\b/.test(document.getElementById(`meta-${side}`).textContent), side);
-    assert.equal(await page.getByRole('textbox', { name: `Code ${side.toUpperCase()}`, exact: true }).textContent(), '',
+    assert.match(await page.locator(`#meta-${side}`).textContent(), /\b0 chars\b/,
       `Normal entry leaves ${side.toUpperCase()} empty instead of reloading the example`);
   }
   assert.equal((await download()).bytes.length, 0, 'Normal entry exports an empty file, not placeholder text');

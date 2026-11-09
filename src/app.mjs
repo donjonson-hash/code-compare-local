@@ -268,7 +268,8 @@ $('download').addEventListener('click', () => {
   const link = document.createElement('a');
   link.href = url; link.download = safeFilename($('filename').value); link.click();
   setTimeout(() => URL.revokeObjectURL(url), 30_000);
-  dirty = false;
+  // A download request cannot confirm that the browser saved the file, and
+  // exporting B does not save edits in A. Keep the leave-page protection.
   notify('File B sent to your browser for download.');
 });
 $('clear').addEventListener('click', () => $('confirm-clear').showModal());

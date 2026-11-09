@@ -60,6 +60,16 @@ sources, tests or node_modules. Serve it over HTTP(S) for Web Worker support.
 The website processes code locally once loaded; offline reload of the website
 is not promised. The installed extension remains self-contained and offline.
 
+After a successful website browser check, CI uploads `comparecode-website`,
+containing the freshly built `dist/client` output. Use that output for hosting,
+not the checked-in bundles without rebuilding. The website is tested first;
+the existing extension suite then checks the shared engine for regressions.
+
+Download B requests a download but cannot confirm its final save or save A.
+The leave-page warning therefore remains active after downloading; explicit
+Clear resets it. Browser checks cover canceling Studio navigation without
+losing either text, and the editor layout at 375 px.
+
 The browser suite exercises the actual web output as well as the installed
 extension, including syntax, transfers, Undo/Redo, downloads, reopen, focus and
 home/example navigation. A successful CI run is required before acceptance.
