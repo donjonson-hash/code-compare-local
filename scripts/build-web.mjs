@@ -8,11 +8,12 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const output = resolve(root, 'dist/client');
 const files = [
   'index.html', 'studio.css',
+  'privacy.html', 'support.html', 'info.css', 'robots.txt', 'sitemap.xml',
   'app.html', 'app.js', 'syntax-worker.js', 'styles.css',
   'workspace-theme.css', 'workspace-theme.js',
   'assets/anime-studio.png', 'assets/mark.svg',
   'icons/icon16.png', 'icons/icon48.png', 'icons/icon128.png',
-  'THIRD-PARTY-NOTICES.txt', 'PRIVACY.md',
+  'THIRD-PARTY-NOTICES.txt',
 ];
 
 // Check inputs before replacing the generated web directory. Build app.js and

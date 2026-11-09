@@ -34,11 +34,11 @@ export function createSyntaxController({ getView, getLanguage, beforeReveal = ()
       };
       current.onerror = event => {
         event.preventDefault();
-        if (worker === current) failed('Open the editor from the installed extension and try again.');
+        if (worker === current) failed('Syntax checking could not start. Save or copy your work, then reload the editor and try again.');
       };
       return true;
     } catch {
-      failed('Open the editor from the installed extension and try again.');
+      failed('Syntax checking could not start. Save or copy your work, then reload the editor and try again.');
       return false;
     }
   }

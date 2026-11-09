@@ -7,6 +7,7 @@ import { checkClockIndependentComparison } from './diff-browser.mjs';
 import { checkCanonicalComparison } from './canonical-browser.mjs';
 import { checkStudioContrast } from './theme-browser.mjs';
 import { checkDownloadNavigation } from './navigation-browser.mjs';
+import { checkInfoPages, checkWorkspaceHelp } from './info-browser.mjs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
@@ -19,14 +20,14 @@ const servedRoot = webBuild ? `${root}/dist/client` : root;
 const output = process.env.TEST_OUTPUT || `${root}/test-output`;
 await mkdir(output, { recursive: true });
 const server = createServer(async(req,res) => {
-  const name = new URL(req.url, 'http://localhost').pathname.slice(1);
-  if (!['index.html', 'studio.css', 'app.html', 'app.js', 'syntax-worker.js',
+  const name = new URL(req.url, 'http://localhost').pathname.slice(1) || 'index.html';
+  if (!['index.html', 'studio.css', 'privacy.html', 'support.html', 'info.css', 'robots.txt', 'sitemap.xml', 'app.html', 'app.js', 'syntax-worker.js',
     'styles.css', 'workspace-theme.css', 'workspace-theme.js',
     'assets/anime-studio.png', 'assets/mark.svg', 'icons/icon16.png',
     'icons/icon48.png', 'icons/icon128.png', 'PRIVACY.md',
     'THIRD-PARTY-NOTICES.txt'].includes(name)) { res.writeHead(404).end(); return; }
   try {
-    res.setHeader('Content-Type', name.endsWith('.js') ? 'text/javascript' : name.endsWith('.css') ? 'text/css' : name.endsWith('.png') ? 'image/png' : name.endsWith('.svg') ? 'image/svg+xml' : name.endsWith('.html') ? 'text/html' : 'text/plain');
+    res.setHeader('Content-Type', name.endsWith('.js') ? 'text/javascript' : name.endsWith('.css') ? 'text/css' : name.endsWith('.png') ? 'image/png' : name.endsWith('.svg') ? 'image/svg+xml' : name.endsWith('.html') ? 'text/html' : name.endsWith('.xml') ? 'application/xml' : 'text/plain');
     res.end(await readFile(`${servedRoot}/${name}`));
   } catch { res.writeHead(404).end(); }
 });
@@ -71,10 +72,12 @@ try {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'The studio home fits a narrow window');
   await page.screenshot({ path: `${output}/studio-mobile.png`, fullPage: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await checkInfoPages({ page, homeUrl, output });
   await page.locator('a[href="app.html?demo=1"]').first().click();
   await page.waitForFunction(() => document.getElementById('diff-count')?.textContent.includes('4 change blocks'));
   assert.equal(page.url(), url, 'The landing example opens the editor and consumes its one-time URL flag');
   await page.waitForFunction(() => document.getElementById('syntax-report').dataset.worker === 'ready');
+  await checkWorkspaceHelp({ page, context, url, download });
   await context.setOffline(true);
 
   await page.locator('#demo').click();

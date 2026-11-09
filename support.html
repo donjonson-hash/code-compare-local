@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <meta name="description" content="Get help with Compare Code: compare two files, apply changes, undo edits and download your result. See supported syntax checks, file limits and troubleshooting.">
+  <meta name="theme-color" content="#10131e">
+  <title>Support &amp; How to Compare Code — Compare Code</title>
+  <link rel="canonical" href="https://comparecode.pro/support.html">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="info.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header shell info-header">
+    <a class="logo" href="index.html" aria-label="Compare Code home"><span class="logo-mark" aria-hidden="true">≠</span><span>Compare Code<span class="logo-local">Local processing <i></i></span></span></a>
+    <nav aria-label="Main navigation"><a href="index.html">Home</a><a href="app.html">Workspace</a><a href="privacy.html">Privacy</a><a href="support.html" aria-current="page">Support</a></nav>
+    <a class="nav-cta" href="app.html">Open workspace <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main" class="shell info-main">
+    <header class="info-intro">
+      <p class="eyebrow">A LITTLE HELP FOR YOUR NEXT CHANGE</p>
+      <h1>Compare. Review.<br><em>Keep your work.</em></h1>
+      <p class="lead">Start with two versions of a file. Compare Code shows their differences and lets you choose which changes to keep, all in your browser.</p>
+      <div class="info-cta"><a class="btn btn-coral" href="app.html?demo=1">Try an example <span aria-hidden="true">↗</span></a></div>
+    </header>
+    <nav class="info-toc" aria-label="On this page"><a href="#start">Getting started</a><a href="#syntax">Syntax checks</a><a href="#limits">File limits</a><a href="#help">Troubleshooting</a><a href="#contact">Report a problem</a></nav>
+    <div class="info-content">
+      <section id="start" aria-labelledby="start-title">
+        <h2 id="start-title">From two files to your result</h2>
+        <ol>
+          <li><strong>Open or paste both versions.</strong> Put your reference in A and your result in B. Both fields are editable. Opening a file selects a language; the language setting applies to both fields.</li>
+          <li><strong>Choose a difference.</strong> Use the Differences list or Previous/Next. Use A → B copies the selected block into B. Keep B marks a block reviewed without changing its text.</li>
+          <li><strong>Review your changes.</strong> Undo and Redo affect B. Ctrl/Cmd+Z works in the focused editor. All A → B replaces the complete result and can be undone.</li>
+          <li><strong>Save and check.</strong> Set the result filename and choose Download B. Open the downloaded file again to check it. Download B saves only B; keep any edits to A separately.</li>
+        </ol>
+        <p>Only changes folds unchanged sections. Show spaces &amp; tabs makes whitespace visible without changing it. Code size and Wrap lines adjust the view. Focus mode gives the editors more room while preserving both texts and their history.</p>
+      </section>
+      <section id="syntax" aria-labelledby="syntax-title">
+        <h2 id="syntax-title">What syntax checking covers</h2>
+        <p>Checks run automatically after edits for supported languages. You can also select Check syntax and click a reported location to jump to it.</p>
+        <div class="info-table-wrap"><table class="info-table"><thead><tr><th scope="col">Language</th><th scope="col">Check available</th></tr></thead><tbody>
+          <tr><td>JavaScript / JSX</td><td>Syntax parsing; code is not executed.</td></tr>
+          <tr><td>TypeScript / TSX</td><td>Syntax parsing without type checking.</td></tr>
+          <tr><td>JSON</td><td>JSON syntax.</td></tr>
+          <tr><td>YAML</td><td>Syntax without schema validation.</td></tr>
+          <tr><td>Python</td><td>Preliminary grammar and indentation checks; verify the result with Python itself.</td></tr>
+          <tr><td>HTML, CSS, Java, C/C++, SQL, Markdown</td><td>Highlighting only.</td></tr>
+        </tbody></table></div>
+        <p>Each side is checked as a complete file, so an incomplete snippet can produce errors. Clean syntax does not prove correct logic, working imports or a safe program. Compare Code does not run or automatically repair your code.</p>
+      </section>
+      <section id="limits" aria-labelledby="limits-title">
+        <h2 id="limits-title">Files and limits</h2>
+        <ul>
+          <li>Open UTF-8 text files up to <strong>512 KiB (524,288 bytes)</strong> per file.</li>
+          <li>Each editor supports up to <strong>200,000 UTF-16 text units and 4,000 lines</strong>. Some emoji and other characters use two text units.</li>
+          <li>Downloads preserve the original LF, CRLF or CR line endings, mixed line endings and UTF-8 BOM. New lines you type use that file's main line-ending style.</li>
+          <li>Comparison includes spaces, tabs and the final newline. Large differences may be grouped into broader blocks.</li>
+        </ul>
+        <p>The workspace compares two texts. It does not compare folders or whole projects, connect to Git repositories, or perform a three-way merge.</p>
+      </section>
+      <section id="help" aria-labelledby="help-title">
+        <h2 id="help-title">Common questions</h2>
+        <div class="info-faq">
+          <article><h3>Why is there a warning after I download?</h3><p>The page cannot confirm that your browser finished saving the download, and Download B does not save changes in A. Check your saved file and keep anything you need from A before leaving.</p></article>
+          <article><h3>Can I recover a closed session?</h3><p>No automatic recovery is available. Text and editing history live in the open tab. Save your work before closing, reloading or clearing the workspace.</p></article>
+          <article><h3>Why won't my file open?</h3><p>Check the file size, line count and encoding. Save it as UTF-8 text first. Binary files and files over the stated limits are not supported.</p></article>
+          <article><h3>Copy B is unavailable, or formatting changed.</h3><p>Your browser may restrict clipboard access. Download B instead, or select and copy B manually. Clipboard transfers may alter line endings; downloading preserves them.</p></article>
+          <article><h3>Syntax checking is incomplete.</h3><p>Choose a supported language and try Check syntax again. If checking remains unavailable, save both texts before reloading the page. Treat an incomplete check as unverified.</p></article>
+          <article><h3>Does the website work offline?</h3><p>It needs a connection to load its files. Comparison and syntax checks then run locally. Reloading or opening a new page offline is not guaranteed.</p></article>
+        </div>
+      </section>
+      <section id="contact" aria-labelledby="contact-title">
+        <h2 id="contact-title">Report a problem</h2>
+        <p>Use the <a href="https://github.com/donjonson-hash/code-compare-local/issues" target="_blank" rel="noopener noreferrer">project's GitHub issues</a>. Include your browser and operating system, the steps to reproduce the problem, what you expected and what happened. A small invented example is usually enough.</p>
+        <div class="info-note"><p><strong>Issues are public.</strong> Remove private code, credentials and personal data from examples or screenshots before posting. The application does not send a report for you. See <a href="privacy.html">Privacy</a> for details about local processing and website requests.</p></div>
+        <div class="info-cta"><a class="btn btn-coral" href="app.html">Back to the workspace <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer shell info-footer"><a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true">≠</span><span>Compare Code<span class="logo-local">Local processing <i></i></span></span></a><nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="app.html">Workspace</a><a href="privacy.html">Privacy</a><a href="support.html" aria-current="page">Support</a></nav></footer>
+</body>
+</html>
