@@ -27,6 +27,8 @@ def archive(name, files, prefix=""):
 runtime = [ROOT / name for name in (
     "manifest.json", "background.js", "app.html", "app.js", "syntax-worker.js",
     "styles.css", "THIRD-PARTY-NOTICES.txt", "PRIVACY.md", "README.md", "README-RU.md",
+    "index.html", "studio.css", "workspace-theme.css", "workspace-theme.js",
+    "assets/anime-studio.png", "assets/mark.svg",
 )] + list((ROOT / "icons").glob("*.png"))
 archive(f"code-compare-local-{version}-beta.zip", runtime)
 

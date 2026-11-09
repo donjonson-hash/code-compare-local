@@ -18,11 +18,16 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+      - run: npm run build:web
       - run: npx playwright install --with-deps chromium
       - name: Test the installed extension, including save and reopen
         run: npm run test:browser
         env:
           REQUIRE_EXTENSION: '1'
+      - name: Test the built website, including save and reopen
+        run: npm run test:web
+        env:
+          TEST_OUTPUT: test-output/web
       - run: npm run package
       - uses: actions/upload-artifact@v4
         with:
@@ -33,5 +38,5 @@ jobs:
         if: failure()
         with:
           name: browser-check-failure
-          path: test-output/*.png
+          path: test-output/**/*.png
           if-no-files-found: ignore
