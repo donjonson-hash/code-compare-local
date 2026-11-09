@@ -297,7 +297,11 @@ try {
   await page.locator('a[href="app.html"]').first().click();
   await page.waitForFunction(() => document.getElementById('syntax-report')?.dataset.worker === 'ready');
   assert.equal(page.url(), url);
-  assert.match(await page.locator('#meta-b').textContent(), /^0 chars\b/, 'Normal entry does not reload the example');
+  for (const side of ['a', 'b']) {
+    await page.waitForFunction(side => /\b0 chars\b/.test(document.getElementById(`meta-${side}`).textContent), side);
+    assert.equal(await page.getByRole('textbox', { name: `Code ${side.toUpperCase()}`, exact: true }).textContent(), '',
+      `Normal entry leaves ${side.toUpperCase()} empty instead of reloading the example`);
+  }
   assert.equal((await download()).bytes.length, 0, 'Normal entry exports an empty file, not placeholder text');
   assert.deepEqual(requests, [], 'No network requests while using the app');
   assert.deepEqual(errors, [], 'No uncaught browser errors');
