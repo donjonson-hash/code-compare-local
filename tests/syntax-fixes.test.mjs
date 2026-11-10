@@ -36,6 +36,29 @@ test('JSON missing object-member comma and key colon preserve existing values', 
   assertFix('{"value" "literal"}', '{"value": "literal"}', 'json', /missing colon/);
 });
 
+test('fixes respect the editor character limit for insertions and deletions', () => {
+  const missingColon = '{"a" 1}';
+  const atLimit = missingColon.padEnd(200_000, ' ');
+  let validations = 0;
+  const validateCandidate = (source, language) => {
+    validations++;
+    return checkSyntax(source, language);
+  };
+  assert.equal(fixes(attachSyntaxFixes(atLimit, 'json', checkSyntax(atLimit, 'json'), validateCandidate)).length, 0,
+    'Do not offer an insertion the editor would reject at 200,001 characters');
+  assert.equal(validations, 0, 'Over-limit candidates are rejected before another parser run');
+
+  const belowLimit = missingColon.padEnd(199_999, ' ');
+  const inserted = fixes(report(belowLimit, 'json'));
+  assert.equal(inserted.length, 1, 'An insertion reaching exactly 200,000 characters remains available');
+  assert.equal(apply(belowLimit, inserted[0]), '{"a": 1}'.padEnd(200_000, ' '));
+
+  const trailingComma = '{"a": 1,}'.padEnd(200_000, ' ');
+  const removed = fixes(report(trailingComma, 'json'));
+  assert.equal(removed.length, 1, 'A deletion remains available at the character limit');
+  assert.equal(apply(trailingComma, removed[0]), '{"a": 1}'.padEnd(199_999, ' '));
+});
+
 test('JSON does not invent values, split adjacent array values, repair duplicates or alter string contents', () => {
   for (const source of ['{"missing": }', '[1 2]', '["a" "b"]', '{"a":1 "a":2}', '{"a"1,"a":2}',
     '{"a":1,"a":2,}', '{"a":"unterminated}', '{"a":"inside,}"', '{"a":1, "b":}', '{,}', '[,]'])

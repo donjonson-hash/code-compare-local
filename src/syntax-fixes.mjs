@@ -164,6 +164,7 @@ export function attachSyntaxFixes(source, language, result, validateSyntax) {
   const accepted = [];
   for (const candidate of unique) {
     const updated = source.slice(0, candidate.from) + candidate.insert + source.slice(candidate.to);
+    if (updated.length > MAX_SOURCE_LENGTH) continue;
     let checked;
     try { checked = validateSyntax(updated, language); } catch { return output; }
     if (checked?.status === 'checked' && !checked.truncated && Array.isArray(checked.diagnostics) && checked.diagnostics.length === 0)
