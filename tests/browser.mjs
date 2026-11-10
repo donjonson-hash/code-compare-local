@@ -1,5 +1,5 @@
-// Optional end-to-end check: install Playwright separately, then provide a
-// Chromium binary through CHROMIUM_EXECUTABLE. No remote service is used.
+// Full end-to-end suite: Chromium by default, or --web --browser=webkit.
+// CHROMIUM_EXECUTABLE overrides only Chromium. No remote service is used.
 import assert from 'node:assert/strict';
 import { checkFocusedReview } from './review-browser.mjs';
 import { checkDeterministicTransfer } from './transfer-browser.mjs';
@@ -14,13 +14,18 @@ import { checkSyntaxFixes } from './syntax-fixes-browser.mjs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
-const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = fileURLToPath(new URL('../', import.meta.url)).replace(/\/$/, '');
 const webBuild = process.argv.includes('--web');
+const browserFlags = process.argv.filter(arg => arg.startsWith('--browser='));
+if (browserFlags.length > 1) throw new Error('Choose a single --browser=chromium or --browser=webkit.');
+const browserEngine = browserFlags[0]?.slice('--browser='.length) || 'chromium';
+if (!['chromium', 'webkit'].includes(browserEngine)) throw new Error('Supported browser engines: chromium, webkit.');
+if (!webBuild && browserEngine !== 'chromium') throw new Error('WebKit is available only for --web; extension tests require Chromium.');
 if (webBuild && process.env.REQUIRE_EXTENSION)
   throw new Error('Choose either the website or the required installed extension.');
+const browserType = (await import(process.env.PLAYWRIGHT_MODULE || 'playwright'))[browserEngine];
 const servedRoot = webBuild ? `${root}/dist/client` : root;
-const output = process.env.TEST_OUTPUT || `${root}/test-output`;
+const output = process.env.TEST_OUTPUT || `${root}/test-output${browserEngine === 'webkit' ? '/webkit' : ''}`;
 await mkdir(output, { recursive: true });
 const server = createServer(async(req,res) => {
   const name = new URL(req.url, 'http://localhost').pathname.slice(1) || 'index.html';
@@ -36,17 +41,20 @@ const server = createServer(async(req,res) => {
 });
 await new Promise(resolve => server.listen(0,'127.0.0.1',resolve));
 const localOrigin = `http://127.0.0.1:${server.address().port}`;
-const context = await chromium.launchPersistentContext(`${output}/profile`, {
-  ...(process.env.CHROMIUM_EXECUTABLE ? { executablePath: process.env.CHROMIUM_EXECUTABLE } : {}),
-  channel: process.env.CHROMIUM_EXECUTABLE ? undefined : 'chromium',
+const context = await browserType.launchPersistentContext(`${output}/profile-${browserEngine}`, {
+  ...(browserEngine === 'chromium' ? {
+    ...(process.env.CHROMIUM_EXECUTABLE ? { executablePath: process.env.CHROMIUM_EXECUTABLE } : {}),
+    channel: process.env.CHROMIUM_EXECUTABLE ? undefined : 'chromium',
+    args: ['--no-sandbox', '--disable-gpu', ...(webBuild ? [] : [`--disable-extensions-except=${root}`, `--load-extension=${root}`])],
+  } : {}),
   headless: true, viewport: { width: 1440, height: 1000 }, acceptDownloads: true,
-  args: ['--no-sandbox', '--disable-gpu', ...(webBuild ? [] : [`--disable-extensions-except=${root}`, `--load-extension=${root}`])]
 });
 const page = await context.newPage();
 const errors = [], requests = [];
 page.on('pageerror', error => errors.push(error.message));
 page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== localOrigin) requests.push(request.url()); });
 page.on('dialog', dialog => dialog.accept());
+// serviceWorkers() is Chromium-only; website checks never query extension APIs.
 let extensionWorker = webBuild ? undefined : context.serviceWorkers()[0];
 if (process.env.REQUIRE_EXTENSION && !extensionWorker) extensionWorker = await context.waitForEvent('serviceworker', { timeout: 15000 });
 const url = extensionWorker ? new URL('app.html', extensionWorker.url()).href : `${localOrigin}/app.html`;
@@ -64,7 +72,9 @@ const download = async () => {
   return { name: file.suggestedFilename(), bytes: await readFile(await file.path()) };
 };
 
+let traceSaved = false;
 try {
+  await context.tracing.start({ screenshots: true, snapshots: true });
   await page.goto(homeUrl);
   await page.waitForFunction(() => {
     const image = document.querySelector('img[src="assets/anime-studio.png"]');
@@ -320,13 +330,18 @@ try {
   assert.equal((await download()).bytes.length, 0, 'Normal entry exports an empty file, not placeholder text');
   assert.deepEqual(requests, [], 'No network requests while using the app');
   assert.deepEqual(errors, [], 'No uncaught browser errors');
-  console.log(JSON.stringify({ passed: true, mode: webBuild ? 'website' : extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['home-demo-navigation', 'rendered-token-contrast', 'focus-preserves-bytes-and-history', 'local-home-editor-navigation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
+  console.log(JSON.stringify({ passed: true, mode: webBuild ? 'website' : extensionWorker ? 'extension' : 'local-page', browserEngine, platform: process.platform, browser: context.browser()?.version() ?? 'unavailable', offline: true, cases: ['home-demo-navigation', 'rendered-token-contrast', 'focus-preserves-bytes-and-history', 'local-home-editor-navigation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
 } catch(error) {
   const state = await page.evaluate(() => ({
     status: document.getElementById('diff-count')?.textContent ?? null,
     toast: document.getElementById('toast')?.textContent ?? null,
   })).catch(() => ({}));
-  console.error({ errors, requests, ...state });
+  console.error({ browserEngine, platform: process.platform, errors, requests, ...state });
   await page.screenshot({path: `${output}/failure.png`, fullPage:true}).catch(() => {});
+  await context.tracing.stop({ path: `${output}/failure-trace.zip` }).then(() => { traceSaved = true; })
+    .catch(traceError => console.error('Could not save failure trace:', traceError.message));
   throw error;
-} finally { await context.close(); await new Promise(resolve => server.close(resolve)); }
+} finally {
+  if (!traceSaved) await context.tracing.stop().catch(() => {});
+  await context.close(); await new Promise(resolve => server.close(resolve));
+}

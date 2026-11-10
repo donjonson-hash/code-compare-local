@@ -8,6 +8,7 @@
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node tests/browser.mjs",
     "test:web": "node tests/browser.mjs --web",
+    "test:web:webkit": "node tests/browser.mjs --web --browser=webkit",
     "package": "python3 scripts/package.py"
   },
   "keywords": [],
