@@ -64,6 +64,23 @@ viewports. Record the tested revision and CI result. This work is **not yet
 complete**. WebKit/Linux automation is not a native Safari/macOS or iOS test;
 those environments remain unverified.
 
+### WebKit test environment
+
+The pinned WebKit runner rejects local `File.arrayBuffer()` reads when Playwright
+`setOffline(true)` is enabled. The isolated `tests/file-read-probe.mjs` diagnostic
+measured 12 combinations of online/offline, input reset timing and buffer/disk
+uploads: all six online cases preserved the exact bytes; all six offline cases
+failed with `NotReadableError`. This happened without application code.
+The diagnostic can be rerun with `node tests/file-read-probe.mjs` after installing
+Playwright WebKit; it reports observations and does not waive the full suite.
+
+WebKit therefore uses HTTP(S) request blocking after initial page load. Because
+[Playwright routing disables HTTP cache](https://playwright.dev/docs/api/class-browsercontext#browser-context-route),
+the test replays only an exact GET for the already-loaded syntax worker from the
+same local build. Other requests are rejected; independent probes verify the
+blocker. The result distinguishes this mode from Chromium's offline emulation.
+It is not proof of native Safari offline behavior or of offline page reloads.
+
 Search Console remains a separate pending action: submit
 `https://comparecode.pro/sitemap.xml` in the verified property. No submission has
 been performed.
