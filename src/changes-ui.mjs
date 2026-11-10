@@ -171,6 +171,22 @@ export function createChangesController({ getMerge, prepareChunk, applyChunk, no
 
   return {
     update, captureForChunk, keepCurrent, nextUnreviewed,
+    exportReview() {
+      update();
+      const merge = getMerge();
+      return { a: merge.a.state.doc.toString(), b: merge.b.state.doc.toString(),
+        kept: items.filter(item => review.isKept(item.key)).map(item => item.key) };
+    },
+    restoreReview(saved) {
+      update();
+      const merge = getMerge();
+      review.reset(pair(merge, items));
+      if (saved.a === merge.a.state.doc.toString() && saved.b === merge.b.state.doc.toString()) {
+        // Never revive decisions whose exact change is absent from this pair.
+        for (const key of saved.kept) review.keep(key);
+      }
+      paintActive();
+    },
     documentChanged(editorUpdate) {
       if (applying) return;
       const isHistory = editorUpdate.transactions.filter(tr => tr.docChanged || tr.effects.some(e => e.is(restoreRaw)))

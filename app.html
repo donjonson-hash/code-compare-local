@@ -62,6 +62,12 @@
         <div id="syntax-a" class="syntax-side" data-state="neutral"><div class="syntax-heading"><b>A</b><span id="syntax-status-a" role="status">Add code</span></div><p id="syntax-note-a"></p><details id="syntax-details-a" hidden><summary>Show locations</summary><ol id="syntax-list-a"></ol></details></div>
         <div id="syntax-b" class="syntax-side" data-state="neutral"><div class="syntax-heading"><b>B</b><span id="syntax-status-b" role="status">Add code</span></div><p id="syntax-note-b"></p><details id="syntax-details-b" hidden><summary>Show locations</summary><ol id="syntax-list-b"></ol></details></div>
       </section>
+      <section id="syntax-comparison" class="syntax-comparison" aria-label="Syntax before and after" data-state="pending">
+        <h2>Syntax: before &amp; after</h2>
+        <p id="syntax-comparison-status" role="status" aria-live="polite">Add two versions to compare their syntax checks.</p>
+        <p id="syntax-comparison-note" class="syntax-comparison-note">Diagnostics compare A with the current B. Code is not run.</p>
+        <ul id="syntax-comparison-list" class="syntax-comparison-list"></ul>
+      </section>
       <div id="format-notice" class="format-notice" hidden><span>The text matches, but line endings or the UTF-8 BOM differ.</span><button id="copy-format" class="button small">Use A’s format → B</button></div>
       <div class="result-bar">
         <div class="toolbar-group"><span class="result-label">Result B</span><button id="copy-all" class="button small">All A → B</button></div>
@@ -69,11 +75,16 @@
       </div>
     </section>
     </div>
+    <section class="session-bar" aria-label="Save or open a session">
+      <div><strong>Continue later</strong><p>Save both texts, view settings and Keep B marks in one file. Edit history is not included.</p></div>
+      <div class="session-actions"><button id="save-session" class="button secondary" type="button">Save session</button><label class="button secondary file-button">Open session<input id="open-session" type="file" accept=".json,application/json" aria-label="Open saved session"></label></div>
+    </section>
     <div class="below-workspace"><div class="legend"><span><i class="removed"></i>Version A</span><span><i class="added"></i>Version B</span><span class="hint-arrow">→</span><span>Select a difference, then use A to fix that block in B</span></div><button id="clear" class="text-button">Clear both editors</button></div>
     <footer><span>Code is processed locally. It is never run or uploaded.</span><span>Save your result before closing this tab.</span><span class="footer-links"><a href="privacy.html" target="_blank" rel="noopener">Privacy ↗</a><a href="support.html" target="_blank" rel="noopener">Support ↗</a></span></footer>
     <details class="help"><summary>Features and limitations</summary><p>Comparison includes spaces, tabs, and the final newline. Downloads preserve the original LF / CRLF / CR line endings, mixed line endings, and UTF-8 BOM. New lines typed in an editor use that file’s main line-ending format.</p><p>Syntax is checked automatically after edits and block transfers for JavaScript/JSX, TypeScript/TSX, JSON, and YAML. Python has a preliminary grammar and indentation check; it does not replace validation with Python itself. Click a diagnostic to go to its line. The selected language applies to both versions.</p><p>Each text is checked as a complete file, so incomplete snippets may be reported as errors. Code is never corrected automatically. Valid syntax does not guarantee correct behavior: moving a Python line into another valid block can change its meaning without a syntax error. TypeScript checks do not include type checking. Other languages have highlighting only.</p><p>Open UTF-8 text files up to 512 KB, 200,000 characters, and 4,000 lines per side. Code is not run or checked for logic errors. For large differences, several changes may be grouped into one block.</p><p>Ctrl/Cmd+Z undoes an edit in the active editor. Tab indents; press Esc, then Tab to leave the editor. Copy and paste snippets from ChatGPT, Claude, or Gemini. Chats are not accessed automatically. The clipboard may change line endings; use Download B to preserve them exactly.</p></details>
   </main>
   <div id="toast" role="status" aria-live="polite" hidden></div>
   <dialog id="confirm-clear"><form method="dialog"><h2>Clear both editors?</h2><p>This removes both texts and their edit history from this tab.</p><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" value="clear">Clear</button></div></form></dialog>
+  <dialog id="confirm-session"><form method="dialog"><h2>Replace this workspace?</h2><p>Opening the session replaces both texts, view settings and review marks. Save your current session first if you need it. Undo history starts fresh.</p><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" value="open">Open session</button></div></form></dialog>
 </body>
 </html>

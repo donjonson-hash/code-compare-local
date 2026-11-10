@@ -22,6 +22,7 @@ import { accessibleCollapsedContext } from './focus-view.mjs';
 import { prepareBlockTransfer, checkBlockTransfer } from './block-transfer.mjs';
 import { DIFF_CONFIG } from './diff-policy.mjs';
 import { studioHighlightStyle } from './editor-theme.mjs';
+import { serializeSession, parseSession, MAX_SESSION_BYTES } from './session.mjs';
 
 const $ = id => document.getElementById(id);
 const compartments = { a: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() }, b: { language: new Compartment(), wrap: new Compartment(), whitespace: new Compartment() } };
@@ -31,6 +32,7 @@ const transferRevisions = { a: 0, b: 0 };
 const appliedOperationIds = new Set();
 let operationSequence = 0, controlsRevision = '';
 let merge, syntax, changes, revealRequested = false, updateQueued = false, toastTimer, dirty = false;
+let sessionGeneration = 0, pendingSession = null;
 
 function notify(message) {
   $('toast').textContent = message;
@@ -134,10 +136,10 @@ function applyChunk(operation) {
   return true;
 }
 
-function initialize() {
+function initialize(docA = makeDocument(), docB = makeDocument()) {
   merge = new MergeView({
-    a: { doc: '', extensions: extensions('a', makeDocument()) },
-    b: { doc: '', extensions: extensions('b', makeDocument()) },
+    a: { doc: normalize(docA.raw), extensions: extensions('a', docA) },
+    b: { doc: normalize(docB.raw), extensions: extensions('b', docB) },
     parent: $('editors'), revertControls: 'a-to-b', renderRevertControl,
     diffConfig: DIFF_CONFIG, highlightChanges: true, gutter: true
   });
@@ -272,9 +274,101 @@ $('download').addEventListener('click', () => {
   // exporting B does not save edits in A. Keep the leave-page protection.
   notify('File B sent to your browser for download.');
 });
+
+function sessionSnapshot() {
+  return {
+    a: { ...merge.a.state.field(rawField), name: $('name-a').textContent },
+    b: { ...merge.b.state.field(rawField), name: $('name-b').textContent },
+    resultFilename: $('filename').value, language: $('language').value,
+    settings: { wrap: $('wrap').checked, changesOnly: $('changes-only').checked,
+      showWhitespace: $('show-whitespace').checked, fontSize: Number($('font-size').value),
+      focusMode: $('zen-mode').getAttribute('aria-pressed') === 'true' },
+    review: changes.exportReview()
+  };
+}
+
+$('save-session').addEventListener('click', () => {
+  try {
+    const text = serializeSession(sessionSnapshot());
+    const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url; link.download = 'compare-code-session.json'; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    // As with Download B, a browser download request is not a save receipt.
+    notify('Session sent for download. It contains both code files; edit history is not included.');
+  } catch (error) { notify(error.message); }
+});
+
+function restoreSession(saved) {
+  // Parsing and all limits have been checked before either editor is replaced.
+  // Rebuild both states together so Undo cannot restore a previous session.
+  sessionGeneration++;
+  revisions.a++; revisions.b++;
+  transferRevisions.a++; transferRevisions.b++;
+  appliedOperationIds.clear(); controlsRevision = ''; revealRequested = false;
+  merge.destroy();
+  $('show-whitespace').checked = saved.settings.showWhitespace;
+  initialize(saved.a, saved.b);
+  $('name-a').textContent = saved.a.name; $('name-b').textContent = saved.b.name;
+  $('filename').value = saved.resultFilename;
+  setLanguage(saved.language);
+  for (const id of ['wrap', 'show-whitespace']) {
+    $(id).checked = id === 'wrap' ? saved.settings.wrap : saved.settings.showWhitespace;
+    $(id).dispatchEvent(new Event('change'));
+  }
+  $('font-size').value = String(saved.settings.fontSize);
+  $('font-size').dispatchEvent(new Event('change'));
+  setChangesOnly(saved.settings.changesOnly);
+  if (($('zen-mode').getAttribute('aria-pressed') === 'true') !== saved.settings.focusMode) $('zen-mode').click();
+  changes.reset();
+  changes.restoreReview(saved.review);
+  dirty = true;
+  syntax.schedule(true);
+  queueStats();
+  notify('Session opened. Both texts and remaining Keep B marks restored. Edit history starts here.');
+}
+
+async function loadSession(file) {
+  if (!file) return;
+  const generation = ++sessionGeneration;
+  const before = JSON.stringify(sessionSnapshot());
+  const revisionA = revisions.a, revisionB = revisions.b;
+  try {
+    if (file.size > MAX_SESSION_BYTES) throw new Error('Session exceeds 8 MiB. Choose a smaller session file.');
+    const bytes = await file.arrayBuffer();
+    let text;
+    try { text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
+    catch { throw new Error('Use a UTF-8 Compare Code session file.'); }
+    const saved = parseSession(text);
+    if (generation !== sessionGeneration || revisionA !== revisions.a || revisionB !== revisions.b || before !== JSON.stringify(sessionSnapshot())) {
+      notify('Opening session canceled: the workspace changed. Open the session again.'); return;
+    }
+    if (dirty || merge.a.state.doc.length || merge.b.state.doc.length) {
+      pendingSession = { saved, before, generation, revisionA, revisionB };
+      $('confirm-session').returnValue = '';
+      $('confirm-session').showModal();
+    } else restoreSession(saved);
+  } catch (error) {
+    if (generation === sessionGeneration) notify(error.message);
+  }
+}
+$('open-session').addEventListener('change', event => {
+  loadSession(event.target.files[0]);
+  event.target.value = '';
+});
+$('confirm-session').addEventListener('close', () => {
+  const pending = pendingSession;
+  pendingSession = null;
+  if ($('confirm-session').returnValue !== 'open' || !pending) return;
+  if (pending.generation !== sessionGeneration || pending.revisionA !== revisions.a || pending.revisionB !== revisions.b || pending.before !== JSON.stringify(sessionSnapshot())) {
+    notify('Opening session canceled: the workspace changed. Open the session again.'); return;
+  }
+  restoreSession(pending.saved);
+});
 $('clear').addEventListener('click', () => $('confirm-clear').showModal());
 $('confirm-clear').addEventListener('close', () => {
   if ($('confirm-clear').returnValue !== 'clear') return;
+  sessionGeneration++; pendingSession = null;
   revealRequested = false;
   $('changes-only').checked = false; $('focus-hint').hidden = true;
   changes.reset();
