@@ -1,10 +1,69 @@
 import { EditorView } from '@codemirror/view';
 import { setDiagnostics } from '@codemirror/lint';
+import { isolateHistory } from '@codemirror/commands';
 import { compareSyntax } from './syntax-compare.mjs';
 
-export function createSyntaxController({ getView, getLanguage, beforeReveal = () => {} }) {
+export function createSyntaxController({ getView, getLanguage, beforeReveal = () => {}, notify = () => {} }) {
   let worker, timer, watchdog, generation = 0, active = 0, snapshot = null;
+  let pendingFix = null;
   const $ = id => document.getElementById(id);
+  const fixDialog = $('confirm-syntax-fix');
+  const fixApply = fixDialog.querySelector('button[value="apply"]');
+  const invalidateFix = () => {
+    if (!pendingFix) return;
+    pendingFix = null;
+    fixApply.disabled = true;
+    $('syntax-fix-status').textContent = 'Code or language changed. Close this preview and check again.';
+  };
+  const currentFix = pending => pending && pending.id === generation &&
+    pending.language === getLanguage() && pending.view === getView(pending.side) &&
+    pending.source === pending.view.state.doc.toString();
+  const addFixButton = (item, side, diagnostic, request) => {
+    const fix = diagnostic.fix;
+    const source = request[side];
+    if (!fix || !Number.isInteger(fix.from) || !Number.isInteger(fix.to) || fix.from < 0 ||
+        fix.to < fix.from || fix.to > source.length || typeof fix.insert !== 'string' ||
+        typeof fix.title !== 'string' || source.slice(fix.from, fix.to) === fix.insert) return;
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'button small syntax-fix-preview'; button.dataset.side = side;
+    button.textContent = `Preview fix in ${side.toUpperCase()}`;
+    button.addEventListener('click', () => {
+      const pending = { side, source, fix, id: request.id, language: request.language, view: getView(side) };
+      if (!currentFix(pending) || fixDialog.open) return;
+      pendingFix = pending;
+      const start = Math.max(source.lastIndexOf('\n', Math.max(0, fix.from - 1)) + 1, fix.from - 140);
+      const nextLine = source.indexOf('\n', fix.to);
+      const end = Math.min(nextLine < 0 ? source.length : nextLine, fix.to + 140);
+      const prefix = start > 0 && source[start - 1] !== '\n' ? '…' : '';
+      const suffix = end < source.length && source[end] !== '\n' ? '…' : '';
+      $('syntax-fix-title').textContent = `${side.toUpperCase()}: ${fix.title}`;
+      $('syntax-fix-before').textContent = prefix + source.slice(start, end) + suffix;
+      $('syntax-fix-after').textContent = prefix + source.slice(start, fix.from) + fix.insert + source.slice(fix.to, end) + suffix;
+      $('syntax-fix-status').textContent = request.language === 'python'
+        ? 'This edit passed the preliminary Python check. Review the change before applying it.'
+        : 'This edit passed the syntax check. Review the change before applying it.';
+      fixApply.disabled = false;
+      fixDialog.returnValue = '';
+      fixDialog.showModal();
+    });
+    item.append(button);
+  };
+  fixDialog.addEventListener('close', () => {
+    const pending = pendingFix;
+    pendingFix = null;
+    if (fixDialog.returnValue !== 'apply') return;
+    if (!currentFix(pending)) { notify('This syntax suggestion is out of date. Check again.'); return; }
+    const { view, fix, source, side } = pending;
+    beforeReveal();
+    const expected = source.slice(0, fix.from) + fix.insert + source.slice(fix.to);
+    view.dispatch({ changes: { from: fix.from, to: fix.to, insert: fix.insert },
+      selection: { anchor: fix.from, head: fix.from + fix.insert.length },
+      effects: EditorView.scrollIntoView(fix.from, { y: 'center' }),
+      annotations: isolateHistory.of('full'), userEvent: 'input.syntax-fix' });
+    if (view.state.doc.toString() !== expected) return;
+    view.focus();
+    notify(`Syntax edit applied to ${side.toUpperCase()}. Checking again; you can undo this edit.`);
+  });
   const renderStatus = (side, title, note, kind = 'neutral') => {
     $(`syntax-${side}`).dataset.state = kind;
     $(`syntax-status-${side}`).textContent = title;
@@ -56,6 +115,9 @@ export function createSyntaxController({ getView, getLanguage, beforeReveal = ()
           button.textContent = `${side.toUpperCase()} · Line ${diagnostic.line}:${diagnostic.column} · ${diagnostic.severity} — ${diagnostic.message}`;
           button.addEventListener('click', () => reveal(side, diagnostic, request.id));
           item.append(button);
+          const original = (side === 'a' ? a : b).diagnostics.find(d =>
+            d.from === diagnostic.from && d.to === diagnostic.to && d.message === diagnostic.message);
+          if (original) addFixButton(item, side, original, request);
         }
         const reason = document.createElement('p'); reason.textContent = entry.reason; item.append(reason);
         $('syntax-comparison-list').append(item);
@@ -64,6 +126,7 @@ export function createSyntaxController({ getView, getLanguage, beforeReveal = ()
   }
   const failed = message => {
     ++generation;
+    invalidateFix();
     clearTimeout(timer); clearTimeout(watchdog);
     worker?.terminate(); worker = null; active = 0; snapshot = null;
     clearMarks();
@@ -84,7 +147,7 @@ export function createSyntaxController({ getView, getLanguage, beforeReveal = ()
         if (data.failed) { failed('Could not parse this code. Try checking again.'); return; }
         if (!request || getLanguage() !== request.language || getView('a').state.doc.toString() !== request.a ||
             getView('b').state.doc.toString() !== request.b) { schedule(true); return; }
-        render('a', data.a); render('b', data.b);
+        render('a', data.a, request); render('b', data.b, request);
         renderComparison(data.a, data.b, request);
       };
       current.onerror = event => {
@@ -97,7 +160,7 @@ export function createSyntaxController({ getView, getLanguage, beforeReveal = ()
       return false;
     }
   }
-  function render(side, result) {
+  function render(side, result, request) {
     const view = getView(side);
     const diagnostics = result.diagnostics || [];
     view.dispatch(setDiagnostics(view.state, diagnostics));
@@ -122,7 +185,9 @@ export function createSyntaxController({ getView, getLanguage, beforeReveal = ()
       button.textContent = `Line ${line.number}:${from - line.from + 1} — ${diagnostic.message}`;
       const id = generation;
       button.addEventListener('click', () => reveal(side, diagnostic, id));
-      const item = document.createElement('li'); item.append(button); $(`syntax-list-${side}`).append(item);
+      const item = document.createElement('li'); item.append(button);
+      addFixButton(item, side, diagnostic, request);
+      $(`syntax-list-${side}`).append(item);
     }
   }
   function run(id) {
@@ -141,6 +206,7 @@ export function createSyntaxController({ getView, getLanguage, beforeReveal = ()
   }
   function schedule(immediate = false) {
     const id = ++generation;
+    invalidateFix();
     clearTimeout(timer); clearTimeout(watchdog);
     for (const side of ['a', 'b']) renderStatus(side, 'Waiting to check', 'Results will update after your edit.', 'pending');
     comparisonStatus('Waiting to compare', 'Previous results were cleared after your edit.', 'pending');

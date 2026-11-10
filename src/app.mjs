@@ -396,7 +396,7 @@ $('demo').addEventListener('click', () => {
 window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
 initialize();
 changes = createChangesController({ getMerge: () => merge, prepareChunk, applyChunk, notify });
-syntax = createSyntaxController({ getView: side => merge[side], getLanguage: () => $('language').value, beforeReveal: () => {
+syntax = createSyntaxController({ getView: side => merge[side], getLanguage: () => $('language').value, notify, beforeReveal: () => {
   if ($('changes-only').checked) { setChangesOnly(false); notify('Showing full files for this syntax issue.'); }
 } });
 syntax.schedule(true);
