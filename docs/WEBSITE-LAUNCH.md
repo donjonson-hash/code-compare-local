@@ -10,7 +10,7 @@ core and do not represent a Chrome Web Store release.
   Workspace: [https://comparecode.pro/app.html](https://comparecode.pro/app.html).
 - PR [#10](https://github.com/donjonson-hash/code-compare-local/pull/10) and
   [#11](https://github.com/donjonson-hash/code-compare-local/pull/11) are merged.
-  Main: `77abda4675b9f592df92854af85111ac3d231483`.
+  Released main revision: `77abda4675b9f592df92854af85111ac3d231483`.
 - Production deployment: `dpl_9KzzWEjqMzJrBCmLu1TQAuAngBas`.
 - Tested tree: `f3d13a85e5a42b0af195a1ceb8c7811e4a25316a`.
   [CI 42788850553](https://github.com/donjonson-hash/code-compare-local/actions/runs/42788850553)
@@ -18,8 +18,9 @@ core and do not represent a Chrome Web Store release.
 - Production HTTP/HTTPS and www redirects were verified. Production bundle SHA
   hashes match the tested CI artifacts exactly.
 
-These are the completed production checks. WebKit/Linux and native Safari/macOS
-have not yet passed verification, and Search Console submission has not been done.
+These are the completed production checks for the released revision. The WebKit/Linux
+verification below is now complete. Native Safari/macOS verification and Search
+Console submission remain unconfirmed.
 
 ## Shipped source and behavior
 
@@ -55,14 +56,20 @@ project, deploy the CI-verified revision as a preview, verify its pages and work
 then promote the tested deployment. The configuration makes no registrar changes
 and contains no deployment credentials.
 
-## Active next step: WebKit on Linux
+## Completed WebKit verification on Linux
 
-Run website automation in WebKit on Linux, covering file load/download/reopen,
-exact UTF-8/BOM/mixed-EOL preservation, edits and Undo/Redo, sessions, syntax
-comparison, quick-fix previews and stale-dialog guards, navigation and narrow
-viewports. Record the tested revision and CI result. This work is **not yet
-complete**. WebKit/Linux automation is not a native Safari/macOS or iOS test;
-those environments remain unverified.
+The full website suite passed in WebKit 26.5/Linux at
+`40eb611f599c232f94769207734d112f0c580c93`:
+[successful job](https://github.com/donjonson-hash/code-compare-local/actions/runs/42793697775/job/129753300229).
+Coverage includes file load/download/reopen, exact UTF-8/BOM/mixed-EOL bytes,
+edits and Undo/Redo, sessions, syntax comparison, quick-fix previews and stale
+modal guards, canceled navigation, and narrow viewports. No functional assertions
+were skipped. The successful run recorded no app HTTP(S) attempts and no worker
+cache replays. The CI job is `Website / WebKit`; run it locally after installing
+WebKit with `npm run test:web:webkit`.
+
+This result is not a native Safari/macOS or iOS test, or proof of their offline
+behavior. Those environments remain unverified.
 
 ### WebKit test environment
 
