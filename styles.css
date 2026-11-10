@@ -158,6 +158,22 @@ dialog::backdrop { background: #122c3a66; }dialog h2 { font-size: 23px; margin: 
 @media (max-width: 420px) { .local-badge { display: none; }.review-toolbar .button { font-size: 13px; }.change-navigation { gap: 5px; }#change-position { min-width: 42px; } }
 
 /* Focus and review controls keep file content and display options separate. */
+.syntax-comparison { padding: 14px 16px; border-top: 1px solid var(--line); }
+.syntax-comparison h2 { margin: 0 0 6px; font-size: 15px; }
+.syntax-comparison p { margin: 5px 0; font-size: 13px; line-height: 1.6; }
+.syntax-comparison-note { color: var(--muted); }
+.syntax-comparison-list { list-style: none; margin: 10px 0 0; padding: 0; max-height: 220px; overflow: auto; }
+.syntax-comparison-list li { padding: 7px 0; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.syntax-comparison-list button { margin: 3px 7px 3px 0; padding: 4px 8px; border: 1px solid var(--line); border-radius: 5px; background: transparent; color: inherit; font-size: 12px; white-space: normal; text-align: left; overflow-wrap: anywhere; }
+.session-bar { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.syntax-fix-preview { margin: 3px 0 7px; white-space: normal; }
+#confirm-syntax-fix { width: 620px; max-width: calc(100vw - 32px); box-sizing: border-box; }
+.syntax-fix-code { min-width: 0; font-size: 13px; }
+.syntax-fix-code pre { border: 1px solid var(--line); border-radius: 6px; padding: 12px; white-space: pre-wrap; overflow-wrap: anywhere; font: 14px/1.6 monospace; max-height: 180px; overflow: auto; }
+.session-bar strong { font-size: 14px; }
+.session-bar p { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 5px 0 0; }
+.session-actions { display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
+@media (max-width: 720px) { .session-bar { align-items: flex-start; flex-direction: column; }.syntax-comparison { padding: 12px; } }
 .view-options { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px; padding: 10px 15px; border-bottom: 1px solid var(--line); font-size: 14px; background: #fbfcfa; }
 .view-options span { color: var(--muted); font-size: 13px; }
 #review-progress { color: #416252; font-size: 14px; }

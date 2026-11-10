@@ -8,6 +8,9 @@ import { checkCanonicalComparison } from './canonical-browser.mjs';
 import { checkStudioContrast } from './theme-browser.mjs';
 import { checkDownloadNavigation } from './navigation-browser.mjs';
 import { checkInfoPages, checkWorkspaceHelp } from './info-browser.mjs';
+import { checkSessions } from './session-browser.mjs';
+import { checkSyntaxComparison } from './syntax-comparison-browser.mjs';
+import { checkSyntaxFixes } from './syntax-fixes-browser.mjs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
@@ -234,6 +237,9 @@ try {
   await checkDeterministicTransfer({ page, open, download });
   await checkClockIndependentComparison({ page, open, download });
   await checkCanonicalComparison({ page, open, download });
+  await checkSyntaxComparison({ page, open, output });
+  await checkSyntaxFixes({ page, open, download, output });
+  await checkSessions({ page, open, download, output });
 
   const exact = '\uFEFF\tпривет 😀\r\nsecond\nthird\rfinal\r\n';
   await open('b', exact, 'mixed.ts');

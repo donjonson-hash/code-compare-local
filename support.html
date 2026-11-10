@@ -49,7 +49,9 @@
           <tr><td>Python</td><td>Preliminary grammar and indentation checks; verify the result with Python itself.</td></tr>
           <tr><td>HTML, CSS, Java, C/C++, SQL, Markdown</td><td>Highlighting only.</td></tr>
         </tbody></table></div>
-        <p>Each side is checked as a complete file, so an incomplete snippet can produce errors. Clean syntax does not prove correct logic, working imports or a safe program. Compare Code does not run or automatically repair your code.</p>
+        <p>Each side is checked as a complete file, so an incomplete snippet can produce errors. Clean syntax does not prove correct logic, working imports or a safe program. Compare Code does not run your code.</p>
+        <p>Some diagnostics offer a <strong>Preview fix</strong> button. Review the before and after text, then apply the edit to its indicated side or cancel. Only a small set of conservative edits that pass another parser check are offered; this is not a general code repair tool. Applying an edit triggers a new syntax check. Use <strong>Undo</strong> for B, or focus A and press <strong>Ctrl+Z</strong> (Mac: <strong>⌘Z</strong>) to undo an edit in A. If the code or language changes while the preview is open, close it and check again.</p>
+        <p><strong>Syntax: before &amp; after</strong> compares diagnostics in A with the current B. It separates newly reported issues, issues no longer reported, matching issues and uncertain matches. Click a location to open it in A or B. A parser can stop at an early error, so an issue no longer reported is not proof of a fix. Incomplete or unsupported checks do not produce a successful comparison.</p>
       </section>
       <section id="limits" aria-labelledby="limits-title">
         <h2 id="limits-title">Files and limits</h2>
@@ -65,7 +67,7 @@
         <h2 id="help-title">Common questions</h2>
         <div class="info-faq">
           <article><h3>Why is there a warning after I download?</h3><p>The page cannot confirm that your browser finished saving the download, and Download B does not save changes in A. Check your saved file and keep anything you need from A before leaving.</p></article>
-          <article><h3>Can I recover a closed session?</h3><p>No automatic recovery is available. Text and editing history live in the open tab. Save your work before closing, reloading or clearing the workspace.</p></article>
+          <article><h3>Can I continue a saved session?</h3><p>Click <strong>Save session</strong> before leaving, then use <strong>Open session</strong> to load the downloaded JSON file later. Both texts, filenames, language, view settings and remaining Keep B marks are restored. Applied edits are already part of B; historical review counts and Undo/Redo history are not restored. There is no automatic recovery after closing a tab.</p><p>Session files contain your code without encryption. Opening one replaces the current workspace after confirmation. Invalid files leave your work unchanged. A session can be up to 8 MiB, with each document within the usual file limits. Save session retains the leave-page warning because the browser does not confirm a completed save.</p></article>
           <article><h3>Why won't my file open?</h3><p>Check the file size, line count and encoding. Save it as UTF-8 text first. Binary files and files over the stated limits are not supported.</p></article>
           <article><h3>Copy B is unavailable, or formatting changed.</h3><p>Your browser may restrict clipboard access. Download B instead, or select and copy B manually. Clipboard transfers may alter line endings; downloading preserves them.</p></article>
           <article><h3>Syntax checking is incomplete.</h3><p>Choose a supported language and try Check syntax again. If checking remains unavailable, save both texts before reloading the page. Treat an incomplete check as unverified.</p></article>
