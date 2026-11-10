@@ -20,10 +20,6 @@ jobs:
       - run: npm run build
       - run: npm run build:web
       - run: npx playwright install --with-deps webkit
-      - name: Diagnose WebKit local-file reading
-        run: node tests/file-read-probe.mjs
-        env:
-          TEST_OUTPUT: test-output/webkit
       - name: Test the built website in WebKit
         run: npm run test:web:webkit
         env:
@@ -35,7 +31,6 @@ jobs:
           path: |
             test-output/webkit/*.png
             test-output/webkit/*.zip
-            test-output/webkit/*.json
           if-no-files-found: ignore
   verify:
     runs-on: ubuntu-latest

@@ -51,6 +51,10 @@ const context = await browserType.launchPersistentContext(`${output}/profile-${b
 });
 const page = await context.newPage();
 const errors = [], requests = [];
+const blockedAppRequests = [];
+const networkIsolation = browserEngine === 'webkit' ? 'http-blocked' : 'emulated-offline';
+const httpPattern = /^https?:\/\//;
+let httpBlocker;
 page.on('pageerror', error => errors.push(error.message));
 page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== localOrigin) requests.push(request.url()); });
 page.on('dialog', dialog => dialog.accept());
@@ -91,7 +95,37 @@ try {
   assert.equal(page.url(), url, 'The landing example opens the editor and consumes its one-time URL flag');
   await page.waitForFunction(() => document.getElementById('syntax-report').dataset.worker === 'ready');
   await checkWorkspaceHelp({ page, context, url, download });
-  await context.setOffline(true);
+  if (browserEngine === 'webkit') {
+    // Measured by file-read-probe.mjs: all six online cases read exact bytes,
+    // all six emulated-offline cases fail with NotReadableError, including disk
+    // inputs that are never cleared. Keep File/Blob usable while denying HTTP(S).
+    // This is network isolation, not a claim of native Safari offline coverage.
+    const probePage = await context.newPage();
+    const blockedProbeRequests = [];
+    httpBlocker = async route => {
+      const request = route.request();
+      let belongsToProbe = false;
+      try { belongsToProbe = request.frame().page() === probePage; } catch {}
+      (belongsToProbe ? blockedProbeRequests : blockedAppRequests).push(request.url());
+      await route.abort('internetdisconnected');
+    };
+    await context.route(httpPattern, httpBlocker);
+    try {
+      const probeUrls = [
+        localOrigin + '/index.html?isolation-probe=http',
+        localOrigin.replace('http:', 'https:') + '/index.html?isolation-probe=https',
+      ];
+      for (const probeUrl of probeUrls) {
+        const rejected = await probePage.evaluate(async target => {
+          try { await fetch(target); return false; } catch { return true; }
+        }, probeUrl);
+        assert.equal(rejected, true, 'The isolation probe request must be rejected');
+      }
+      assert.deepEqual(blockedProbeRequests, probeUrls, 'Both HTTP and HTTPS probes reached the blocker');
+    } finally { await probePage.close(); }
+  } else {
+    await context.setOffline(true);
+  }
 
   await page.locator('#demo').click();
   await page.locator('.cm-merge-revert button').first().waitFor();
@@ -310,7 +344,10 @@ try {
   assert.equal(await page.locator('#undo').isDisabled(), true);
   // An installed extension must keep its home page, image, and editor local.
   // The website needs the server for a full navigation; no offline reload is claimed.
-  if (!extensionWorker) await context.setOffline(false);
+  if (httpBlocker) {
+    assert.deepEqual(blockedAppRequests, [], 'The loaded editor made no HTTP(S) attempts while isolated');
+    await context.unroute(httpPattern, httpBlocker);
+  } else if (!extensionWorker) await context.setOffline(false);
   await checkDownloadNavigation({ page, open, download, url });
   await page.locator('a.brand[href="index.html"]').click();
   assert.equal(page.url(), homeUrl);
@@ -330,13 +367,13 @@ try {
   assert.equal((await download()).bytes.length, 0, 'Normal entry exports an empty file, not placeholder text');
   assert.deepEqual(requests, [], 'No network requests while using the app');
   assert.deepEqual(errors, [], 'No uncaught browser errors');
-  console.log(JSON.stringify({ passed: true, mode: webBuild ? 'website' : extensionWorker ? 'extension' : 'local-page', browserEngine, platform: process.platform, browser: context.browser()?.version() ?? 'unavailable', offline: true, cases: ['home-demo-navigation', 'rendered-token-contrast', 'focus-preserves-bytes-and-history', 'local-home-editor-navigation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
+  console.log(JSON.stringify({ passed: true, mode: webBuild ? 'website' : extensionWorker ? 'extension' : 'local-page', browserEngine, platform: process.platform, browser: context.browser()?.version() ?? 'unavailable', networkIsolation, ...(browserEngine === 'chromium' ? { offline: true } : {}), blockedAppRequests, cases: ['home-demo-navigation', 'rendered-token-contrast', 'focus-preserves-bytes-and-history', 'local-home-editor-navigation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
 } catch(error) {
   const state = await page.evaluate(() => ({
     status: document.getElementById('diff-count')?.textContent ?? null,
     toast: document.getElementById('toast')?.textContent ?? null,
   })).catch(() => ({}));
-  console.error({ browserEngine, platform: process.platform, errors, requests, ...state });
+  console.error({ browserEngine, platform: process.platform, networkIsolation, blockedAppRequests, errors, requests, ...state });
   await page.screenshot({path: `${output}/failure.png`, fullPage:true}).catch(() => {});
   await context.tracing.stop({ path: `${output}/failure-trace.zip` }).then(() => { traceSaved = true; })
     .catch(traceError => console.error('Could not save failure trace:', traceError.message));
