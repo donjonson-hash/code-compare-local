@@ -4,8 +4,10 @@
   "description": "Local offline code comparison browser extension",
   "scripts": {
     "build": "node build.mjs",
+    "build:web": "node scripts/build-web.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node tests/browser.mjs",
+    "test:web": "node tests/browser.mjs --web",
     "package": "python3 scripts/package.py"
   },
   "keywords": [],
@@ -30,6 +32,7 @@
     "@codemirror/merge": "6.12.2",
     "@codemirror/state": "6.7.6",
     "@codemirror/view": "6.43.14",
+    "@lezer/highlight": "1.2.5",
     "@lezer/json": "1.0.3",
     "@lezer/python": "1.1.19",
     "yaml": "2.9.1"

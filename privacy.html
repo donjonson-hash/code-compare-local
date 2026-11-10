@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <meta name="description" content="How Compare Code handles your code, files, downloads and website requests. Comparison runs locally in your browser without uploading your code.">
+  <meta name="theme-color" content="#10131e">
+  <title>Privacy — Compare Code</title>
+  <link rel="canonical" href="https://comparecode.pro/privacy.html">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="info.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header shell info-header">
+    <a class="logo" href="index.html" aria-label="Compare Code home"><span class="logo-mark" aria-hidden="true">≠</span><span>Compare Code<span class="logo-local">Local processing <i></i></span></span></a>
+    <nav aria-label="Main navigation"><a href="index.html">Home</a><a href="app.html">Workspace</a><a href="privacy.html" aria-current="page">Privacy</a><a href="support.html">Support</a></nav>
+    <a class="nav-cta" href="app.html">Open workspace <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main" class="shell info-main">
+    <header class="info-intro">
+      <p class="eyebrow">YOUR CODE. YOUR CONTROL.</p>
+      <h1>Your code stays<br><em>in your browser.</em></h1>
+      <p class="lead">Compare Code compares and edits the files you choose on your device. This page explains what the application does with your information and what happens when you visit the website.</p>
+      <p class="info-date">Privacy statement · Updated <time datetime="2026-11-10">10 November 2026</time></p>
+    </header>
+    <nav class="info-toc" aria-label="On this page"><a href="#code">Code &amp; files</a><a href="#session">Your session</a><a href="#downloads">Downloads &amp; clipboard</a><a href="#website">Website requests</a><a href="#contact">Contact</a></nav>
+    <div class="info-content">
+      <section id="code" aria-labelledby="code-title">
+        <h2 id="code-title">Code and files</h2>
+        <p>The application reads a file only after you select it in a file picker. It also processes text you paste or type into the two editors. Comparison and syntax checking run locally, using the downloaded application and a local browser worker.</p>
+        <p><strong>The application does not upload your code or selected filenames to a server or an AI service.</strong> It does not execute the code being compared, resolve its imports, read your other tabs, or access files you have not chosen.</p>
+      </section>
+      <section id="session" aria-labelledby="session-title">
+        <h2 id="session-title">Your session is kept in memory</h2>
+        <p>Editor text, Undo/Redo history and review progress remain in the open tab's memory. The application does not save them to a cloud account, browser storage or a session database. Closing or reloading the page discards the active session; there is no automatic recovery.</p>
+        <p><strong>Save session</strong> lets you explicitly download a JSON file containing both texts, filenames, selected language, view settings and remaining Keep B marks. The file preserves the UTF-8 BOM and line endings. It is not encrypted and does not include Undo/Redo history. <strong>Open session</strong> reads a file you choose locally and restores that workspace after confirmation when replacing existing work.</p>
+        <p>Use <strong>Clear both editors</strong> to discard both texts and their editing history. Downloaded files and clipboard contents are separate and are not removed by clearing the editors. Clearing or closing the tab is not a promise of secure erasure from browser or operating-system memory.</p>
+      </section>
+      <section id="downloads" aria-labelledby="downloads-title">
+        <h2 id="downloads-title">Downloads and clipboard</h2>
+        <p><strong>Download B</strong> creates a file from the result in B through your browser's download flow. It does not save A. Your browser controls the destination, whether the download completes and its usual download history. Check the downloaded file before leaving the page.</p>
+        <p><strong>Copy B</strong> writes B to your system clipboard when you click the button. Your browser and operating system control the clipboard, including any clipboard synchronization you have enabled. Use Download B when you need to preserve the file's original line endings and UTF-8 BOM.</p>
+      </section>
+      <section id="website" aria-labelledby="website-title">
+        <h2 id="website-title">Website requests and hosting</h2>
+        <p>Visiting the website sends normal HTTP requests to its hosting infrastructure to load the pages, scripts, styles and images. The infrastructure may receive or log connection information such as your IP address, requested URL, browser information and request time.</p>
+        <p>These website requests are separate from the code you enter into the editor. The comparison application includes no analytics, advertising, telemetry, external fonts, account system or tracking cookies. It does not add your code or selected filenames to website requests.</p>
+        <p>This describes the application itself. Your browser, browser extensions, hosting provider and any service you open through an external link may have their own data handling. The website needs a connection to load; offline reloading is not guaranteed.</p>
+      </section>
+      <section id="contact" aria-labelledby="contact-title">
+        <h2 id="contact-title">Feedback and privacy questions</h2>
+        <p>Feedback is voluntary and is not submitted automatically. Product and privacy questions can be raised through the <a href="https://github.com/donjonson-hash/code-compare-local/issues" target="_blank" rel="noopener noreferrer">project's GitHub issues</a>. GitHub is a separate service, and its own privacy policy applies when you use it.</p>
+        <div class="info-note"><p><strong>GitHub issues are public.</strong> Share a small, invented example when reporting a problem. Do not post private source code, credentials, personal data or screenshots containing sensitive information.</p></div>
+        <div class="info-cta"><a class="btn btn-coral" href="app.html">Open workspace <span aria-hidden="true">↗</span></a><a href="support.html">Read the support guide</a></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer shell info-footer"><a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true">≠</span><span>Compare Code<span class="logo-local">Local processing <i></i></span></span></a><nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="app.html">Workspace</a><a href="privacy.html" aria-current="page">Privacy</a><a href="support.html">Support</a></nav></footer>
+</body>
+</html>

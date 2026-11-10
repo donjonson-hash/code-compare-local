@@ -17,8 +17,27 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-runtime
+          path: |
+            app.js
+            syntax-worker.js
+            THIRD-PARTY-NOTICES.txt
+          if-no-files-found: error
       - run: npm test
+      - run: npm run build:web
       - run: npx playwright install --with-deps chromium
+      - name: Test the built website, including save and reopen
+        run: npm run test:web
+        env:
+          TEST_OUTPUT: test-output/web
+      - name: Upload the verified static website
+        uses: actions/upload-artifact@v4
+        with:
+          name: comparecode-website
+          path: dist/client/
+          if-no-files-found: error
       - name: Test the installed extension, including save and reopen
         run: npm run test:browser
         env:
@@ -30,8 +49,8 @@ jobs:
           path: dist/*.zip
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
-          name: browser-check-failure
-          path: test-output/*.png
+          name: browser-check-screenshots
+          path: test-output/**/*.png
           if-no-files-found: ignore

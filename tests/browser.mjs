@@ -5,19 +5,33 @@ import { checkFocusedReview } from './review-browser.mjs';
 import { checkDeterministicTransfer } from './transfer-browser.mjs';
 import { checkClockIndependentComparison } from './diff-browser.mjs';
 import { checkCanonicalComparison } from './canonical-browser.mjs';
+import { checkStudioContrast } from './theme-browser.mjs';
+import { checkDownloadNavigation } from './navigation-browser.mjs';
+import { checkInfoPages, checkWorkspaceHelp } from './info-browser.mjs';
+import { checkSessions } from './session-browser.mjs';
+import { checkSyntaxComparison } from './syntax-comparison-browser.mjs';
+import { checkSyntaxFixes } from './syntax-fixes-browser.mjs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = fileURLToPath(new URL('../', import.meta.url)).replace(/\/$/, '');
+const webBuild = process.argv.includes('--web');
+if (webBuild && process.env.REQUIRE_EXTENSION)
+  throw new Error('Choose either the website or the required installed extension.');
+const servedRoot = webBuild ? `${root}/dist/client` : root;
 const output = process.env.TEST_OUTPUT || `${root}/test-output`;
 await mkdir(output, { recursive: true });
 const server = createServer(async(req,res) => {
-  const name = new URL(req.url, 'http://localhost').pathname.slice(1);
-  if (!['app.html','app.js','syntax-worker.js','styles.css','icons/icon16.png'].includes(name)) { res.writeHead(404).end(); return; }
+  const name = new URL(req.url, 'http://localhost').pathname.slice(1) || 'index.html';
+  if (!['index.html', 'studio.css', 'privacy.html', 'support.html', 'info.css', 'robots.txt', 'sitemap.xml', 'app.html', 'app.js', 'syntax-worker.js',
+    'styles.css', 'workspace-theme.css', 'workspace-theme.js',
+    'assets/anime-studio.png', 'assets/mark.svg', 'icons/icon16.png',
+    'icons/icon48.png', 'icons/icon128.png', 'PRIVACY.md',
+    'THIRD-PARTY-NOTICES.txt'].includes(name)) { res.writeHead(404).end(); return; }
   try {
-    res.setHeader('Content-Type', name.endsWith('.js') ? 'text/javascript' : name.endsWith('.css') ? 'text/css' : name.endsWith('.png') ? 'image/png' : 'text/html');
-    res.end(await readFile(`${root}/${name}`));
+    res.setHeader('Content-Type', name.endsWith('.js') ? 'text/javascript' : name.endsWith('.css') ? 'text/css' : name.endsWith('.png') ? 'image/png' : name.endsWith('.svg') ? 'image/svg+xml' : name.endsWith('.html') ? 'text/html' : name.endsWith('.xml') ? 'application/xml' : 'text/plain');
+    res.end(await readFile(`${servedRoot}/${name}`));
   } catch { res.writeHead(404).end(); }
 });
 await new Promise(resolve => server.listen(0,'127.0.0.1',resolve));
@@ -26,19 +40,17 @@ const context = await chromium.launchPersistentContext(`${output}/profile`, {
   ...(process.env.CHROMIUM_EXECUTABLE ? { executablePath: process.env.CHROMIUM_EXECUTABLE } : {}),
   channel: process.env.CHROMIUM_EXECUTABLE ? undefined : 'chromium',
   headless: true, viewport: { width: 1440, height: 1000 }, acceptDownloads: true,
-  args: ['--no-sandbox', '--disable-gpu', `--disable-extensions-except=${root}`, `--load-extension=${root}`]
+  args: ['--no-sandbox', '--disable-gpu', ...(webBuild ? [] : [`--disable-extensions-except=${root}`, `--load-extension=${root}`])]
 });
 const page = await context.newPage();
 const errors = [], requests = [];
 page.on('pageerror', error => errors.push(error.message));
 page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== localOrigin) requests.push(request.url()); });
 page.on('dialog', dialog => dialog.accept());
-let extensionWorker = context.serviceWorkers()[0];
+let extensionWorker = webBuild ? undefined : context.serviceWorkers()[0];
 if (process.env.REQUIRE_EXTENSION && !extensionWorker) extensionWorker = await context.waitForEvent('serviceworker', { timeout: 15000 });
 const url = extensionWorker ? new URL('app.html', extensionWorker.url()).href : `${localOrigin}/app.html`;
-await page.goto(url);
-await page.waitForFunction(() => document.getElementById('syntax-report').dataset.worker === 'ready');
-await context.setOffline(true);
+const homeUrl = new URL('index.html', url).href;
 const open = async (side, text, name = 'sample.py') => {
   await page.locator(`#file-${side}`).setInputFiles({ name, mimeType: 'text/plain', buffer: Buffer.from(text) });
   await page.waitForFunction(({side, text}) => document.getElementById(`meta-${side}`).textContent.includes(`${text.replace(/\r\n|\r/g,'\n').replace(/^\uFEFF/,'').length.toLocaleString('en-US')} chars`), { side, text });
@@ -53,9 +65,28 @@ const download = async () => {
 };
 
 try {
+  await page.goto(homeUrl);
+  await page.waitForFunction(() => {
+    const image = document.querySelector('img[src="assets/anime-studio.png"]');
+    return image?.complete && image.naturalWidth > 0;
+  });
+  await page.screenshot({ path: `${output}/studio-home.png`, fullPage: true });
+  await page.setViewportSize({ width: 375, height: 812 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'The studio home fits a narrow window');
+  await page.screenshot({ path: `${output}/studio-mobile.png`, fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await checkInfoPages({ page, homeUrl, output });
+  await page.locator('a[href="app.html?demo=1"]').first().click();
+  await page.waitForFunction(() => document.getElementById('diff-count')?.textContent.includes('4 change blocks'));
+  assert.equal(page.url(), url, 'The landing example opens the editor and consumes its one-time URL flag');
+  await page.waitForFunction(() => document.getElementById('syntax-report').dataset.worker === 'ready');
+  await checkWorkspaceHelp({ page, context, url, download });
+  await context.setOffline(true);
+
   await page.locator('#demo').click();
   await page.locator('.cm-merge-revert button').first().waitFor();
   assert.match(await page.locator('#diff-count').innerText(), /4 change blocks/);
+  await checkStudioContrast(page);
   await page.screenshot({ path: `${output}/desktop.png`, fullPage: true });
   const demoBefore = await download();
   await page.locator('.cm-merge-revert button').first().click();
@@ -65,6 +96,23 @@ try {
   assert.deepEqual((await download()).bytes, demoBefore.bytes);
   await page.locator('#redo').click();
   assert.deepEqual((await download()).bytes, demoAfter.bytes);
+
+  // Focus changes the layout without replacing either editor or its history.
+  const originalA = await page.getByRole('textbox', { name: 'Code A', exact: true }).textContent();
+  await page.locator('#zen-mode').click();
+  assert.equal(await page.locator('#zen-mode').getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.locator('.changes-sidebar').isVisible(), false);
+  assert.deepEqual((await download()).bytes, demoAfter.bytes, 'Focus preserves B bytes');
+  assert.equal(await page.getByRole('textbox', { name: 'Code A', exact: true }).textContent(), originalA, 'Focus preserves A');
+  await page.locator('#undo').click();
+  assert.deepEqual((await download()).bytes, demoBefore.bytes, 'Undo history survives entering focus');
+  await page.locator('#redo').click();
+  assert.deepEqual((await download()).bytes, demoAfter.bytes, 'Redo history survives entering focus');
+  await page.locator('#zen-mode').click();
+  assert.equal(await page.locator('#zen-mode').getAttribute('aria-pressed'), 'false');
+  assert.equal(await page.locator('.changes-sidebar').isVisible(), true);
+  assert.equal(await page.getByRole('textbox', { name: 'Code A', exact: true }).textContent(), originalA, 'Leaving focus preserves A');
+  assert.deepEqual((await download()).bytes, demoAfter.bytes, 'Leaving focus preserves B');
 
   // Syntax diagnostics react to a hunk transfer and its undo, without executing code.
   await open('a', 'def greet():\n    print("hello")\n', 'syntax.py');
@@ -189,6 +237,9 @@ try {
   await checkDeterministicTransfer({ page, open, download });
   await checkClockIndependentComparison({ page, open, download });
   await checkCanonicalComparison({ page, open, download });
+  await checkSyntaxComparison({ page, open, output });
+  await checkSyntaxFixes({ page, open, download, output });
+  await checkSessions({ page, open, download, output });
 
   const exact = '\uFEFF\tпривет 😀\r\nsecond\nthird\rfinal\r\n';
   await open('b', exact, 'mixed.ts');
@@ -239,15 +290,43 @@ try {
   await page.locator('#demo').click();
   await page.screenshot({ path: `${output}/compact.png`, fullPage: true });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  await page.setViewportSize({ width: 375, height: 812 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'The editor fits a narrow window');
+  await page.screenshot({ path: `${output}/workspace-mobile.png`, fullPage: true });
+  await page.setViewportSize({ width: 900, height: 900 });
   await page.locator('#clear').click();
   await page.getByRole('button', { name: 'Clear', exact: true }).click();
   assert.equal((await download()).bytes.length, 0);
   assert.equal(await page.locator('#undo').isDisabled(), true);
+  // An installed extension must keep its home page, image, and editor local.
+  // The website needs the server for a full navigation; no offline reload is claimed.
+  if (!extensionWorker) await context.setOffline(false);
+  await checkDownloadNavigation({ page, open, download, url });
+  await page.locator('a.brand[href="index.html"]').click();
+  assert.equal(page.url(), homeUrl);
+  await page.locator('img[src="assets/anime-studio.png"]').waitFor();
+  await page.waitForFunction(() => {
+    const image = document.querySelector('img[src="assets/anime-studio.png"]');
+    return image?.complete && image.naturalWidth > 0;
+  });
+  await page.locator('a[href="app.html"]').first().click();
+  await page.waitForFunction(() => document.getElementById('syntax-report')?.dataset.worker === 'ready');
+  assert.equal(page.url(), url);
+  for (const side of ['a', 'b']) {
+    await page.waitForFunction(side => /\b0 chars\b/.test(document.getElementById(`meta-${side}`).textContent), side);
+    assert.match(await page.locator(`#meta-${side}`).textContent(), /\b0 chars\b/,
+      `Normal entry leaves ${side.toUpperCase()} empty instead of reloading the example`);
+  }
+  assert.equal((await download()).bytes.length, 0, 'Normal entry exports an empty file, not placeholder text');
   assert.deepEqual(requests, [], 'No network requests while using the app');
   assert.deepEqual(errors, [], 'No uncaught browser errors');
-  console.log(JSON.stringify({ passed: true, mode: extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
+  console.log(JSON.stringify({ passed: true, mode: webBuild ? 'website' : extensionWorker ? 'extension' : 'local-page', browser: context.browser()?.version(), offline: true, cases: ['home-demo-navigation', 'rendered-token-contrast', 'focus-preserves-bytes-and-history', 'local-home-editor-navigation', 'demo', 'block-transfer', 'undo-redo', 'python-indent-errors', 'syntax-after-merge-and-undo', 'diagnostic-navigation', 'language-change-invalidates-results', 'javascript-json-yaml-typescript', 'five-language-fix-download-reopen', 'long-file-change-list-and-navigation', 'selected-change-only-and-undo', 'code-font-size', 'collapse-context-and-keyboard-expand', 'shared-diagnostic-reveal', 'visible-whitespace-byte-preservation', 'keep-apply-review-progress-undo-redo', 'edit-invalidates-review', 'replayed-transfer-command', 'stale-source-and-target-proposals', 'raw-only-stale-proposal', 'double-click-one-block', 'clock-independent-comparison-and-download', 'canonical-grouping-after-A-B-edits-and-undo-redo', 'UTF8-BOM-mixed-EOL-roundtrip', 'format-only', 'empty-insert-delete-final-newline', 'manual-edit', 'size-limit', 'inert-code', 'compact-layout', 'clear', 'no-external-network'] }, null, 2));
 } catch(error) {
-  console.error({errors, requests, status: await page.locator('#diff-count').textContent(), toast: await page.locator('#toast').textContent()});
-  await page.screenshot({path: `${output}/failure.png`, fullPage:true});
+  const state = await page.evaluate(() => ({
+    status: document.getElementById('diff-count')?.textContent ?? null,
+    toast: document.getElementById('toast')?.textContent ?? null,
+  })).catch(() => ({}));
+  console.error({ errors, requests, ...state });
+  await page.screenshot({path: `${output}/failure.png`, fullPage:true}).catch(() => {});
   throw error;
 } finally { await context.close(); await new Promise(resolve => server.close(resolve)); }

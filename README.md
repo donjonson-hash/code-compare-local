@@ -1,3 +1,5 @@
+> Studio integration candidate: the recovered anime home and workspace share the current editor engine. Build with `npm run build` followed by `npm run build:web`; serve `dist/client` over HTTP(S). Both pages are also packaged for offline extension use. See [recovery provenance](docs/ANIME-STUDIO-RECOVERY.md). This is not a new store release.
+
 # Code Compare Local · beta 0.8.0
 
 ## Canonical comparison pilot
